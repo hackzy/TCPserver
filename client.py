@@ -24,16 +24,32 @@ class Client:
             buffer = self.客户端id.recv(50000)
             print("客户端数据",buffer.hex())
             if cid != None:
-                self.未发送 = self.未发送 + buffer
+                self.未发送 = buffer
                 t = 线程(target=self.接收处理线程,args=(cid,))
                 t.setDaemon(True)
                 t.start()
-                setting.服务器[setting.客户端[cid].服务器数组id].服务器.send(buffer)
+                
             if len(buffer) == 0:
-                    self.客户端id.close()
-                    # 删除连接
-                    print("服务器断开")
-                    break
+                self.客户端id.close()
+                # 删除连接
+                setting.客户端[cid].remove()
+                print("服务器断开")
+                break
 
     def 接收处理线程(self,cid):
-        pass
+        包头 = self.未发送[10:12]
+        print(包头.hex())
+        if 包头.hex() == "3357":
+            buffer = self.登录线路(self.未发送)
+        print(buffer.hex())
+        setting.服务器[setting.客户端[cid].服务器数组id].服务器.send(buffer)
+
+
+    def 登录线路(self,buffer):
+        封包 = buffer[0:18]
+        封包 = 封包 + len(setting.服务器监听地址).to_bytes(1) +  bytes(setting.服务器监听地址,'UTF-8') + \
+                            setting.服务器监听端口[1].to_bytes(2)
+        封包 = 封包 + buffer[30:]
+        封包 = setting.组包包头 + len(封包).to_bytes(2) + 封包[10:] 
+        
+        return 封包
