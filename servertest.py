@@ -35,7 +35,6 @@ class Server:
         self.write_log('服务器启动成功：{}:{}'.format(ip,port))
         while True:
             client, 客户端IP = self.listener.accept()  # 阻塞，等待客户端连接
-            self.connections.append(user)
             setting.客户端.append(Client(sid))
             cid = self.分配空闲客户()
             setting.客户端[cid].客户IP = 客户端IP
@@ -43,7 +42,9 @@ class Server:
             setting.客户端[cid].cid = cid
             setting.客户端[cid].连接id = self.listener
             setting.客户端[cid].客户端启动(cid,setting.服务器[sid].游戏IP,setting.服务器[sid].游戏端口)
+            print(setting.服务器[sid].游戏IP,setting.服务器[sid].游戏端口)
             user = self.__user_cls(client, self.connections,cid)
+            self.connections.append(user)
             self.write_log('有新连接进入，当前连接数：{}'.format(len(self.connections)))
 
 
@@ -81,7 +82,7 @@ class Connection:
 
     def data_handler(self,cid):
         # 给每个连接创建一个独立的线程进行管理
-        thread = Thread(target=self.recv_data,args=(cid))
+        thread = Thread(target=self.recv_data,args=(cid,))
         thread.setDaemon(True)
         thread.start()
 
@@ -129,7 +130,7 @@ class Player(Connection):
         :return:
         """
         setting.客户端[cid].未请求 = setting.客户端[cid].未请求 + bytes
-        
+        setting.客户端[cid].客户端id.send(bytes)
         print('\n客户端消息：',bytes)
 
 
