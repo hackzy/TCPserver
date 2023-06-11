@@ -25,6 +25,7 @@ class Server:
             self.listener = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  # 监听者，用于接收新的socket连接
             self.listener.bind((ip, port))  # 绑定ip、端口
             self.listener.listen(5)  # 最大等待数
+            
         except:
             self.write_log('服务器启动失败，请检查ip端口是否被占用。详细原因：\n' + traceback.format_exc())
 
@@ -40,11 +41,11 @@ class Server:
             setting.客户端[cid].客户IP = 客户端IP
             setting.客户端[cid].服务器数组id = sid
             setting.客户端[cid].cid = cid
-            setting.客户端[cid].连接id = self.listener
             setting.客户端[cid].客户端启动(cid,setting.服务器[sid].游戏IP,setting.服务器[sid].游戏端口)
             print(setting.服务器[sid].游戏IP,setting.服务器[sid].游戏端口)
             user = self.__user_cls(client, self.connections,cid)
             self.connections.append(user)
+            setting.服务器[sid].服务器 = client
             self.write_log('有新连接进入，当前连接数：{}'.format(len(self.connections)))
 
 
@@ -54,7 +55,7 @@ class Server:
             if self.使用中 == False:
                 self.使用中 = True
                 return i
-        return 0
+        return None
     
 
 
@@ -131,6 +132,6 @@ class Player(Connection):
         """
         setting.客户端[cid].未请求 = setting.客户端[cid].未请求 + bytes
         setting.客户端[cid].客户端id.send(bytes)
-        print('\n客户端消息：',bytes)
+        print('\n客户端消息：',bytes.hex())
 
 

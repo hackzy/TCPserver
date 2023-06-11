@@ -6,6 +6,7 @@ class 服务器:
         self.监听端口 = None
         self.游戏端口 = None
         self.游戏IP = None
+        self.服务器 = None
                 
 
 
