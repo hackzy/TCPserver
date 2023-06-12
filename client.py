@@ -1,6 +1,7 @@
 import socket
-import setting
+from setting import *
 from threading import Thread as 线程
+from clientData import 客户端
 class Client:
     def __init__(self,sid) -> None:
         self.cid = 0
@@ -8,7 +9,7 @@ class Client:
         self.连接id = 0
         self.服务器数组id = sid
         self.客户端id = 0
-        self.未发送 = bytes()
+        self.客户数据处理 = 客户端()
         self.未请求 = bytes()
     
     def 客户端启动(self,cid,ip,端口):
@@ -24,49 +25,15 @@ class Client:
             buffer = self.客户端id.recv(50000)
             print("客户端数据",buffer.hex())
             if cid != None:
-                self.未发送 = buffer
-                t = 线程(target=self.接收处理线程,args=(cid,))
+                self.客户数据处理.未发送 = buffer
+                t = 线程(target=self.客户数据处理.接收处理线程,args=(cid,))
                 t.setDaemon(True)
                 t.start()
                 
             if len(buffer) == 0:
                 self.客户端id.close()
                 # 删除连接
-                setting.客户端.remove(cid)
+                客户端组.remove(cid)
                 print("服务器断开")
                 break
 
-    def 接收处理线程(self,cid):
-        包头 = self.未发送[10:12]
-        buffer = self.未发送
-        print(包头.hex())
-        buffer = bytes()
-        if 包头.hex() == "3357":
-            buffer = self.登录线路(self.未发送)
-            print(buffer.hex())
-        if 包头.hex() == "4355":
-            buffer = self.显示线路(self.未发送)
-            print(buffer.hex())
-        setting.服务器[setting.客户端[cid].服务器数组id].服务器.send(buffer)
-
-
-    def 登录线路(self,buffer):
-        '''4d5a000000000000003133570000000103e80c31302e3136382e312e313039177b77a4f34b15e58581e8a8b1e8a9b2e5b8b3e8999fe799bbe585a5
-3357
-4d5a000000000000003b33570000000103e8093132372e302e302e31c81f39177b77a4f34b15e58581e8a8b1e8a9b2e5b8b3e8999fe799bbe585a5'''
-        封包 = buffer[0:18]
-        封包 = 封包 + len(setting.服务器监听地址).to_bytes(1) +  bytes(setting.服务器监听地址,'UTF-8') + \
-                            setting.服务器监听端口[1].to_bytes(2)
-        封包 = 封包 + buffer[33:]
-        封包 = setting.组包包头 + len(封包).to_bytes(2) + 封包[10:] 
-        return 封包
-    
-    def 显示线路(self,buffer):
-        ''' 4D 5A 00 00 00 00 00 00 00 38 43 55 00 01 12 E6 9B B4 E9 91 84 E8 BC 9D E7 85 8C E4 B8 
-        80 E7 B7 9A 0E 31 32 34 2E 32 32 30 2E 31 35 39 2E 36 36 0F 31 31 31 2E 31 37 33 2E 31 31 
-        36 2E 31 33 33 00 02'''
-        a = 1
-        封包 = buffer[10:12] + a.to_bytes(2)+ buffer[14:15] + buffer[15:15+buffer[14:15][0]] + len(setting.服务器监听地址).to_bytes(1) + \
-                bytes(setting.服务器监听地址,'UTF-8') + buffer[-2:]
-        封包 = setting.组包包头 + len(封包).to_bytes(2) + 封包
-        return 封包
