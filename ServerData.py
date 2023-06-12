@@ -11,9 +11,9 @@ class 服务器:
         self.服务器句柄 = None
                 
     def 初始化服务器(self,serverid,游戏ip,游戏端口,监听端口):
-        服务器组[serverid].监听端口 = 监听端口
-        服务器组[serverid].游戏IP = 游戏ip
-        服务器组[serverid].游戏端口 = 游戏端口
+        self.监听端口 = 监听端口
+        self.游戏IP = 游戏ip
+        self.游戏端口 = 游戏端口
         t = 线程(target=Server,args=(serverid,服务器监听地址,监听端口))
         t.setDaemon(True)
         t.start()
