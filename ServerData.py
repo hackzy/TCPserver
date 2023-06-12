@@ -9,6 +9,7 @@ class 服务器:
         self.游戏端口 = None
         self.游戏IP = None
         self.服务器 = None
+        self.使用中 = False
                 
     def 初始化服务器(self,serverid,游戏ip,游戏端口,监听端口):
         服务器组.append(self)
@@ -21,8 +22,9 @@ class 服务器:
 
     def 分配空闲客户(self):
         for i in range(len(客户端组)):
-            if self.使用中 == False:
-                self.使用中 = True
+            if 客户端组[i].使用中 == False:
+                客户端组[i].使用中 = True
+                print("分配空闲客户",i)
                 return i
-        return None
+        return 0
     

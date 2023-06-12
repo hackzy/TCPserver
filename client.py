@@ -9,6 +9,7 @@ class Client:
         self.连接id = 0
         self.服务器数组id = sid
         self.客户端id = 0
+        self.使用中 = False
         self.客户数据处理 = 客户端()
         self.未请求 = bytes()
     
@@ -18,7 +19,7 @@ class Client:
         c1 = 线程(target=self.数据到达,args=(cid,))
         c1.setDaemon(True)
         c1.start()
-        return cid
+        return self.客户端id
     
     def 数据到达(self,cid):
         while True:
@@ -33,7 +34,7 @@ class Client:
             if len(buffer) == 0:
                 self.客户端id.close()
                 # 删除连接
-                客户端组.remove(cid)
+                #客户端组.remove(客户端组[cid])
                 print("服务器断开")
                 break
 

@@ -7,14 +7,14 @@ class 客户端:
         包头 = self.未发送[10:12]
         buffer = self.未发送
         print(包头.hex())
-        buffer = bytes()
         if 包头.hex() == "3357":
             buffer = self.登录线路(self.未发送)
             print(buffer.hex())
         if 包头.hex() == "4355":
             buffer = self.显示线路(self.未发送)
             print(buffer.hex())
-        服务器组[客户端组[cid].服务器数组id].服务器.send(buffer)
+        if len(buffer) != 0 :
+            客户端组[cid].连接id.send(buffer)
 
 
     def 登录线路(self,buffer):
