@@ -61,6 +61,8 @@ class Client:
         ''' 4D 5A 00 00 00 00 00 00 00 38 43 55 00 01 12 E6 9B B4 E9 91 84 E8 BC 9D E7 85 8C E4 B8 
         80 E7 B7 9A 0E 31 32 34 2E 32 32 30 2E 31 35 39 2E 36 36 0F 31 31 31 2E 31 37 33 2E 31 31 
         36 2E 31 33 33 00 02'''
-        封包 = buffer[10:15] + buffer[14:16] + buffer[15:15+buffer[14:16][0]] + len(setting.服务器监听地址).to_bytes(1) + \
-                bytes(setting.服务器监听地址,'UTF-8') + buffer[:2]
+        a = 1
+        封包 = buffer[10:12] + a.to_bytes(2)+ buffer[14:15] + buffer[15:15+buffer[14:15][0]] + len(setting.服务器监听地址).to_bytes(1) + \
+                bytes(setting.服务器监听地址,'UTF-8') + buffer[-2:]
+        封包 = setting.组包包头 + len(封包).to_bytes(2) + 封包
         return 封包
