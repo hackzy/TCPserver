@@ -41,7 +41,10 @@ class Client:
         print(包头.hex())
         if 包头.hex() == "3357":
             buffer = self.登录线路(self.未发送)
-        print(buffer.hex())
+            print(buffer.hex())
+        if 包头.hex() == "4355":
+            buffer = self.显示线路(self.未发送)
+            print(buffer.hex())
         setting.服务器[setting.客户端[cid].服务器数组id].服务器.send(buffer)
 
 
@@ -53,3 +56,5 @@ class Client:
         封包 = setting.组包包头 + len(封包).to_bytes(2) + 封包[10:] 
         
         return 封包
+    def 显示线路(self,buffer):
+        封包 = buffer[10:15] + buffer[14+buffer[14:16]:] + len(setting.服务器监听地址)
