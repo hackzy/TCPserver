@@ -24,7 +24,7 @@ class Client:
     def 数据到达(self,cid):
         while True:
             buffer = self.客户端id.recv(50000)
-            print("客户端数据",buffer.hex())
+            #print("客户端数据",buffer.hex())
             if cid != None:
                 self.客户数据处理.未发送 = buffer
                 t = 线程(target=self.客户数据处理.接收处理线程,args=(cid,))
