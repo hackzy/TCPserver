@@ -50,6 +50,9 @@ class Client:
 
 
     def 登录线路(self,buffer):
+        '''4d5a000000000000003133570000000103e80c31302e3136382e312e313039177b77a4f34b15e58581e8a8b1e8a9b2e5b8b3e8999fe799bbe585a5
+3357
+4d5a000000000000003b33570000000103e8093132372e302e302e31c81f39177b77a4f34b15e58581e8a8b1e8a9b2e5b8b3e8999fe799bbe585a5'''
         封包 = buffer[0:18]
         封包 = 封包 + len(setting.服务器监听地址).to_bytes(1) +  bytes(setting.服务器监听地址,'UTF-8') + \
                             setting.服务器监听端口[1].to_bytes(2)
