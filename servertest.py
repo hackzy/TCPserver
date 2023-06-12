@@ -16,10 +16,9 @@ class Server:
         s = "[" + str(cur_time) + "]" + msg
         print(s)
 
-    def __init__(self,服务端,sid,ip, port):
+    def __init__(self,sid,ip, port):
         self.connections = []  # 所有客户端连接
         self.使用中 = False
-        self.服务端 = 服务端
         self.write_log('服务器启动中，请稍候...')
         try:
             self.listener = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  # 监听者，用于接收新的socket连接
@@ -36,8 +35,8 @@ class Server:
         self.write_log('服务器启动成功：{}:{}'.format(ip,port))
         while True:
             client, 客户端IP = self.listener.accept()  # 阻塞，等待客户端连接
-            cid = self.服务端.分配空闲客户()
-            客户端组.insert(cid,Client(sid))
+            cid = 服务器组[sid].分配空闲客户()
+            
             客户端组[cid].使用中 = True
             客户端组[cid].客户IP = 客户端IP
             客户端组[cid].服务器数组id = sid
@@ -121,6 +120,7 @@ class Player(Connection):
         """
         #客户端组[cid].未请求 = 客户端组[cid].未请求 + bytes
         服务器组[客户端组[self.cid].服务器数组id].服务器.send(bytes)
-        print('\n客户端消息：',bytes.hex())
+        #print('\n客户端消息：',bytes.hex())
+        print("当前cid",self.cid)
 
 
