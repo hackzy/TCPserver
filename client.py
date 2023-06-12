@@ -39,6 +39,7 @@ class Client:
     def 接收处理线程(self,cid):
         包头 = self.未发送[10:12]
         print(包头.hex())
+        buffer = bytes()
         if 包头.hex() == "3357":
             buffer = self.登录线路(self.未发送)
             print(buffer.hex())
