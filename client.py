@@ -57,7 +57,7 @@ class Client:
         封包 = buffer[0:18]
         封包 = 封包 + len(setting.服务器监听地址).to_bytes(1) +  bytes(setting.服务器监听地址,'UTF-8') + \
                             setting.服务器监听端口[1].to_bytes(2)
-        封包 = 封包 + buffer[30:]
+        封包 = 封包 + buffer[33:]
         封包 = setting.组包包头 + len(封包).to_bytes(2) + 封包[10:] 
         return 封包
     
