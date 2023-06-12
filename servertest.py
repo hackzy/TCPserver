@@ -18,7 +18,6 @@ class Server:
 
     def __init__(self,sid,ip, port):
         self.connections = []  # 所有客户端连接
-        self.使用中 = False
         self.write_log('服务器启动中，请稍候...')
         try:
             self.listener = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  # 监听者，用于接收新的socket连接

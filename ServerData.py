@@ -7,9 +7,8 @@ class 服务器:
     def __init__(self) -> None:
         self.监听端口 = None
         self.游戏端口 = None
-        self.游戏IP = None
-        self.服务器 = None
-        self.使用中 = False
+        self.游戏IP = "127.0.0.1"
+        self.服务器句柄 = None
                 
     def 初始化服务器(self,serverid,游戏ip,游戏端口,监听端口):
         服务器组[serverid].监听端口 = 监听端口
