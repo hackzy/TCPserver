@@ -29,6 +29,7 @@ class Client:
                 #print("客户端数据",buffer.hex())
                 if self.cid != None:
                     self.客户数据处理.未发送 = buffer
+                    
                     self.客户数据处理.接收处理线程(self.cid)
                     
                 

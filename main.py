@@ -15,10 +15,10 @@ class 逍遥插件:
                 return i
         return 0
     
-    def write_log(msg):
+    def write_log(self,msg):
         cur_time = datetime.datetime.now()
         s = "[" + str(cur_time) + "]" + msg
-        print(s)
+        print(s+"\n")
 
 
 
