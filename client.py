@@ -3,38 +3,47 @@ from setting import *
 from threading import Thread as 线程
 from clientData import 客户端
 class Client:
-    def __init__(self,sid) -> None:
+    def __init__(self,server) -> None:
         self.cid = 0
         self.客户IP = 0
-        self.连接id = 0
-        self.服务器数组id = sid
-        self.客户端id = 0
+        self.server = server
+        self.服务器数组id = 0
+        self.客户句柄 = 0
+        self.服务器句柄 = 0
         self.使用中 = False
-        self.客户数据处理 = 客户端()
+        self.客户数据处理 = 客户端(self.server)
         self.未请求 = bytes()
     
-    def 客户端启动(self,cid,ip,端口):
-        self.客户端id = socket.socket()
-        self.客户端id.connect((ip,端口))
-        c1 = 线程(target=self.数据到达,args=(cid,))
+    def 客户端启动(self,ip,端口):
+        self.服务器句柄 = socket.socket()
+        self.服务器句柄.connect((ip,端口))
+        c1 = 线程(target=self.数据到达)
         c1.setDaemon(True)
         c1.start()
-        return self.客户端id
+        
     
-    def 数据到达(self,cid):
+    def 数据到达(self):
         while True:
-            buffer = self.客户端id.recv(50000)
-            #print("客户端数据",buffer.hex())
-            if cid != None:
-                self.客户数据处理.未发送 = buffer
-                t = 线程(target=self.客户数据处理.接收处理线程,args=(cid,))
-                t.setDaemon(True)
-                t.start()
+            try:
+                buffer = self.服务器句柄.recv(100000)
+                #print("客户端数据",buffer.hex())
+                if self.cid != None:
+                    self.客户数据处理.未发送 = buffer
+                    self.客户数据处理.接收处理线程(self.cid)
+                    
                 
-            if len(buffer) == 0:
-                self.客户端id.close()
-                # 删除连接
-                #客户端组.remove(客户端组[cid])
-                print("服务器断开")
-                break
+                if len(buffer) == 0:
+                
+                    #self.服务器句柄.close()
+                    # 删除连接
+                    #del self.server.client[self.cid]
+                    #客户端组.remove(客户端组[cid])
+                    print("断开与服务器连接",self.服务器句柄,self.cid)
 
+                    break
+            except:
+                print("接收数据异常",len(buffer))
+                #self.服务器句柄.close()
+                # 删除连接
+                #del self.server.client[self.cid]
+                #客户端组.remove(客户端组[cid])

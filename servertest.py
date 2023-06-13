@@ -16,9 +16,10 @@ class Server:
         s = "[" + str(cur_time) + "]" + msg
         print(s)
 
-    def __init__(self,sid,ip, port):
+    def __init__(self,server,sid,ip, port):
         self.connections = []  # 所有客户端连接
         self.write_log('服务器启动中，请稍候...')
+        self.server = server
         try:
             self.listener = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  # 监听者，用于接收新的socket连接
             self.listener.bind((ip, port))  # 绑定ip、端口
@@ -34,16 +35,17 @@ class Server:
         self.write_log('服务器启动成功：{}:{}'.format(ip,port))
         while True:
             client, 客户端IP = self.listener.accept()  # 阻塞，等待客户端连接
-            cid = sid.分配空闲客户()
-            客户端组[cid].使用中 = True
-            客户端组[cid].客户IP = 客户端IP
-            客户端组[cid].服务器数组id = sid
-            客户端组[cid].cid = cid
-            服务器组[sid].服务器 = 客户端组[cid].客户端启动(cid,服务器组[sid].游戏IP,服务器组[sid].游戏端口)
-            print(服务器组[sid].游戏IP,服务器组[sid].游戏端口)
-            user = self.__user_cls(client, self.connections,cid)
+            self.server.client.append(Client(self.server))
+            cid = self.server.分配空闲客户()
+            self.server.client[cid].cid = cid
+            self.server.client[cid].客户句柄 = client
+            self.server.client[cid].客户IP = 客户端IP
+            self.server.client[cid].服务器数组id = sid
+            self.server.client[cid].客户端启动(self.server.server[sid].游戏IP,self.server.server[sid].游戏端口)
+            print(self.server.server[sid].游戏IP,self.server.server[sid].游戏端口,len(self.server.client))
+            user = self.__user_cls(self.server, self.connections,cid)
             self.connections.append(user)
-            客户端组[cid].连接id = client
+            
             self.write_log('有新连接进入，当前连接数：{}'.format(len(self.connections)))
 
 
@@ -67,11 +69,11 @@ class Connection:
     连接类，每个socket连接都是一个connection
     """
 
-    def __init__(self, socket, connections,cid):
-        self.socket = socket
+    def __init__(self,server, connections,cid):
         self.connections = connections
         self.data_handler()
         self.cid = cid
+        self.server = server
     def data_handler(self):
         # 给每个连接创建一个独立的线程进行管理
         thread = Thread(target=self.recv_data)
@@ -82,9 +84,9 @@ class Connection:
         # 接收数据
         try:
             while True:
-                bytes = self.socket.recv(10000)  # 我们这里只做一个简单的服务端框架，不去做分包处理。所以每个数据包不要大于2048
+                bytes = self.server.client[self.cid].客户句柄.recv(50000)  # 我们这里只做一个简单的服务端框架，不去做分包处理。所以每个数据包不要大于2048
                 if len(bytes) == 0:
-                    客户端组.pop(self.cid)
+                    del self.server.client[self.cid]
                     print("客户断开")
                     self.connections.remove(self)
                     break
@@ -117,8 +119,9 @@ class Player(Connection):
         :return:
         """
         #客户端组[cid].未请求 = 客户端组[cid].未请求 + bytes
-        服务器组[客户端组[self.cid].服务器数组id].服务器.send(bytes)
-        #print('\n客户端消息：',bytes.hex())
-        print("当前cid",self.cid)
+        if self.server.client[self.cid].服务器句柄 != -1:
+            self.server.client[self.cid].服务器句柄.send(bytes)
+            #print('\n客户端消息：',bytes.hex())
+            #print("当前cid",self.cid)
 
 
