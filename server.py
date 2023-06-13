@@ -1,4 +1,4 @@
-import datetime
+
 import socket
 import traceback
 from setting import *
@@ -11,28 +11,25 @@ class Server:
     __user_cls = None
 
     @staticmethod
-    def write_log(msg):
-        cur_time = datetime.datetime.now()
-        s = "[" + str(cur_time) + "]" + msg
-        print(s)
+
 
     def __init__(self,server,sid,ip, port):
-        self.connections = []  # 所有客户端连接
-        self.write_log('服务器启动中，请稍候...')
         self.server = server
+        self.connections = []  # 所有客户端连接
+        self.server.write_log('服务器启动中，请稍候...')
         try:
             self.listener = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  # 监听者，用于接收新的socket连接
             self.listener.bind((ip, port))  # 绑定ip、端口
             self.listener.listen(5)  # 最大等待数
             
         except:
-            self.write_log('服务器启动失败，请检查ip端口是否被占用。详细原因：\n' + traceback.format_exc())
+            self.server.write_log('服务器启动失败，请检查ip端口是否被占用。详细原因：\n' + traceback.format_exc())
 
         if self.__user_cls is None:
-            self.write_log('服务器启动失败，未注册用户自定义类')
+            self.server.write_log('服务器启动失败，未注册用户自定义类')
             return
 
-        self.write_log('服务器启动成功：{}:{}'.format(ip,port))
+        self.server.write_log('服务器启动成功：{}:{}'.format(ip,port))
         while True:
             client, 客户端IP = self.listener.accept()  # 阻塞，等待客户端连接
             self.server.client.append(Client(self.server))
@@ -40,13 +37,14 @@ class Server:
             self.server.client[cid].cid = cid
             self.server.client[cid].客户句柄 = client
             self.server.client[cid].客户IP = 客户端IP
-            self.server.client[cid].服务器数组id = sid
+            self.server.client[cid].sid = sid
             self.server.client[cid].客户端启动(self.server.server[sid].游戏IP,self.server.server[sid].游戏端口)
             print(self.server.server[sid].游戏IP,self.server.server[sid].游戏端口,len(self.server.client))
-            user = self.__user_cls(self.server, self.connections,cid)
-            self.connections.append(user)
             
-            self.write_log('有新连接进入，当前连接数：{}'.format(len(self.connections)))
+            #user = self.__user_cls(self.server, self.connections,cid)
+            #self.connections.append(user)
+            
+            self.server.write_log('有新连接进入，当前连接数：{}'.format(len(self.connections)))
 
 
 

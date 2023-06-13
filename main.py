@@ -1,10 +1,11 @@
 from setting import *
 from ServerData import 服务器
+import datetime
 class 逍遥插件:
     def __init__(self) -> None:
       self.server = []
       self.client = []
-
+      
     def 分配空闲客户(self):
         print("分配客户",len(self.client))
         for i in range(len(self.client)):
@@ -14,6 +15,10 @@ class 逍遥插件:
                 return i
         return 0
     
+    def write_log(msg):
+        cur_time = datetime.datetime.now()
+        s = "[" + str(cur_time) + "]" + msg
+        print(s)
 
 
 

@@ -7,7 +7,7 @@ class Client:
         self.cid = 0
         self.客户IP = 0
         self.server = server
-        self.服务器数组id = 0
+        self.sid = 0
         self.客户句柄 = 0
         self.服务器句柄 = 0
         self.使用中 = False

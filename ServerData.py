@@ -1,7 +1,7 @@
 
 from threading import Thread as 线程
 from setting import *
-from servertest import Server
+from server import Server
 
 class 服务器:
     def __init__(self,server) -> None:
