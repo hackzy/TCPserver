@@ -43,6 +43,7 @@ class 自动战斗:
         写包.写整数型(id,True)
         写包.写整数型(攻击id,True)
         写包.写整数型(攻击类型,True)
+        写包.写整数型(技能id,True)
         写包.写整数型(0,True)
         完整包.写字节集(b'\x79\x90\x00\x00')
         完整包.写整数型(psutil.boot_time(),True)
