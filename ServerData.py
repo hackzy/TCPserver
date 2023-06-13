@@ -3,7 +3,7 @@ from threading import Thread as 线程
 from setting import *
 from server import Server
 import traceback
-class 服务器:
+class 服务器数据处理:
     def __init__(self,server) -> None:
         self.监听端口 = None
         self.游戏端口 = None

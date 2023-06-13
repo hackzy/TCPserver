@@ -1,5 +1,6 @@
 from setting import *
-class 客户端:
+class 客户端数据处理:
+    '''客户端数据处理类，负责处理服务器发来的数据'''
     def __init__(self,server) -> None:
         self.未发送 = bytes()
         self.server = server

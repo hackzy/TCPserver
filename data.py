@@ -2,6 +2,7 @@ from setting import *
 
 
 class 数据池 :
+    '''数据管理，检查收到的数据是否完整'''
     def __init__(self) -> None:
         self.data = []
         self.now = 0
