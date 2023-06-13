@@ -9,10 +9,8 @@ class 客户端:
         #print(包头.hex())
         if 包头.hex() == "3357":
             buffer = self.登录线路(self.未发送)
-            print(buffer.hex())
         if 包头.hex() == "4355":
             buffer = self.显示线路(self.未发送)
-            print(buffer.hex())
         if len(buffer) != 0 and self.server.client[cid].客户句柄 != -1:
             self.server.client[cid].客户句柄.send(buffer)
 
@@ -31,7 +29,7 @@ class 客户端:
         80 E7 B7 9A 0E 31 32 34 2E 32 32 30 2E 31 35 39 2E 36 36 0F 31 31 31 2E 31 37 33 2E 31 31 
         36 2E 31 33 33 00 02'''
         a = 1
-        封包 = buffer[10:12] + a.to_bytes(2)+ buffer[14:15] + buffer[15:15+buffer[14:15][0]] + len(服务器监听地址).to_bytes(1) + \
-                bytes(服务器监听地址,'UTF-8') + buffer[-2:]
+        封包 = buffer[10:12] + a.to_bytes(2)+ buffer[14:15] + buffer[15:15+buffer[14:15][0]] + \
+            len(服务器监听地址).to_bytes(1) + bytes(服务器监听地址,'UTF-8') + buffer[-2:]
         封包 = 组包包头 + len(封包).to_bytes(2) + 封包
         return 封包

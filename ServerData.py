@@ -30,7 +30,7 @@ class 服务器:
         # 接收数据
         try:
             while True:
-                bytes = self.server.client[cid].客户句柄.recv(50000)  # 我们这里只做一个简单的服务端框架，不去做分包处理。所以每个数据包不要大于2048
+                bytes = self.server.client[cid].客户句柄.recv(1000)  # 我们这里只做一个简单的服务端框架，不去做分包处理。所以每个数据包不要大于2048
                 if len(bytes) == 0:
                     self.server.client[cid].客户句柄.close()
                     del self.server.client[cid]
