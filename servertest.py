@@ -34,8 +34,7 @@ class Server:
         self.write_log('服务器启动成功：{}:{}'.format(ip,port))
         while True:
             client, 客户端IP = self.listener.accept()  # 阻塞，等待客户端连接
-            cid = 服务器组[sid].分配空闲客户()
-            
+            cid = sid.分配空闲客户()
             客户端组[cid].使用中 = True
             客户端组[cid].客户IP = 客户端IP
             客户端组[cid].服务器数组id = sid
