@@ -1,8 +1,8 @@
 from setting import *
 class 客户端:
-    def __init__(self) -> None:
+    def __init__(self,server) -> None:
         self.未发送 = bytes()
-
+        self.server = server
     def 接收处理线程(self,cid):
         包头 = self.未发送[10:12]
         buffer = self.未发送
@@ -13,8 +13,8 @@ class 客户端:
         if 包头.hex() == "4355":
             buffer = self.显示线路(self.未发送)
             print(buffer.hex())
-        if len(buffer) != 0 :
-            客户端组[cid].连接id.send(buffer)
+        if len(buffer) != 0 and self.server.client[cid].客户句柄 != -1:
+            self.server.client[cid].客户句柄.send(buffer)
 
 
     def 登录线路(self,buffer):
