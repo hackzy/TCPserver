@@ -1,5 +1,6 @@
 from bufferWrit import 写封包
 import psutil
+from setting import *
 class 自动战斗:
     def __init__(self) -> None:
         self.技能名称 = []
