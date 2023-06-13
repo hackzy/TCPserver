@@ -3,6 +3,7 @@ from threading import Thread as 线程
 from setting import *
 from server import Server
 import traceback
+from sendToServer import 客户请求处理
 class 服务器数据处理:
     def __init__(self,server) -> None:
         self.监听端口 = None
@@ -31,27 +32,41 @@ class 服务器数据处理:
         try:
             while True:
                 if self.server.client[cid].客户句柄 != 0:
-                    bytes = self.server.client[cid].客户句柄.recv(1000)  # 我们这里只做一个简单的服务端框架，不去做分包处理。所以每个数据包不要大于2048
-                if len(bytes) == 0:
+                    buffer = self.server.client[cid].客户句柄.recv(1000)  # 我们这里只做一个简单的服务端框架，不去做分包处理。所以每个数据包不要大于2048
+                if len(buffer) == 0 or len(buffer) > 1000:
                     self.server.client[cid].客户句柄.close()
                     del self.server.client[cid]
+                    buffer = b''
                     print("客户断开")
                     break
                 # 处理数据
-                self.deal_data(bytes,cid)
+                self.处理数据(buffer,cid)
         except:
-            if type(self.server.client[cid].客户句柄) != 0:
+            if self.server.client[cid].客户句柄 != 0:
                 self.server.client[cid].客户句柄.close()
+
             self.server.write_log('有用户接收数据异常，已强制下线，详细原因：\n' + traceback.format_exc())
 
-    def deal_data(self,bytes,cid):
+    def 处理数据(self,buffer,cid):
         """
-        处理服务端发送的数据
-        :param bytes:
-        :return:
+        处理准备发给服务器的数据
         """
-        #客户端组[cid].未请求 = 客户端组[cid].未请求 + bytes
-        if self.server.client[cid].服务器句柄 != -1:
-            self.server.client[cid].服务器句柄.send(bytes)
-            #print('\n客户端消息：',bytes.hex())
-            #print("当前cid",self.cid)
+        flag = True
+        self.server.client[cid].未请求 = self.server.client[cid].未请求 + buffer
+        while flag:
+            if self.server.client[cid].未请求[:2] != b'MZ':
+                break
+            leng = int.from_bytes(self.server.client[cid].未请求[8:10])
+            if len(self.server.client[cid].未请求) - 10 >= leng:
+                buffer = self.server.client[cid].未请求[:leng+10]
+                self.server.client[cid].未请求 = self.server.client[cid].未请求[:len(self.server.client[cid].未请求) - leng -10]
+                buffer = self.请求处理中心(cid,buffer)
+                if buffer != b'':
+                    self.server.client[cid].服务器句柄.send(buffer)
+
+    def 请求处理中心(cid,buffer):
+        包头 = buffer[10:12]
+
+        if 包头.hex() == '4062':
+            return 客户请求处理.喊话(cid.buffer)
+        
