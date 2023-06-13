@@ -25,7 +25,8 @@ class Client:
     def 数据到达(self):
         while True:
             try:
-                buffer = self.服务器句柄.recv(100000)
+                if self.服务器句柄 != -1:
+                    buffer = self.服务器句柄.recv(100000)
                 #print("客户端数据",buffer.hex())
                 if self.cid != None:
                     self.客户数据处理.未发送 = buffer
@@ -35,12 +36,9 @@ class Client:
                 
                 if len(buffer) == 0:
                 
-                    #self.服务器句柄.close()
+                    self.服务器句柄.close()
                     # 删除连接
-                    #del self.server.client[self.cid]
-                    #客户端组.remove(客户端组[cid])
                     print("断开与服务器连接",self.服务器句柄,self.cid)
-
                     break
             except:
                 print("接收数据异常",len(buffer))

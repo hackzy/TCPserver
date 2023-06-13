@@ -7,7 +7,6 @@ class 逍遥插件:
       self.client = []
       
     def 分配空闲客户(self):
-        print("分配客户",len(self.client))
         for i in range(len(self.client)):
             if self.client[i].使用中 == False:
                 self.client[i].使用中 = True

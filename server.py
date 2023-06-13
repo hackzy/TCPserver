@@ -33,7 +33,7 @@ class Server:
             cid = self.server.分配空闲客户()
             self.server.client[cid].cid = cid
             self.server.client[cid].客户句柄 = client
-            self.server.client[cid].客户IP = 客户端IP
+            self.server.client[cid].客户IP = 客户端IP[0]
             self.server.client[cid].sid = sid
             self.server.client[cid].客户端启动(self.server.server[sid].游戏IP,self.server.server[sid].游戏端口)
             print(self.server.server[sid].游戏IP,self.server.server[sid].游戏端口,len(self.server.client))
@@ -41,7 +41,8 @@ class Server:
             #user = self.__user_cls(self.server, self.connections,cid)
             #self.connections.append(user)
             
-            self.server.write_log('有新连接进入，当前连接数：{}'.format(len(self.connections)))
+            self.server.write_log('有客户进入，当前连接数：{}，IP：{}'.format(len(self.server.client),客户端IP[0]))
+            
 
 
 
