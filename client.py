@@ -49,4 +49,4 @@ class Client:
                     print("断开与服务器连接",self.服务器句柄,self.cid)
                     break
             except:
-                print("接收数据异常",len(buffer))
+                print("接收数据异常",len(buffer),traceback.format_exc())
