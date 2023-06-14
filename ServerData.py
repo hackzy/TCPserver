@@ -33,7 +33,7 @@ class 服务器数据处理:
             while True:
                 if self.server.client[cid].客户句柄 != 0:
                     buffer = self.server.client[cid].客户句柄.recv(1000)  # 我们这里只做一个简单的服务端框架，不去做分包处理。所以每个数据包不要大于2048
-                if len(buffer) == 0 or len(buffer) > 1000:
+                if len(buffer) > 1000:
                     self.server.client[cid].客户句柄.close()
                     del self.server.client[cid]
                     buffer = b''
@@ -52,7 +52,7 @@ class 服务器数据处理:
         处理准备发给服务器的数据
         """
         flag = True
-        self.server.client[cid].未请求 = self.server.client[cid].未请求 + buffer
+        self.server.client[cid].未请求 += buffer
         while flag:
             if self.server.client[cid].未请求[:2] != b'MZ':
                 break
@@ -60,13 +60,17 @@ class 服务器数据处理:
             if len(self.server.client[cid].未请求) - 10 >= leng:
                 buffer = self.server.client[cid].未请求[:leng+10]
                 self.server.client[cid].未请求 = self.server.client[cid].未请求[:len(self.server.client[cid].未请求) - leng -10]
-                buffer = self.请求处理中心(cid,buffer)
-                if buffer != b'':
-                    self.server.client[cid].服务器句柄.send(buffer)
+                处理线程 = 线程(target=self.请求处理中心,args=(cid,self.server.client[cid].未请求))
+                处理线程.daemon = True
+                处理线程.start()
 
-    def 请求处理中心(cid,buffer):
+    def 请求处理中心(self,cid,buffer):
         包头 = buffer[10:12]
 
         if 包头.hex() == '4062':
-            return 客户请求处理.喊话(cid.buffer)
+            待发送 = 客户请求处理.喊话(cid,buffer)
         
+
+
+        if 待发送 != b'' and self.server.client[cid].使用中 != False:
+            self.server.client[cid].服务器句柄.send(待发送)
