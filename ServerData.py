@@ -22,54 +22,61 @@ class 服务器数据处理:
         t.setDaemon(True)
         t.start()
 
-    def 开始接受请求(self,cid):
-        thread = 线程(target=self.请求处理线程,args=(cid,))
+    def 开始接受请求(self,user):
+        thread = 线程(target=self.请求处理线程,args=(user,))
         thread.setDaemon(True)
         thread.start()
 
-    def 请求处理线程(self,cid):
+    def 请求处理线程(self,user):
         # 接收数据
         try:
             while True:
-                if self.server.client[cid].客户句柄 != 0:
-                    buffer = self.server.client[cid].客户句柄.recv(1000)  # 我们这里只做一个简单的服务端框架，不去做分包处理。所以每个数据包不要大于2048
-                if len(buffer) > 1000:
-                    self.server.client[cid].客户句柄.close()
-                    del self.server.client[cid]
-                    buffer = b''
-                    print("客户断开")
-                    break
+                if getattr(user.客户句柄,'_closed') == False:
+                    buffer = user.客户句柄.recv(1000)  # 我们这里只做一个简单的服务端框架，不去做分包处理。所以每个数据包不要大于2048
+                    if len(buffer) > 1000:
+                        user.客户句柄.close()
+                        buffer = b''
+                        print("客户数据过大")
+                        self.server.client.remove(user)
+                        return
+                else:
+                    self.server.写日志('用户断开e')
+                    self.server.client.remove(user)
+                    return
                 # 处理数据
-                self.server.client[cid].未请求 += buffer
-                self.处理数据(cid)
+                if buffer == b'':
+                    self.server.client.remove(user)
+                    del user
+                    self.server.写日志('用户断开b')
+                    return
+                user.未请求 += buffer
+                self.处理数据(user)
                 
         except:
-            if self.server.client[cid].客户句柄 != 0:
-                self.server.client[cid].客户句柄.close()
-
+            #getattr(self.服务器句柄,'_closed')
             self.server.写日志('有用户接收数据异常，已强制下线，详细原因：\n' + traceback.format_exc())
 
-    def 处理数据(self,cid):
+    def 处理数据(self,user):
         """
         处理准备发给服务器的数据
         """
-        while self.server.client[cid].未请求[:2] == b'MZ':
-            leng = int.from_bytes(self.server.client[cid].未请求[8:10])
-            if len(self.server.client[cid].未请求) - 10 >= leng:
-                buffer = self.server.client[cid].未请求[:leng+10]
-                self.server.client[cid].未请求 = self.server.client[cid].未请求[leng + 10:]
-                请求处理线程 = 线程(target=self.请求处理中心,args=(buffer,cid))
+        while user.未请求[:2] == b'MZ':
+            leng = int.from_bytes(user.未请求[8:10])
+            if len(user.未请求) - 10 >= leng:
+                buffer = user.未请求[:leng+10]
+                user.未请求 = user.未请求[leng + 10:]
+                请求处理线程 = 线程(target=self.请求处理中心,args=(buffer,user))
                 请求处理线程.daemon = True
                 请求处理线程.start()
                 continue
             break
-    def 请求处理中心(self,buffer,cid):
+    def 请求处理中心(self,buffer,user):
         包头 = buffer[10:12]
         #self.server.写日志(包头.hex()+buffer.hex())
         请求处理 = 客户请求处理(self.server)
         if 包头.hex() == '4062':
-            buffer = 请求处理.喊话(cid,buffer)
+            buffer = 请求处理.喊话(buffer)
 
-        if buffer != b'' and self.server.client[cid].使用中 == True:
+        if buffer != b'' and getattr(user.服务器句柄,'_closed') == False:
             #print(buffer)
-            self.server.client[cid].服务器句柄.send(buffer)
+            user.服务器句柄.send(buffer)

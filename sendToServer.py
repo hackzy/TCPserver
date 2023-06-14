@@ -5,7 +5,7 @@ class 客户请求处理:
         self.server = server
 
 
-    def 喊话(self,cid,buffer):
+    def 喊话(self,buffer):
         读 = 读封包()
         读.置数据(buffer)
         读.跳过(12)
