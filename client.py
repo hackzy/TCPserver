@@ -45,7 +45,7 @@ class Client:
                         # 删除连接
                         print("断开与服务器连接",self.服务器句柄,self.cid)
                         break
-                    self.客户数据处理.未发送 = buffer
+                    self.客户数据处理.未发送 += buffer
                     self.客户数据处理.接收处理线程(self.cid)
 
             except:

@@ -15,5 +15,4 @@ class 客户请求处理:
         内容 = 内容[8:]
         if 内容 == "123456789":
             return b'MZ'
-        
         return buffer
