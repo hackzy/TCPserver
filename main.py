@@ -14,6 +14,7 @@ class 逍遥插件:
                 self.client[i].使用中 = True
                 print("分配空闲客户",i)
                 return i
+        self.client[0].使用中 = True
         return 0
     
     def 写日志(self,msg):

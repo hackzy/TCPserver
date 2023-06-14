@@ -6,14 +6,15 @@ class 客户端数据处理:
         self.server = server
     def 接收处理线程(self,cid):
         包头 = self.未发送[10:12]
-        buffer = self.未发送
         #print(包头.hex())
+        #self.server.写日志(self.未发送.hex())
         if 包头.hex() == "3357":
-            buffer = self.登录线路(self.未发送)
+            self.未发送 = self.登录线路(self.未发送)
         if 包头.hex() == "4355":
-            buffer = self.显示线路(self.未发送)
-        if len(buffer) != 0 and self.server.client[cid].客户句柄 != -1:
-            self.server.client[cid].客户句柄.send(buffer)
+            self.未发送 = self.显示线路(self.未发送)
+        if len(self.未发送) != 0 :
+            self.server.client[cid].客户句柄.send(self.未发送)
+
 
 
     def 登录线路(self,buffer):

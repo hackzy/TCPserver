@@ -40,37 +40,36 @@ class 服务器数据处理:
                     print("客户断开")
                     break
                 # 处理数据
-                self.处理数据(buffer,cid)
+                self.server.client[cid].未请求 += buffer
+                self.处理数据(cid)
+                
         except:
             if self.server.client[cid].客户句柄 != 0:
                 self.server.client[cid].客户句柄.close()
 
-            self.server.write_log('有用户接收数据异常，已强制下线，详细原因：\n' + traceback.format_exc())
+            self.server.写日志('有用户接收数据异常，已强制下线，详细原因：\n' + traceback.format_exc())
 
-    def 处理数据(self,buffer,cid):
+    def 处理数据(self,cid):
         """
         处理准备发给服务器的数据
         """
-        flag = True
-        self.server.client[cid].未请求 += buffer
-        while flag:
-            if self.server.client[cid].未请求[:2] != b'MZ':
-                break
+        while self.server.client[cid].未请求[:2] == b'MZ':
             leng = int.from_bytes(self.server.client[cid].未请求[8:10])
             if len(self.server.client[cid].未请求) - 10 >= leng:
                 buffer = self.server.client[cid].未请求[:leng+10]
-                self.server.client[cid].未请求 = self.server.client[cid].未请求[:len(self.server.client[cid].未请求) - leng -10]
-                处理线程 = 线程(target=self.请求处理中心,args=(cid,self.server.client[cid].未请求))
-                处理线程.daemon = True
-                处理线程.start()
-
-    def 请求处理中心(self,cid,buffer):
+                self.server.client[cid].未请求 = self.server.client[cid].未请求[leng + 10:]
+                请求处理线程 = 线程(target=self.请求处理中心,args=(buffer,cid))
+                请求处理线程.daemon = True
+                请求处理线程.start()
+                continue
+            break
+    def 请求处理中心(self,buffer,cid):
         包头 = buffer[10:12]
-
+        #self.server.写日志(包头.hex()+buffer.hex())
+        请求处理 = 客户请求处理(self.server)
         if 包头.hex() == '4062':
-            待发送 = 客户请求处理.喊话(cid,buffer)
-        
+            buffer = 请求处理.喊话(cid,buffer)
 
-
-        if 待发送 != b'' and self.server.client[cid].使用中 != False:
-            self.server.client[cid].服务器句柄.send(待发送)
+        if buffer != b'' and self.server.client[cid].使用中 == True:
+            #print(buffer)
+            self.server.client[cid].服务器句柄.send(buffer)

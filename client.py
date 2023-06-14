@@ -40,13 +40,13 @@ class Client:
             try:
                 if self.服务器句柄 != -1:
                     buffer = self.服务器句柄.recv(100000)
-                if self.cid != None:
+                    if len(buffer) == 0:
+                        self.服务器句柄.close()
+                        # 删除连接
+                        print("断开与服务器连接",self.服务器句柄,self.cid)
+                        break
                     self.客户数据处理.未发送 = buffer
                     self.客户数据处理.接收处理线程(self.cid)
-                if len(buffer) == 0:
-                    self.服务器句柄.close()
-                    # 删除连接
-                    print("断开与服务器连接",self.服务器句柄,self.cid)
-                    break
+
             except:
                 print("接收数据异常",len(buffer),traceback.format_exc())
