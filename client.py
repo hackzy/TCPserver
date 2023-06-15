@@ -3,17 +3,19 @@ from setting import *
 from threading import Thread as 线程
 from clientData import 客户端数据处理
 import traceback
+from GameData import GameData
 class Client:
     '''客户对象类，每个客户连接插件服务端就创建一个客户对象连接游戏的服务器'''
     def __init__(self,server) -> None:
         '''初始化客户属性'''
-        self.客户IP = 0
+        self.客户IP
         self.server = server
         self.sid = 0
-        self.客户句柄 = 0
-        self.服务器句柄 = 0
+        self.客户句柄
+        self.服务器句柄
         self.客户数据处理 = 客户端数据处理(self.server)
         self.未请求 = b''
+        self.gamedata = GameData()
     
     def 客户端启动(self,ip,端口):
         '''启动连接服务器'''
