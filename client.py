@@ -38,7 +38,8 @@ class Client:
             try:
                 if getattr(self.服务器句柄,'_closed') == False:
                     buffer = self.服务器句柄.recv(20000)
-                    if len(buffer) == 0 or getattr(self.服务器句柄,'_closed') == True:
+                    if len(buffer) == 0 or getattr(self.服务器句柄,
+                                                   '_closed') == True:
                         # 删除连接
                         print("断开与服务器连接1")
                         return

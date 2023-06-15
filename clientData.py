@@ -14,6 +14,7 @@ class 客户端数据处理:
         self.未发送 = b''
         while data.是否还有剩余():
             buffer = data.取出数据()
+            
             if getattr(user.客户句柄,'_closed') == False:
                 中心线程 = 线程(target=self.接收处理中心,args=(buffer,user))
                 中心线程.daemon = True
@@ -31,17 +32,27 @@ class 客户端数据处理:
             user.客户句柄.send(buffer)
 
     def 登录线路(self,buffer):
-        封包 = buffer[0:18]
-        封包 = 封包 + len(服务器监听地址).to_bytes(1) +  bytes(服务器监听地址,'UTF-8') + \
-                            服务器监听端口[1].to_bytes(2)
-        封包 = 封包 + buffer[33:]
-        封包 = 组包包头 + len(封包).to_bytes(2) + 封包[10:] 
-        return 封包
+        写 = 写封包()
+        读 = 读封包()
+        完整包 = 写封包()
+        读.置数据(buffer)
+        读.跳过(10)
+        写.写字节集(读.读字节集(8))
+        写.写文本型(服务器监听地址,True)
+        写.写短整数型(服务器监听端口[1])
+        读.读文本型()
+        读.读字节集(2)
+        写.写字节集(读.剩余数据())
+        完整包.写字节集(组包包头)
+        完整包.写字节集(写.取数据(),True,1) 
+        return 完整包.取数据()
     
     def 显示线路(self,buffer):
         a = 1
-        封包 = buffer[10:12] + a.to_bytes(2)+ buffer[14:15] + buffer[15:15+buffer[14:15][0]] + \
-            len(服务器监听地址).to_bytes(1) + bytes(服务器监听地址,'UTF-8') + buffer[-2:]
+        封包 = buffer[10:12] + a.to_bytes(2)+ \
+            buffer[14:15] + buffer[15:15+buffer[14:15][0]] +\
+                  len(服务器监听地址).to_bytes(1) + \
+                    bytes(服务器监听地址,'UTF-8') + buffer[-2:]
         封包 = 组包包头 + len(封包).to_bytes(2) + 封包
         return 封包
     

@@ -68,3 +68,9 @@ class 读封包:
         长度 = len(bytes(文本,'utf8'))
         self.当前位置 += 长度
         return 文本
+    
+    def 取剩余长度(self):
+        return self.leng - self.当前位置 + 1
+    
+    def 剩余数据(self):
+        return self.读字节集(self.取剩余长度())
