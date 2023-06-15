@@ -13,7 +13,7 @@ class 服务器数据处理:
         self.sid = 0
         self.server = server
                 
-    def 初始化服务器(self,serverid,游戏ip,游戏端口,监听端口):
+    def 启动服务器(self,serverid,游戏ip,游戏端口,监听端口):
         self.监听端口 = 监听端口
         self.游戏IP = 游戏ip
         self.游戏端口 = 游戏端口

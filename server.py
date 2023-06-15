@@ -23,14 +23,7 @@ class Server:
         while True:
             '''开始监听客户'''
             client, 客户IP = self.listener.accept()          #阻塞，等待客户端连接
-            #self.server.client.append(Client(self.server))  #客户连接，创建客户对象，加入客户列表
-            #cid = self.server.分配空闲客户()                  #分配客户列表索引cid
-            user = Client(self.server)
-            user.初始化客户信息(client,客户IP[0],sid)  #保存客户属性
-            user.客户端启动(self.server.server[sid].游戏IP,self.server.server[sid].游戏端口) #客户连接，启动连接服务端
-            self.server.client.append(user)
-            self.server.server[sid].开始接受请求(user)           #服务器启动接受客户发来的数据
-            self.server.写日志('有客户进入，当前客户数：{}，IP：{}'.format(len(self.server.client),客户IP[0]))
+            self.server.启动客户端(client,客户IP,sid)
             
 
 

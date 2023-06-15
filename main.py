@@ -1,35 +1,44 @@
 from setting import *
 from ServerData import 服务器数据处理
 import datetime
+from client import Client
+import os
+import datetime
+import logging
 class 逍遥插件:
     '''全局管理类，负责保存分配客户与服务端信息'''
     def __init__(self) -> None:
       self.server = []
       self.client = []
-      
-    def 分配空闲客户(self):
-        '''分配客户id'''
-        for i in range(len(self.client)):
-            if self.client[i].使用中 == False:
-                self.client[i].使用中 = True
-                print("分配空闲客户",i)
-                return i
-        self.client[0].使用中 = True
-        return 0
+      self.sid = 0
     
     def 写日志(self,msg):
         cur_time = datetime.datetime.now()
-        s = "[" + str(cur_time) + "]" + msg
+        filename = str(cur_time.year) + "年" + str(cur_time.month) + '月' + str(cur_time.day) + '日'
+        s = "[" + str(cur_time.time()) + "]" + msg
+        logger = logging.getLogger(__name__)
+        logger.setLevel(level = logging.INFO)
+        handler = logging.FileHandler('./' + filename + '.log',encoding='utf-8')   #log.txt是文件的名字，可以任意修改
+        handler.setLevel(logging.INFO)
+        if not logger.handlers:
+            logger.addHandler(handler)
+        logger.info(s)
         print(s+"\n")
 
-
+    def 启动客户端(self,client,ip,sid):
+        user = Client(self.server)
+        user.初始化客户信息(client,ip[0],sid)  #保存客户属性
+        user.客户端启动(self.server[sid].游戏IP,self.server[sid].游戏端口) #客户连接，启动连接服务端
+        self.client.append(user)
+        self.server[sid].开始接受请求(user)           #服务器启动接受客户发来的数据
+        self.写日志('有客户进入，当前客户数：{}，IP：{}'.format(len(self.client),ip[0]))
 
 
 if __name__== '__main__':
     '服务器启动'
     server = 逍遥插件() #创建全局对象
     for id in range(len(服务器监听端口)):           #根据线路数量创建服务端，一个线路一个服务端
-      server.server.append(服务器数据处理(server))  #创建服务器管理对象
-      server.server[id].初始化服务器(id,游戏IP,游戏端口[id],服务器监听端口[id]) #初始化并创建服务端
+        server.server.append(服务器数据处理(server))  #创建服务器管理对象
+        server.server[id].启动服务器(id,游戏IP,游戏端口[id],服务器监听端口[id]) #初始化并创建服务端
 
     m = input()
