@@ -12,9 +12,8 @@ class Client:
         self.sid = 0
         self.客户句柄 = 0
         self.服务器句柄 = 0
-        self.使用中 = False
         self.客户数据处理 = 客户端数据处理(self.server)
-        self.未请求 = bytes()
+        self.未请求 = b''
     
     def 客户端启动(self,ip,端口):
         '''启动连接服务器'''
