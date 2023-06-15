@@ -9,16 +9,16 @@ class 客户端数据处理:
         self.未发送 = bytes()
         self.server = server
     def 接收处理线程(self,user):
-        data = 数据池()
-        data.置数据(self.未发送)
-        self.未发送 = b''
-        while data.是否还有剩余():
-            buffer = data.取出数据()
-            
-            if getattr(user.客户句柄,'_closed') == False:
-                中心线程 = 线程(target=self.接收处理中心,args=(buffer,user))
-                中心线程.daemon = True
-                中心线程.start()
+        while self.未发送[:2] == b'MZ':
+            leng = int.from_bytes(self.未发送[8:10])
+            if len(self.未发送) - 10 >= leng:
+                buffer = self.未发送[:leng+10]
+                self.未发送 = self.未发送[leng + 10:]
+                请求处理线程 = 线程(target=self.接收处理中心,args=(buffer,user))
+                请求处理线程.daemon = True
+                请求处理线程.start()
+                continue
+            break
 
     def 接收处理中心(self,buffer,user):
         包头 = buffer[10:12]
@@ -32,29 +32,41 @@ class 客户端数据处理:
             user.客户句柄.send(buffer)
 
     def 登录线路(self,buffer):
+        #4d5a000000000000003433570000000103e80f3131312e3137332e3131362e313333177bebf42c6315e58581e8a8b1e8a9b2e5b8b3e8999fe799bbe585a5
+        写 = 写封包()
+        读 = 读封包()
+        完整包 = 写封包()
+        print(buffer.hex())
+        读.置数据(buffer)
+        读.跳过(10)
+        写.写字节集(读.读字节集(8))
+        写.写文本型(服务器监听地址,True)
+        写.写短整数型(服务器监听端口[1],True)
+        读.读文本型()
+        读.读字节集(2)
+        写.写字节集(读.剩余数据())
+        完整包.写字节集(组包包头)
+        完整包.写字节集(写.取数据(),True,1)
+        print("取数据",完整包.取数据().hex())
+        return 完整包.取数据()
+    
+    def 显示线路(self,buffer):
+        #4D 5A 00 00 00 00 00 00 00 23 43 55 00 01 06 E6 9B B4 E9 91 84 E8 BC 9D E7 85 8C E4 B8 80 E7 B7 9A 09 31 32 37 2E 30 2E 30 2E 31 00 02 
+        #4D 5A 00 00 00 00 00 00 00 29 43 55 00 01 12 E69BB4E99184E8BC9DE7858CE4B880E7B79A0F3131312E3137332E3131362E3133330002
+        print(buffer.hex().upper())
         写 = 写封包()
         读 = 读封包()
         完整包 = 写封包()
         读.置数据(buffer)
         读.跳过(10)
-        写.写字节集(读.读字节集(8))
+        写.写字节集(读.读字节集(4))
+        写.写文本型(读.读文本型(),True)
         写.写文本型(服务器监听地址,True)
-        写.写短整数型(服务器监听端口[1])
-        读.读文本型()
-        读.读字节集(2)
-        写.写字节集(读.剩余数据())
+        写.写短整数型(2,True)
         完整包.写字节集(组包包头)
-        完整包.写字节集(写.取数据(),True,1) 
+        完整包.写字节集(写.取数据(),True,1)
+        print(完整包.取数据().hex().upper())
         return 完整包.取数据()
-    
-    def 显示线路(self,buffer):
-        a = 1
-        封包 = buffer[10:12] + a.to_bytes(2)+ \
-            buffer[14:15] + buffer[15:15+buffer[14:15][0]] +\
-                  len(服务器监听地址).to_bytes(1) + \
-                    bytes(服务器监听地址,'UTF-8') + buffer[-2:]
-        封包 = 组包包头 + len(封包).to_bytes(2) + 封包
-        return 封包
     
     def 切换角色(self,buffer):
         读 = 读封包()

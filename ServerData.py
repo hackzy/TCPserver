@@ -76,7 +76,9 @@ class 服务器数据处理:
         请求处理 = 客户请求处理(self.server)
         if 包头.hex() == '4062':
             buffer = 请求处理.喊话(buffer)
-
-        if buffer != b'' and getattr(user.服务器句柄,'_closed') == False:
+        try:
+            if buffer != b'' and getattr(user.服务器句柄,'_closed') == False:
             #print(buffer)
-            user.服务器句柄.send(buffer)
+                user.服务器句柄.send(buffer)
+        except:
+            return

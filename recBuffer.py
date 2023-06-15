@@ -63,9 +63,9 @@ class 读封包:
                 长度 = self.读整数型(反转长度)
             记录位置 = self.当前位置
             self.当前位置 += 长度
-            return self.data[记录位置:记录位置+长度].decode('utf8')
-        文本 = self.data[self.当前位置:].decode('utf8')
-        长度 = len(bytes(文本,'utf8'))
+            return self.data[记录位置:记录位置+长度].decode()
+        文本 = self.data[self.当前位置:].decode()
+        长度 = len(bytes(文本,'utf-8'))
         self.当前位置 += 长度
         return 文本
     

@@ -20,7 +20,7 @@ class 写封包:
             self.data = self.data + bytes(buffer,'utf8')
             return
         if 长度类型 == 0:
-            self.写字节型(len(buffer).to_bytes())
+            self.写字节型(len(buffer.encode()).to_bytes())
         elif 长度类型 == 1:
             self.写短整数型(len(buffer),反转长度)
         elif 长度类型 == 2:
