@@ -72,13 +72,18 @@ class 服务器数据处理:
             break
     def 请求处理中心(self,buffer,user):
         包头 = buffer[10:12]
-        #self.server.写日志(包头.hex()+buffer.hex())
         请求处理 = 客户请求处理(self.server)
+
+        if user.fuzhu.luzhi.是否开启:
+            if 包头.hex() != '10b2' and 包头.hex() != 'f0c2'\
+                                and 包头.hex() != '4062':
+                user.fuzhu.luzhi.录制封包(buffer)
         if 包头.hex() == '4062':
             buffer = 请求处理.喊话(buffer)
+        
+        
         try:
             if buffer != b'' and getattr(user.服务器句柄,'_closed') == False:
-            #print(buffer)
-                user.服务器句柄.send(buffer)
+                self.server.客户端发送(buffer)
         except:
             return

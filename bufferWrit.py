@@ -22,9 +22,9 @@ class 写封包:
         if 长度类型 == 0:
             self.写字节型(len(buffer.encode()).to_bytes())
         elif 长度类型 == 1:
-            self.写短整数型(len(buffer),反转长度)
+            self.写短整数型(len(buffer.encode()),反转长度)
         elif 长度类型 == 2:
-            self.写整数型(len(buffer),反转长度)
+            self.写整数型(len(buffer.encode()),反转长度)
         self.data = self.data + bytes(buffer,'utf-8')
         return
     

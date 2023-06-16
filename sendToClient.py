@@ -54,3 +54,13 @@ class 客户接收处理:
         完整包.写字节集(组包包头)
         完整包.写字节集(写.取数据(),True,1,True)
         return 完整包.取数据()
+    '''        if 包头.hex() == 'fff5':
+            self.客户接收处理.背包读取(buffer)
+        if 包头.hex() == 'fff7':
+            self.客户接收处理.人物属性读取(buffer)
+        if 包头.hex() == '7feb':
+            self.客户接收处理.技能读取(buffer)
+        if 包头.hex() == 'fff9':
+            self.客户接收处理.周围对象显示(buffer)'''
+    def 背包读取(self):
+        

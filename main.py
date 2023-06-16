@@ -5,13 +5,15 @@ from client import Client
 import os
 import datetime
 import logging
+from otherKing import 基础功能
 class 逍遥插件:
     '''全局管理类，负责保存分配客户与服务端信息'''
     def __init__(self) -> None:
       self.server = []
       self.client = []
       self.sid = 0
-      self.user
+      self.user = None
+      self.基础功能 = 基础功能()
     
     def 写日志(self,msg):
         cur_time = datetime.datetime.now()
@@ -19,7 +21,7 @@ class 逍遥插件:
         s = "[" + str(cur_time.time()) + "]" + msg
         logger = logging.getLogger(__name__)
         logger.setLevel(level = logging.INFO)
-        handler = logging.FileHandler('./' + filename + '.log',encoding='utf-8')   #log.txt是文件的名字，可以任意修改
+        handler = logging.FileHandler('./log/' + filename + '.log',encoding='utf-8')   #log.txt是文件的名字，可以任意修改
         handler.setLevel(logging.INFO)
         if not logger.handlers:
             logger.addHandler(handler)
@@ -27,7 +29,7 @@ class 逍遥插件:
         print(s+"\n")
 
     def 启动客户端(self,client,ip,sid):
-        self.user = Client(self.server)
+        self.user = Client(self)
         self.user.初始化客户信息(client,ip[0],sid)  #保存客户属性
         self.user.客户端启动(self.server[sid].游戏IP,self.server[sid].游戏端口) #客户连接，启动连接服务端
         self.client.append(self.user)
