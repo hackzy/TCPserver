@@ -76,12 +76,16 @@ class 服务器数据处理:
 
         if user.fuzhu.luzhi.是否开启:
             if 包头.hex() != '10b2' and 包头.hex() != 'f0c2'\
-                                and 包头.hex() != '4062':
+                                    and 包头.hex() != '4062':
                 user.fuzhu.luzhi.录制封包(buffer)
         if 包头.hex() == '4062':
             buffer = 请求处理.喊话(buffer)
-        
-        
+        if 包头.hex() == '3038':
+            请求处理.NPC对话点击处理(buffer)
+        if 包头.hex() == '2032':
+            if buffer[-2:].hex() == '0133':
+                self.server.user.fuzhu.小助手.小助手()
+                buffer = b''
         try:
             if buffer != b'' and getattr(user.服务器句柄,'_closed') == False:
                 self.server.客户端发送(buffer)

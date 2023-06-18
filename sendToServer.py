@@ -31,5 +31,27 @@ class 客户请求处理:
         if 内容 == 'LZFS':
             self.server.user.fuzhu.luzhi.单次发送()
             return
-        
         return buffer
+    
+    def NPC对话点击处理(self,buffer):
+        解包 = self.取对话内容(buffer)
+        npcid = 解包[0]
+        内容 = 解包[1]
+        if npcid == self.server.user.gamedata.角色id:
+            self.server.user.fuzhu.小助手.助手_自动战斗(内容)
+
+
+    def 取对话内容(self,buffer):
+        读 = 读封包()
+        读.置数据(buffer)
+        读.跳过(12)
+        npcid = 读.读整数型(True)
+        内容 = 读.读文本型()
+        填写内容 = 读.读文本型()
+        返回卡密 = 填写内容
+        if 填写内容.find('money:') != -1:
+            填写内容 = int(填写内容.split('money:0,')[1].split(':')[0])
+        else:
+            if 填写内容 != '':
+                填写内容 = int(填写内容)
+        return [npcid,内容,填写内容,返回卡密]
