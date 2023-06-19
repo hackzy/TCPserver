@@ -201,3 +201,7 @@ class 客户接收处理:
                     self.server.user.gamedata.技能.update({对象id:{技能名称:技能id}})
                 else:
                     self.server.user.gamedata.技能[对象id].update({技能名称:技能id})
+
+    def 周围对象显示(self):
+        读 = 读封包()
+        
