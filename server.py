@@ -2,7 +2,6 @@
 import socket
 import traceback
 from setting import *
-from client import Client
 class Server:
     """
     服务端，为每个线路启动一个服务端对象
@@ -10,7 +9,6 @@ class Server:
     def __init__(self,server,sid,ip, port):
         '''初始化并启动服务端'''
         self.server = server
-        self.connections = []  # 所有客户端连接
         self.server.写日志("服务器启动中，请稍候...")
         try:
             self.listener = socket.socket(socket.AF_INET, socket.SOCK_STREAM)  # 监听者，用于接收新的socket连接

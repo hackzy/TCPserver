@@ -45,6 +45,7 @@ class 服务器数据处理:
                     return
                 # 处理数据
                 if buffer == b'':
+                    user.客户句柄.close()
                     self.server.user.pop(user.cid)
                     self.server.写日志('用户断开b')
                     return

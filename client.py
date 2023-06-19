@@ -24,7 +24,7 @@ class Client:
     def 客户端启动(self,ip,端口):
         '''启动连接服务器'''
         try:
-            self.服务器句柄 = socket.socket()
+            self.服务器句柄 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.服务器句柄.connect((ip,端口))
             c1 = 线程(target=self.数据到达)
             c1.setDaemon(True)
@@ -43,9 +43,10 @@ class Client:
             try:
                 if getattr(self.服务器句柄,'_closed') == False:
                     buffer = self.服务器句柄.recv(20000)
-                    if len(buffer) == 0 or getattr(self.服务器句柄,
+                    if buffer == b'' or getattr(self.服务器句柄,
                                                    '_closed') == True:
                         # 删除连接
+                        self.server.user.pop(self.cid)
                         print("断开与服务器连接1")
                         return
                     self.客户数据处理.未发送 += buffer
