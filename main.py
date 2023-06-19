@@ -18,7 +18,7 @@ class 逍遥插件:
     def 写日志(self,msg):
         cur_time = datetime.datetime.now()
         filename = str(cur_time.year) + "年" + str(cur_time.month) + '月' + str(cur_time.day) + '日'
-        s = "[" + str(cur_time.time()) + "]" + msg
+        s = "[" + str(cur_time.time()) + "]" + str(msg)
         logger = logging.getLogger(__name__)
         logger.setLevel(level = logging.INFO)
         handler = logging.FileHandler('./log/' + filename + '.log',encoding='utf-8')   #log.txt是文件的名字，可以任意修改

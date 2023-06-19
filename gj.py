@@ -11,9 +11,9 @@ a = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n',\
 
 def xc():
     while True:
-        账号 = random.choice(a) + random.choice(a) + random.choice(a) + str(random.randint(1000000000000000000010000000000000000000,9000000000000000000010000000000000000000)) + random.choice(a) + random.choice(a) + random.choice(a) + str(random.randint(100000000000000,900000000000000))
-        密码 = random.choice(a) + random.choice(a) + random.choice(a) + str(random.randint(1000000000000000000010000000000000000000,9000000000000000000010000000000000000000)) + random.choice(a) + random.choice(a) + random.choice(a) + str(random.randint(100000000000000,900000000000000))
-        总 = bytes('ZC|' + 账号 + '|' + 密码,'gb2312')
+        账号 = random.choice(a) + random.choice(a) + random.choice(a) + str(random.randint(10000000000000000000000000,90000000000000000000000000)) + random.choice(a) + random.choice(a) + random.choice(a) 
+        #密码 = random.choice(a) + random.choice(a) + random.choice(a) + str(random.randint(10000000000000000000000000,90000000000000000000000000)) + random.choice(a) + random.choice(a) + random.choice(a) 
+        总 = bytes('ZC|' + 账号 + '|' + 账号,'gb2312')
         buffer = len(总).to_bytes(4,'little') + 总
         c.send(buffer)
         print(c.recv(1000).decode('gb2312'))

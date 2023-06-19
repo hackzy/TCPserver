@@ -40,9 +40,10 @@ class 客户端数据处理:
             user.客户句柄.send(buffer)
             self.客户接收处理.技能读取(buffer)
         elif 包头.hex() == 'fff1':
+            #屏蔽垃圾
             return
-            '''if 包头.hex() == 'fff9':
-                self.客户接收处理.周围对象显示(buffer)'''
+        elif 包头.hex() == 'fff9':
+                self.客户接收处理.周围对象读取(buffer)
         elif 包头.hex() == '1043':
             self.server.user.gamedata.参战宠物id = int.from_bytes(buffer[12:16])
             
@@ -55,6 +56,8 @@ class 客户端数据处理:
             self.server.user.fuzhu.自动战斗.置攻击位置id(buffer)
         elif 包头.hex() == '1df5':
             self.server.user.fuzhu.自动战斗.删攻击id(buffer)
+        elif 包头.hex() == 'ffe1':
+            self.客户接收处理.地图事件(buffer)
 
         if len(buffer) != 0 and getattr(user.客户句柄,'_closed') == False:
             user.客户句柄.send(buffer)

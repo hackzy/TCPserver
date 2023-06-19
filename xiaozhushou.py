@@ -63,7 +63,7 @@ class XiaoZhuShou:
                 return
             except:
                 self.server.服务器发送(self.server.基础功能.中心提示('宠物技能获取失败,重新参战宠物后重试!'))
-        if self.server.user.gamedata.技能[self.对象id].get(点击对话) != None:
+        if self.对象id != 0:
             if self.对象id == self.server.user.gamedata.角色id:
                 self.server.user.fuzhu.自动战斗.人物使用技能 = 点击对话
             else:
