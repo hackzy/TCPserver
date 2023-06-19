@@ -49,7 +49,7 @@ class Client:
                         print("断开与服务器连接1")
                         return
                     self.客户数据处理.未发送 += buffer
-                    self.客户数据处理.接收处理线程(self)
+                    self.客户数据处理.接收处理线程()
                 else:
                         # 删除连接
                     self.server.user.pop(self.cid)
