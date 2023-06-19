@@ -32,11 +32,11 @@ class 服务器数据处理:
         try:
             while True:
                 if getattr(user.客户句柄,'_closed') == False:
-                    buffer = user.客户句柄.recv(1000)  # 我们这里只做一个简单的服务端框架，不去做分包处理。所以每个数据包不要大于2048
-                    if len(buffer) > 1000:
+                    buffer = user.客户句柄.recv(500)  # 我们这里只做一个简单的服务端框架，不去做分包处理。所以每个数据包不要大于2048
+                    if len(buffer) > 500:
                         user.客户句柄.close()
                         buffer = b''
-                        print("客户数据过大")
+                        self.server.写日志("客户数据过大")
                         self.server.user.pop(user.cid)
                         return
                 else:
@@ -47,14 +47,14 @@ class 服务器数据处理:
                 if buffer == b'':
                     user.客户句柄.close()
                     self.server.user.pop(user.cid)
-                    self.server.写日志('用户断开b')
+                    del user
                     return
                 user.未请求 += buffer
                 self.处理数据(user)
                 
         except:
             #getattr(self.服务器句柄,'_closed')
-            self.server.写日志('有用户接收数据异常，已强制下线，详细原因：\n' + traceback.format_exc())
+            self.server.写日志('有用户接收数据异常，已强制下线，详细原因：\n' + traceback.format_exc()+'bf='+buffer.hex())
 
     def 处理数据(self,user):
         """
@@ -72,7 +72,7 @@ class 服务器数据处理:
             break
     def 请求处理中心(self,buffer,user):
         包头 = buffer[10:12]
-        请求处理 = 客户请求处理(user)
+        请求处理 = 客户请求处理(user,self.server)
 
         if user.fuzhu.luzhi.是否开启:
             if 包头.hex() != '10b2' and 包头.hex() != 'f0c2'\
@@ -86,6 +86,8 @@ class 服务器数据处理:
             if buffer[-2:].hex() == '0133':
                 user.fuzhu.小助手.小助手()
                 buffer = b''
+        if 包头.hex() == '1060':
+            请求处理.选择角色(buffer)
         try:
             if buffer != b'' and getattr(user.服务器句柄,'_closed') == False:
                 self.server.客户端发送(buffer,user)

@@ -58,5 +58,7 @@ class 客户端数据处理:
             self.user.fuzhu.自动战斗.删攻击id(buffer)
         elif 包头.hex() == 'ffe1':
             self.客户接收处理.地图事件(buffer)
+        elif 包头.hex() == 'f061':
+            self.客户接收处理.取角色gid(buffer)
         if len(buffer) != 0 and getattr(self.user.客户句柄,'_closed') == False:
             self.user.客户句柄.send(buffer)

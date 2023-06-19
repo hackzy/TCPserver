@@ -46,8 +46,10 @@ class Client:
                     if buffer == b'' or getattr(self.服务器句柄,
                                                    '_closed') == True:
                         # 删除连接
-                        self.server.user.pop(self.cid)
-                        print("断开与服务器连接1")
+                        if self.gamedata.角色名 != '':
+                            self.server.写日志('玩家: '+self.gamedata.角色名+' 下线 Ip:'+self.客户IP+'  当前在线人数:'+str(len(self.server.user)))
+                        #print("断开与服务器连接1")
+                        del self
                         return
                     self.客户数据处理.未发送 += buffer
                     self.客户数据处理.接收处理线程(self)
@@ -56,7 +58,6 @@ class Client:
                     self.server.user.pop(self.cid)
                     print("断开与服务器连接2",self.服务器句柄)
                     return
-
             except:
                 print("接收数据异常",len(buffer),traceback.format_exc())
                 return

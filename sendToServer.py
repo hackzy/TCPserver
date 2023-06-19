@@ -1,9 +1,9 @@
 from recBuffer import 读封包
 from threading import  Thread
 class 客户请求处理:
-    def __init__(self,user) -> None:
+    def __init__(self,user,server) -> None:
         self.user = user
-
+        self.server = server
 
     def 喊话(self,buffer):
         读 = 读封包()
@@ -55,3 +55,14 @@ class 客户请求处理:
             if 填写内容 != '':
                 填写内容 = int(填写内容)
         return [npcid,内容,填写内容,返回卡密]
+    
+    def 选择角色(self,buffer):
+        读 = 读封包()
+        读.置数据(buffer)
+        读.跳过(12)
+        昵称 = 读.读文本型()
+        for a in self.user.gamedata.所有角色:
+            if self.user.gamedata.所有角色[a]['名称'] == 昵称:
+                self.user.gamedata.GID = self.user.gamedata.所有角色[a]['GID']
+                self.server.写日志('玩家：'+ 昵称 + ' 上线 ip:'+self.user.客户IP+'  当前在线人数:'+str(len(self.server.user)))
+                break

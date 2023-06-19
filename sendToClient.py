@@ -177,7 +177,7 @@ class 客户接收处理:
                     self.user.gamedata.师尊 = T_文本型
                 elif 数据头 == '0001':
                     self.user.gamedata.角色名 = T_文本型
-
+        
     def 技能读取(self,buffer):
         读 = 读封包()
         读.置数据(buffer)
@@ -241,6 +241,30 @@ class 客户接收处理:
         '''[13:21:58.965960]对象id:379088|对象昵称:竇小鑫|对象类型:11962|NPC类型:1|坐骑:31501|对象职业:4001|飞
 行法宝:0|铭牌:|X:61|Y:29|'''
 
+    def 取角色gid(self,buffer):
+        读 = 读封包()
+        读.置数据(buffer)
+        读.跳过(12)
+        角色数量 = 读.读短整数型(True)
+        for i in range(角色数量):
+            数据数量 = 读.读短整数型(True)
+            for b in range(数据数量):
+                数据头 = 读.读字节集(2)
+                标识 = 读.读字节型()
+                if 标识 == 1:
+                    读.读字节型()
+                elif 标识 == 2:
+                    读.读短整数型(True)
+                elif 标识 == 3:
+                    读.读整数型(True)
+                elif 标识 == 4:
+                    文本 = 读.读文本型()
+                    if 数据头 == b'\x00\x01':
+                        self.user.gamedata.所有角色[i].update({'名称':文本})
+                    elif 数据头 == b'\x01\x31':
+                        self.user.gamedata.所有角色[i].update({'GID':int.from_bytes(bytes.fromhex(文本))})
+
+
     def 地图事件(self,buffer):
         读 = 读封包()
         读.置数据(buffer)
@@ -249,6 +273,5 @@ class 客户接收处理:
         读.读整数型()
         地图名 = 读.读文本型()
         if 地图名 == '天墉城':
-            print('地图到')
             self.server.服务器发送(bytes.fromhex('4D 5A 00 00 00 00 00 00 00 A9 FF F9 00 00 2D F6 00 EF 00 CF 00 02 00 00 04 8E 00 00 00 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 79 1E 00 00 9C 42 00 00 00 00 10 E9 80 8D E9 81 99 E5 A4 A7 E9 A3 9B 79 54 35 34 00 00 00 00 00 8B 0C E9 80 8D E9 81 99 E5 A4 A7 E9 A3 9B 07 75 70 67 72 61 64 65 12 E7 B5 82 E5 8D 97 E5 B1 B1 E7 8E 89 E6 9F B1 E6 B4 9E 00 00 00 0A 00 00 04 00 00 00 00 00 00 1B 5A 00 00 00 00 00 00 1B 5A 00 0B BF DC 00 04 00 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 '.replace(' ','')),self.user)
             self.server.服务器发送(bytes.fromhex('4D 5A 00 00 00 00 00 00 00 3F F0 E7 00 00 2D F600 03 0F E6 AD A3 E5 9C A8 E9 9A B1 E8 BA AB E4 B8 AD 0C E4 BD 8D E5 88 97 E4 BB 99 E7 8F AD 19 E5 90 8C E7 A6 8F E5 AE A2 E6 A3 A7 20 E5 B9 AB E6 B4 BE E7 B2 BE E8 8B B1 '.replace(' ','')),self.user)

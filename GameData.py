@@ -2,6 +2,7 @@ from itemData import 背包数据
 from petData import petdata
 class GameData:
     def __init__(self) -> None:
+        self.所有角色 = {0:{},1:{},2:{},3:{}}
         self.角色名 = ''
         self.角色id = 0
         self.GID = 0

@@ -80,7 +80,6 @@ class 自动战斗:
         读.置数据(buffer)
         读.跳过(12)
         删除id = 读.读整数型(True)
-        dic = self.攻击位置id.keys()
-        for a in dic:
-            if dic[a] == 删除id:
+        for a in list(self.攻击位置id.keys()):
+            if self.攻击位置id[a] == 删除id:
                 del self.攻击位置id[a]
