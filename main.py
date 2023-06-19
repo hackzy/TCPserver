@@ -39,11 +39,11 @@ class 逍遥插件:
         self.server[sid].开始接受请求(self.user[cid])           #服务器启动接受客户发来的数据
         self.写日志('有客户进入，当前客户数：{}，IP：{}'.format(len(self.user),ip[0]))
 
-    def 服务器发送(self,buffer):
-        self.user.客户句柄.send(buffer)
+    def 服务器发送(self,buffer,user):
+        user.客户句柄.send(buffer)
 
-    def 客户端发送(self,buffer):
-        self.user.服务器句柄.send(buffer)
+    def 客户端发送(self,buffer,user):
+        user.服务器句柄.send(buffer)
 
 if __name__== '__main__':
     '服务器启动'
