@@ -14,10 +14,10 @@ class Client:
         self.sid = 0
         self.客户句柄 = None
         self.服务器句柄 = None
-        self.客户数据处理 = 客户端数据处理(self)
+        self.客户数据处理 = 客户端数据处理(self,server)
         self.未请求 = b''
         self.gamedata = GameData()
-        self.fuzhu = fuzhu(self)
+        self.fuzhu = fuzhu(server,self)
         self.cid = 0
         
     
@@ -49,7 +49,7 @@ class Client:
                         print("断开与服务器连接1")
                         return
                     self.客户数据处理.未发送 += buffer
-                    self.客户数据处理.接收处理线程()
+                    self.客户数据处理.接收处理线程(self)
                 else:
                         # 删除连接
                     self.server.user.pop(self.cid)

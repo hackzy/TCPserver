@@ -2,8 +2,9 @@ from recBuffer import 读封包
 from bufferWrit import 写封包
 from setting import *
 class 客户接收处理:
-    def __init__(self,user) -> None:
+    def __init__(self,user,server) -> None:
         self.user = user
+        self.server = server
 
     def 登录线路(self,buffer):
         #4d5a000000000000003433570000000103e80f3131312e3137332e3131362e313333177bebf42c6315e58581e8a8b1e8a9b2e5b8b3e8999fe799bbe585a5

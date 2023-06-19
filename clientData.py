@@ -5,12 +5,13 @@ from recBuffer import 读封包
 from bufferWrit import 写封包
 class 客户端数据处理:
     '''客户端数据处理类，负责处理服务器发来的数据'''
-    def __init__(self,user) -> None:
+    def __init__(self,user,server) -> None:
         self.未发送 = bytes()
         self.user = user
-        self.客户接收处理 = 客户接收处理(user)
+        self.server = server
+        self.客户接收处理 = 客户接收处理(user,server)
 
-    def 接收处理线程(self):
+    def 接收处理线程(self,user):
         while self.未发送[:2] == b'MZ':
             leng = int.from_bytes(self.未发送[8:10])
             if len(self.未发送) - 10 >= leng:

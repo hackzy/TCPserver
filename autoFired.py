@@ -4,7 +4,7 @@ import psutil
 from setting import *
 import time
 class 自动战斗:
-    def __init__(self,server) -> None:
+    def __init__(self,server,user) -> None:
         self.人物使用技能 = ""
         self.宠物使用技能 = ""
         self.攻击位置id = {}
@@ -12,6 +12,7 @@ class 自动战斗:
         self.宠物攻击位置 = 0
         self.开关 = False
         self.server = server
+        self.user = user
 
     def 战斗封包(self,id,技能,攻击位置):
         if 攻击位置 not in self.攻击位置id:
@@ -28,7 +29,7 @@ class 自动战斗:
             攻击类型 = 2
         else:
             攻击id = self.攻击位置id[攻击位置]
-            技能id = self.server.user.gamedata.技能[id][技能]
+            技能id = self.user.gamedata.技能[id][技能]
             攻击类型 = 3
             if 辅助技能.find(技能) != -1:
                 攻击id = id
@@ -47,11 +48,11 @@ class 自动战斗:
 
     def 开始战斗(self):
         
-        self.server.客户端发送(self.战斗封包(self.server.user.gamedata.角色id,
-                                         self.人物使用技能,self.人物攻击位置))
+        self.server.客户端发送(self.战斗封包(self.user.gamedata.角色id,
+                                         self.人物使用技能,self.人物攻击位置),self.user)
 
-        self.server.客户端发送(self.战斗封包(self.server.user.gamedata.参战宠物id,
-                                         self.宠物使用技能,self.宠物攻击位置))
+        self.server.客户端发送(self.战斗封包(self.user.gamedata.参战宠物id,
+                                         self.宠物使用技能,self.宠物攻击位置),self.user)
         
     def 置攻击位置id(self,buffer):
         读 = 读封包()
