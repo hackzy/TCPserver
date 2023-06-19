@@ -1,8 +1,8 @@
 from recBuffer import 读封包
 from threading import  Thread
 class 客户请求处理:
-    def __init__(self,server) -> None:
-        self.server = server
+    def __init__(self,user) -> None:
+        self.user = user
 
 
     def 喊话(self,buffer):
@@ -14,22 +14,22 @@ class 客户请求处理:
         内容 = 读.读文本型()
         内容 = 内容[8:]
         if 内容 == "LZKS":
-            self.server.user.fuzhu.luzhi.录制开始()
+            self.user.fuzhu.luzhi.录制开始()
             return
         if 内容 == 'LZTZ':
-            self.server.user.fuzhu.luzhi.录制停止()
+            self.user.fuzhu.luzhi.录制停止()
             return
         if 内容 == 'LZFSKS':
-            self.server.user.fuzhu.luzhi.发送开始()
+            self.user.fuzhu.luzhi.发送开始()
             return
         if 内容 == 'LZFSTZ':
-            self.server.user.fuzhu.luzhi.发送停止()
+            self.user.fuzhu.luzhi.发送停止()
             return
         if 内容.find('SZLZYS') != -1:
-            self.server.user.fuzhu.luzhi.设置延时(内容)
+            self.user.fuzhu.luzhi.设置延时(内容)
             return
         if 内容 == 'LZFS':
-            self.server.user.fuzhu.luzhi.单次发送()
+            self.user.fuzhu.luzhi.单次发送()
             return
         return buffer
     
@@ -37,8 +37,8 @@ class 客户请求处理:
         解包 = self.取对话内容(buffer)
         npcid = 解包[0]
         内容 = 解包[1]
-        if npcid == self.server.user.gamedata.角色id:
-            self.server.user.fuzhu.小助手.助手_自动战斗(内容)
+        if npcid == self.user.gamedata.角色id:
+            self.user.fuzhu.小助手.助手_自动战斗(内容)
 
 
     def 取对话内容(self,buffer):
