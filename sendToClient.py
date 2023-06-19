@@ -2,8 +2,8 @@ from recBuffer import 读封包
 from bufferWrit import 写封包
 from setting import *
 class 客户接收处理:
-    def __init__(self,server) -> None:
-        self.server = server
+    def __init__(self,user) -> None:
+        self.user = user
 
     def 登录线路(self,buffer):
         #4d5a000000000000003433570000000103e80f3131312e3137332e3131362e313333177bebf42c6315e58581e8a8b1e8a9b2e5b8b3e8999fe799bbe585a5
@@ -103,23 +103,23 @@ class 客户接收处理:
                             if 属性标识 == b'\x02\x71':
                                 pass
                             if 属性标识 == b'\x00\x84':
-                                self.server.user.gamedata.物品数据.物品列表[物品位置id]\
+                                self.user.gamedata.物品数据.物品列表[物品位置id]\
                                 = {'物品id':T_整数型}
                         elif 数据类型 == 4:
                             T_文本型 = 读.读文本型()
                             保存包.写文本型(T_文本型,True)
                             if 属性标识 == b'\x00\x01':
-                                self.server.user.gamedata.物品数据.物品列表[物品位置id]\
+                                self.user.gamedata.物品数据.物品列表[物品位置id]\
                                 = {'物品名称':T_文本型}
                         elif 数据类型 == 6:
                             T_字节型 = 读.读字节型()
                             if 属性标识 == b'\x00\x202':
-                                self.server.user.gamedata.物品数据.物品列表[物品位置id]\
+                                self.user.gamedata.物品数据.物品列表[物品位置id]\
                                 = {'物品类型':T_字节型}
                         elif 数据类型 == 7:
                             T_短整数型 = 读.读短整数型(True)
                             保存包.写短整数型(T_短整数型,True)
-                    self.server.user.gamedata.物品数据.物品列表[物品位置id]\
+                    self.user.gamedata.物品数据.物品列表[物品位置id]\
                     = {'封包缓存':保存包.取数据()}
         
     def 人物属性读取(self,buffer):
@@ -127,7 +127,7 @@ class 客户接收处理:
         读.置数据(buffer)
         读.跳过(10)
         读.读字节集(2)
-        self.server.user.gamedata.角色id = 读.读整数型(True)
+        self.user.gamedata.角色id = 读.读整数型(True)
         数量 = 读.读短整数型(True)
         for a in range(数量):
             数据头 = 读.读字节集(2).hex()
@@ -137,45 +137,45 @@ class 客户接收处理:
             elif 标识 == 2:
                 T_短整数型 = 读.读短整数型(True)
                 if 数据头 == '002c':
-                    self.server.user.gamedata.五行 = T_短整数型
+                    self.user.gamedata.五行 = T_短整数型
                 elif 数据头 == '001f':
-                    self.server.user.gamedata.等级 = T_短整数型
+                    self.user.gamedata.等级 = T_短整数型
             elif 标识 == 3:
                 T_整数型 = 读.读整数型(True)
                 if 数据头 == '001b':
-                    self.server.user.gamedata.金币 = T_整数型
+                    self.user.gamedata.金币 = T_整数型
                 elif 数据头 == '013e':
-                    self.server.user.gamedata.代金券 = T_整数型
+                    self.user.gamedata.代金券 = T_整数型
                 elif 数据头 == '0077':
-                    self.server.user.gamedata.银元宝 = T_整数型
+                    self.user.gamedata.银元宝 = T_整数型
                 elif 数据头 == '0078':
-                    self.server.user.gamedata.金元宝 = T_整数型
+                    self.user.gamedata.金元宝 = T_整数型
                 elif 数据头 == '0056':
-                    self.server.user.gamedata.形象id = T_整数型
+                    self.user.gamedata.形象id = T_整数型
                 elif 数据头 == '001a':
-                    self.server.user.gamedata.潜能 = T_整数型
+                    self.user.gamedata.潜能 = T_整数型
                 elif 数据头 == '0014':
-                    self.server.user.gamedata.道行 = T_整数型
+                    self.user.gamedata.道行 = T_整数型
                 elif 数据头 == '0019':
-                    self.server.user.gamedata.经验 = T_整数型
+                    self.user.gamedata.经验 = T_整数型
                 elif 数据头 == '0006':
-                    self.server.user.gamedata.当前气血 = T_整数型
+                    self.user.gamedata.当前气血 = T_整数型
                 elif 数据头 == '000b':
-                    self.server.user.gamedata.当前法力 = T_整数型
+                    self.user.gamedata.当前法力 = T_整数型
                 elif 数据头 == '004b':
-                    self.server.user.gamedata.战绩 = T_整数型
+                    self.user.gamedata.战绩 = T_整数型
                 elif 数据头 == '0079':
-                    self.server.user.gamedata.血池 = T_整数型
+                    self.user.gamedata.血池 = T_整数型
                 elif 数据头 == '007a':
-                    self.server.user.gamedata.灵池 = T_整数型
+                    self.user.gamedata.灵池 = T_整数型
             elif 标识 == 4:
                 T_文本型 = 读.读文本型()
                 if 数据头 == '0051':
-                    self.server.user.gamedata.门派 = T_文本型
+                    self.user.gamedata.门派 = T_文本型
                 elif 数据头 == '001e':
-                    self.server.user.gamedata.师尊 = T_文本型
+                    self.user.gamedata.师尊 = T_文本型
                 elif 数据头 == '0001':
-                    self.server.user.gamedata.角色名 = T_文本型
+                    self.user.gamedata.角色名 = T_文本型
 
     def 技能读取(self,buffer):
         读 = 读封包()
@@ -197,10 +197,10 @@ class 客户接收处理:
                 读.跳过(15)
             elif 标识 == '0203':
                 读.跳过(23)
-                if 对象id not in self.server.user.gamedata.技能:
-                    self.server.user.gamedata.技能.update({对象id:{技能名称:技能id}})
+                if 对象id not in self.user.gamedata.技能:
+                    self.user.gamedata.技能.update({对象id:{技能名称:技能id}})
                 else:
-                    self.server.user.gamedata.技能[对象id].update({技能名称:技能id})
+                    self.user.gamedata.技能[对象id].update({技能名称:技能id})
 
     def 周围对象读取(self,buffer):
         '''4d5a0000000000000098fff90005c8d0003d001d000400002eba
