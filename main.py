@@ -9,7 +9,6 @@ class 逍遥插件:
     '''全局管理类，负责保存分配客户与服务端信息'''
     def __init__(self) -> None:
       self.server = []
-      self.client = []
       self.sid = 0
       self.user = {}
       self.基础功能 = 基础功能()
@@ -35,9 +34,9 @@ class 逍遥插件:
     def 启动客户端(self,client,ip,sid):
         cid = self.分配空闲客户()
         self.user.update({cid:Client(self)})
-        self.user[cid].初始化客户信息(client,ip[0],sid)  #保存客户属性
+        self.user[cid].初始化客户信息(client,ip[0],sid,cid)  #保存客户属性
         self.user[cid].客户端启动(self.server[sid].游戏IP,self.server[sid].游戏端口) #客户连接，启动连接服务端
-        self.server[sid].开始接受请求(self.user)           #服务器启动接受客户发来的数据
+        self.server[sid].开始接受请求(self.user[cid])           #服务器启动接受客户发来的数据
         self.写日志('有客户进入，当前客户数：{}，IP：{}'.format(len(self.client),ip[0]))
 
     def 服务器发送(self,buffer):

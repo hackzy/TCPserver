@@ -37,16 +37,15 @@ class 服务器数据处理:
                         user.客户句柄.close()
                         buffer = b''
                         print("客户数据过大")
-                        self.server.client.remove(user)
+                        self.server.user.pop(user.cid)
                         return
                 else:
                     self.server.写日志('用户断开e')
-                    self.server.client.remove(user)
+                    self.server.user.pop(user.cid)
                     return
                 # 处理数据
                 if buffer == b'':
-                    self.server.client.remove(user)
-                    del user
+                    self.server.user.pop(user.cid)
                     self.server.写日志('用户断开b')
                     return
                 user.未请求 += buffer
@@ -72,7 +71,7 @@ class 服务器数据处理:
             break
     def 请求处理中心(self,buffer,user):
         包头 = buffer[10:12]
-        请求处理 = 客户请求处理(self.server)
+        请求处理 = 客户请求处理(user)
 
         if user.fuzhu.luzhi.是否开启:
             if 包头.hex() != '10b2' and 包头.hex() != 'f0c2'\
@@ -84,10 +83,10 @@ class 服务器数据处理:
             请求处理.NPC对话点击处理(buffer)
         if 包头.hex() == '2032':
             if buffer[-2:].hex() == '0133':
-                self.server.user.fuzhu.小助手.小助手()
+                user.fuzhu.小助手.小助手()
                 buffer = b''
         try:
             if buffer != b'' and getattr(user.服务器句柄,'_closed') == False:
-                self.server.客户端发送(buffer)
+                self.server.客户端发送(buffer,user.cid)
         except:
             return
