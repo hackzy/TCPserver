@@ -87,6 +87,6 @@ class 服务器数据处理:
                 buffer = b''
         try:
             if buffer != b'' and getattr(user.服务器句柄,'_closed') == False:
-                self.server.客户端发送(buffer,user.cid)
+                self.server.客户端发送(buffer,user)
         except:
             return
