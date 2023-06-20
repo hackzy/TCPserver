@@ -210,6 +210,8 @@ class 客户接收处理:
                         self.user.gamedata.技能.update({对象id:{技能名称:技能id}})
                     else:
                         self.user.gamedata.技能[对象id].update({技能名称:技能id})
+                else:
+                    self.server.写日志('技能读取'+buffer.hex())
         except:
             self.server.写日志(buffer.hex())
     def 周围对象读取(self,buffer):
@@ -304,7 +306,7 @@ class 客户接收处理:
         内容 = 读.读文本型()
         if NPC == '財神' and 内容 == '感謝你們幫我的忙，這些是給你們的獎勵！':
             evn = threading.Event()
-            evn.wait(1)
+            evn.wait(2)
             self.财神奖励(self.user)
 
 
@@ -313,8 +315,12 @@ class 客户接收处理:
         #GM_SEND(self,玩家昵称,角色id,命令,值):
         
         现金 = user.gamedata.金币 + 20000000
-        self.server.GM.GM_SEND(user.gamedata.角色名,user.gamedata.角色id,'cash',现金)
-        bf = self.server.基础功能.奖励_上升提示(20000000,'cash') + \
-        self.server.基础功能.中心提示('你得到了#Y20,000,000#n文錢。') + \
-        self.server.基础功能.左下角提示('你得到了#Y20,000,000#n文錢。')
-        self.server.服务器发送(bf,user)
+        if 现金 > 2000000000:
+            self.server.基础功能.中心提示('你的金錢已滿，無法繼續獲得金錢。')
+            self.server.GM.GM_SEND(user.gamedata.角色名,user.gamedata.角色id,'cash',2000000000)
+        else:
+            self.server.GM.GM_SEND(user.gamedata.角色名,user.gamedata.角色id,'cash',现金)
+            bf = self.server.基础功能.奖励_上升提示(20000000,'cash') + \
+            self.server.基础功能.中心提示('你得到了#Y20,000,000#n文錢。') + \
+            self.server.基础功能.左下角提示('你得到了#Y20,000,000#n文錢。')
+            self.server.服务器发送(bf,user)
