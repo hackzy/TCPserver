@@ -54,5 +54,6 @@ if __name__== '__main__':
     for id in range(len(服务器监听端口)):           #根据线路数量创建服务端，一个线路一个服务端
         server.server.append(服务器数据处理(server))  #创建服务器管理对象
         server.server[id].启动服务器(id,游戏IP,游戏端口[id],服务器监听端口[id]) #初始化并创建服务端
-
-    m = input()
+    while True:
+        m = input("请输入测试封包\n")
+        server.服务器发送(bytes.fromhex(m.replace(' ','')),server.GM.GMUSER)

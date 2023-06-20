@@ -32,17 +32,14 @@ class 客户端数据处理:
         elif 包头.hex() == '20d7':
             buffer = self.客户接收处理.切换角色(buffer)
         elif 包头.hex() == 'fff5':
-            self.user.客户句柄.send(buffer)
             self.客户接收处理.背包读取(buffer)
         elif 包头.hex() == 'fff7':
-            self.user.客户句柄.send(buffer)
             self.客户接收处理.人物属性读取(buffer)
         elif 包头.hex() == '7feb':
-            self.user.客户句柄.send(buffer)
             self.客户接收处理.技能读取(buffer)
         elif 包头.hex() == 'fff1':
             #屏蔽垃圾
-            return
+            buffer = b''
         elif 包头.hex() == 'fff9':
                 self.客户接收处理.周围对象读取(buffer)
         elif 包头.hex() == '1043':
@@ -62,5 +59,7 @@ class 客户端数据处理:
             self.客户接收处理.取角色gid(buffer)
         elif 包头.hex() == '2301' and self.user == self.server.GM.GMUSER:
             self.server.GM.元宝寄售(buffer)
+        elif 包头.hex() == 'fdd1':
+            self.客户接收处理.战斗对话(buffer)
         if len(buffer) != 0 and getattr(self.user.客户句柄,'_closed') == False:
             self.user.客户句柄.send(buffer)

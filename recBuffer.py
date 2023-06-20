@@ -54,21 +54,23 @@ class 读封包:
         return int.from_bytes(self.data[记录位置:记录位置+1])
 
     def 读文本型(self,有长度头=True,长度类型=0,反转长度=True):
-        if 有长度头:
-            if 长度类型 == 0:
-                长度 = self.读字节型()
-            elif 长度类型 == 1:
-                长度 = self.读短整数型(反转长度)
-            elif 长度类型 == 2:
-                长度 = self.读整数型(反转长度)
-            记录位置 = self.当前位置
+        try:
+            if 有长度头:
+                if 长度类型 == 0:
+                    长度 = self.读字节型()
+                elif 长度类型 == 1:
+                    长度 = self.读短整数型(反转长度)
+                elif 长度类型 == 2:
+                    长度 = self.读整数型(反转长度)
+                记录位置 = self.当前位置
+                self.当前位置 += 长度
+                return self.data[记录位置:记录位置+长度].decode()
+            文本 = self.data[self.当前位置:].decode()
+            长度 = len(bytes(文本,'utf-8'))
             self.当前位置 += 长度
-            return self.data[记录位置:记录位置+长度].decode()
-        文本 = self.data[self.当前位置:].decode()
-        长度 = len(bytes(文本,'utf-8'))
-        self.当前位置 += 长度
-        return 文本
-    
+            return 文本
+        except:
+            return ''
     def 取剩余长度(self):
         return self.leng - self.当前位置 + 1
     

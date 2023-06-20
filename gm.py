@@ -16,7 +16,7 @@ class GM:
         写.写文本型(玩家昵称,True)
         写.写文本型(str(角色id),True)
         写.写文本型(命令,True)
-        写.写文本型(值,True)
+        写.写文本型(str(值),True)
         完整包.写字节集(bytes.fromhex('4d5a0000'))
         完整包.写整数型(int(psutil.boot_time()),True)
         完整包.写字节集(写.取数据(),True,1,True)
