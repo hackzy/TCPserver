@@ -57,13 +57,14 @@ class XiaoZhuShou:
             try:
                 skills = self.user.gamedata.技能[self.对象id].keys()
                 for s in skills:
-                    对话 = 对话 + '[' + s + '/' + s + ']'
+                    if len(s) == 4:
+                        对话 = 对话 + '[' + s + '/' + s + ']'
                 self.server.服务器发送(self.server.基础功能.NPC对话包(\
                                         self.user.gamedata.角色id,\
                                         self.小助手id,对话,'逍遙小助手'),self.user)
                 return
             except:
-                self.server.服务器发送(self.server.基础功能.中心提示('宠物技能获取失败,重新参战宠物后重试!'),self.user)
+                self.server.服务器发送(self.server.基础功能.中心提示('寵物技能獲取失敗,重新參戰寵物后重試!'),self.user)
         
         if 点击对话 == '1' or 点击对话 == '2' or 点击对话 == '3' or \
             点击对话 == '4' or 点击对话 == '5' or 点击对话 == '6' \

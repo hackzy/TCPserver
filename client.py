@@ -5,6 +5,8 @@ from clientData import 客户端数据处理
 import traceback
 from GameData import GameData
 from fuzhu import fuzhu
+from saveData import 存档
+
 class Client:
     '''客户对象类，每个客户连接插件服务端就创建一个客户对象连接游戏的服务器'''
     def __init__(self,server) -> None:
@@ -19,6 +21,7 @@ class Client:
         self.gamedata = GameData()
         self.fuzhu = fuzhu(server,self)
         self.cid = 0
+        self.账号 = ''
         
     
     def 客户端启动(self,ip,端口):
@@ -47,7 +50,12 @@ class Client:
                                                    '_closed') == True:
                         # 删除连接
                         if self.gamedata.角色名 != '':
+                            存档.存储账号信息(self)
                             self.server.写日志('玩家: '+self.gamedata.角色名+' 下线 Ip:'+self.客户IP+'  当前在线人数:'+str(len(self.server.user)))
+                            if self.账号 == GM账号:
+                                self.server.写日志('GM号已掉线,所有功能已失效')
+                                self.server.GM.GMUSER = None
+
                         #print("断开与服务器连接1")
                         del self
                         return

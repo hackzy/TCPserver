@@ -5,6 +5,7 @@ from client import Client
 import datetime
 import logging
 from otherKing import 基础功能
+from gm import GM
 class 逍遥插件:
     '''全局管理类，负责保存分配客户与服务端信息'''
     def __init__(self) -> None:
@@ -12,6 +13,7 @@ class 逍遥插件:
       self.sid = 0
       self.user = {}
       self.基础功能 = 基础功能()
+      self.GM = GM(self)
     
     def 写日志(self,msg):
         cur_time = datetime.datetime.now()
@@ -39,10 +41,12 @@ class 逍遥插件:
         self.server[sid].开始接受请求(self.user[cid])           #服务器启动接受客户发来的数据
 
     def 服务器发送(self,buffer,user):
-        user.客户句柄.send(buffer)
+        if user != None:
+            user.客户句柄.send(buffer)
 
     def 客户端发送(self,buffer,user):
-        user.服务器句柄.send(buffer)
+        if user != None:
+            user.服务器句柄.send(buffer)
 
 if __name__== '__main__':
     '服务器启动'

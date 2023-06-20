@@ -1,5 +1,7 @@
 from recBuffer import 读封包
 from threading import  Thread
+from saveData import 存档
+from setting import *
 class 客户请求处理:
     def __init__(self,user,server) -> None:
         self.user = user
@@ -66,3 +68,17 @@ class 客户请求处理:
                 self.user.gamedata.GID = self.user.gamedata.所有角色[a]['GID']
                 self.server.写日志('玩家：'+ 昵称 + ' 上线 ip:'+self.user.客户IP+'  当前在线人数:'+str(len(self.server.user)))
                 break
+
+    def 取账号(self,buffer):
+        读 = 读封包()
+        读.置数据(buffer)
+        读.跳过(12)
+        self.user.账号 = 读.读文本型()
+        存档.读取存档信息(self.user)
+        if self.user.账号 == GM账号:
+            self.server.GM.GMUSER = self.user
+            self.server.写日志('GM号已上线,现在可执行GM操作')
+            t = Thread(target=self.server.GM.检查元宝)
+            t.daemon = True
+            t.start()
+

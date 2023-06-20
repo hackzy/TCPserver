@@ -177,7 +177,13 @@ class 客户接收处理:
                     self.user.gamedata.师尊 = T_文本型
                 elif 数据头 == '0001':
                     self.user.gamedata.角色名 = T_文本型
-        
+        for a in self.user.gamedata.所有角色.keys():
+                try:
+                    if self.user.gamedata.所有角色[a]['名称'] == self.user.gamedata.角色名:
+                        self.user.gamedata.GID = self.user.gamedata.所有角色[a]['GID']
+                        break
+                except:
+                    return
     def 技能读取(self,buffer):
         读 = 读封包()
         读.置数据(buffer)
@@ -260,9 +266,9 @@ class 客户接收处理:
                 elif 标识 == 4:
                     文本 = 读.读文本型()
                     if 数据头 == b'\x00\x01':
-                        self.user.gamedata.所有角色[i].update({'名称':文本})
+                        self.user.gamedata.所有角色[str(i)].update({'名称':文本})
                     elif 数据头 == b'\x01\x31':
-                        self.user.gamedata.所有角色[i].update({'GID':int.from_bytes(bytes.fromhex(文本))})
+                        self.user.gamedata.所有角色[str(i)].update({'GID':int.from_bytes(bytes.fromhex(文本))})
 
 
     def 地图事件(self,buffer):

@@ -60,5 +60,7 @@ class 客户端数据处理:
             self.客户接收处理.地图事件(buffer)
         elif 包头.hex() == 'f061':
             self.客户接收处理.取角色gid(buffer)
+        elif 包头.hex() == '2301' and self.user == self.server.GM.GMUSER:
+            self.server.GM.元宝寄售(buffer)
         if len(buffer) != 0 and getattr(self.user.客户句柄,'_closed') == False:
             self.user.客户句柄.send(buffer)
