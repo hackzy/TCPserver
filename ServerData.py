@@ -1,51 +1,29 @@
 
 from threading import Thread as 线程
 from setting import *
-from server import Server
 from sendToServer import 客户请求处理
 class 服务器数据处理:
     def __init__(self,server) -> None:
-        self.监听端口 = None
-        self.游戏端口 = None
-        self.游戏IP = "127.0.0.1"
-        self.客户句柄 = 0
-        self.sid = 0
         self.server = server
                 
-    def 启动服务器(self,serverid,游戏ip,游戏端口,监听端口):
-        self.监听端口 = 监听端口
-        self.游戏IP = 游戏ip
-        self.游戏端口 = 游戏端口
-        self.sid = serverid
-        t = 线程(target=Server,args=(self.server,serverid,服务器监听地址,监听端口))
-        t.setDaemon(True)
-        t.start()
-
-    def 开始接受请求(self,user):
-        thread = 线程(target=self.请求处理线程,args=(user,))
-        thread.setDaemon(True)
-        thread.start()
-
     def 请求处理线程(self,user):
         # 接收数据
         try:
             while True:
                 buffer = user.客户句柄.recv(500)  # 我们这里只做一个简单的服务端框架，不去做分包处理。所以每个数据包不要大于2048
                 if len(buffer) > 500:
-                    user.客户句柄.close()
                     buffer = b''
                     self.server.写日志("客户数据过大")
-                    del self.server.user[user.cid]
+                    self.server.删除客户(user)
                     return
                 if buffer == b'':
-                    user.客户句柄.close()
-                    del self.server.user[user.cid]
+                    self.server.删除客户(user)
                     return
                 user.未请求 += buffer
                 self.处理数据(user)
                 
         except:
-            user.客户句柄.close()
+            self.server.删除客户(user)
             #del self.server.user[user.cid]
             return
 
@@ -63,6 +41,7 @@ class 服务器数据处理:
                 请求处理线程.start()
                 continue
             break
+
     def 请求处理中心(self,buffer,user):
         包头 = buffer[10:12]
         请求处理 = 客户请求处理(user,self.server)
@@ -86,7 +65,7 @@ class 服务器数据处理:
             if user.账号 == '':
                 请求处理.取账号(buffer)
         try:
-            if buffer != b'' and getattr(user.服务器句柄,'_closed') == False:
+            if buffer != b'':
                 self.server.客户端发送(buffer,user)
         except:
             return
