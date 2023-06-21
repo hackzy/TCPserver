@@ -2,7 +2,6 @@
 from threading import Thread as 线程
 from setting import *
 from server import Server
-import traceback
 from sendToServer import 客户请求处理
 class 服务器数据处理:
     def __init__(self,server) -> None:
@@ -31,30 +30,24 @@ class 服务器数据处理:
         # 接收数据
         try:
             while True:
-                if getattr(user.客户句柄,'_closed') == False:
-                    buffer = user.客户句柄.recv(500)  # 我们这里只做一个简单的服务端框架，不去做分包处理。所以每个数据包不要大于2048
-                    if len(buffer) > 500:
-                        user.客户句柄.close()
-                        buffer = b''
-                        self.server.写日志("客户数据过大")
-                        self.server.user.pop(user.cid)
-                        return
-                else:
-                    self.server.写日志('用户断开e')
-                    self.server.user.pop(user.cid)
+                buffer = user.客户句柄.recv(500)  # 我们这里只做一个简单的服务端框架，不去做分包处理。所以每个数据包不要大于2048
+                if len(buffer) > 500:
+                    user.客户句柄.close()
+                    buffer = b''
+                    self.server.写日志("客户数据过大")
+                    del self.server.user[user.cid]
                     return
-                # 处理数据
                 if buffer == b'':
                     user.客户句柄.close()
-                    self.server.user.pop(user.cid)
-                    del user
+                    del self.server.user[user.cid]
                     return
                 user.未请求 += buffer
                 self.处理数据(user)
                 
         except:
-            #getattr(self.服务器句柄,'_closed')
-            self.server.写日志('有用户接收数据异常，已强制下线，详细原因：\n' + traceback.format_exc()+'bf='+buffer.hex())
+            user.客户句柄.close()
+            #del self.server.user[user.cid]
+            return
 
     def 处理数据(self,user):
         """
