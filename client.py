@@ -22,6 +22,7 @@ class Client:
         self.fuzhu = fuzhu(server,self)
         self.cid = 0
         self.账号 = ''
+        self.在线中 = True
         
     
     def 客户端启动(self,ip,端口):
@@ -44,28 +45,20 @@ class Client:
         '''开始接收服务器发来的数据'''
         while True:
             try:
-                if getattr(self.服务器句柄,'_closed') == False:
-                    buffer = self.服务器句柄.recv(20000)
-                    if buffer == b'' or getattr(self.服务器句柄,
-                                                   '_closed') == True:
+                buffer = self.服务器句柄.recv(20000)
+                if buffer == b'' :
                         # 删除连接
-                        if self.gamedata.角色名 != '':
-                            存档.存储账号信息(self)
-                            self.server.写日志('玩家: '+self.gamedata.角色名+' 下线 Ip:'+self.客户IP+'  当前在线人数:'+str(len(self.server.user)))
-                            if self.账号 == GM账号:
-                                self.server.写日志('GM号已掉线,所有功能已失效')
-                                self.server.GM.GMUSER = None
-
-                        #print("断开与服务器连接1")
-                        del self
+                    if self.gamedata.角色名 != '':
+                        存档.存储账号信息(self)
+                        self.server.写日志('玩家: '+self.gamedata.角色名+' 下线 Ip:'+self.客户IP+'  当前在线人数:'+str(len(self.server.user)))
+                        if self.账号 == GM账号:
+                            self.server.写日志('GM号已掉线,所有功能已失效')
+                            self.server.GM.GMUSER = None
+                        self.客户句柄.close()
+                        del self.server.user[self.cid]
                         return
-                    self.客户数据处理.未发送 += buffer
-                    self.客户数据处理.接收处理线程(self)
-                else:
-                        # 删除连接
-                    self.server.user.pop(self.cid)
-                    print("断开与服务器连接2",self.服务器句柄)
-                    return
+                self.客户数据处理.未发送 += buffer
+                self.客户数据处理.接收处理线程(self)
             except:
-                print("接收数据异常",len(buffer),traceback.format_exc())
+                
                 return

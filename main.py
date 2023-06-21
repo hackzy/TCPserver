@@ -28,6 +28,11 @@ class 逍遥插件:
         logger.info(s)
         print(s+"\n")
 
+    def 删除客户(self,user):
+        if user.在线中:
+            user.在线中 = False
+            del self.user(user.cid)
+
     def 分配空闲客户(self):
         for a in range(len(self.user)+1):
             if a not in self.user.keys():
@@ -41,11 +46,11 @@ class 逍遥插件:
         self.server[sid].开始接受请求(self.user[cid])           #服务器启动接受客户发来的数据
 
     def 服务器发送(self,buffer,user):
-        if user != None:
+        if user.在线中:
             user.客户句柄.send(buffer)
 
     def 客户端发送(self,buffer,user):
-        if user != None:
+        if user.在线中:
             user.服务器句柄.send(buffer)
 
 if __name__== '__main__':
