@@ -55,7 +55,10 @@ class 客户请求处理:
             填写内容 = int(填写内容.split('money:0,')[1].split(':')[0])
         else:
             if 填写内容 != '':
-                填写内容 = int(填写内容)
+                try:
+                    填写内容 = int(填写内容)
+                except:
+                    填写内容 = 0
         return [npcid,内容,填写内容,返回卡密]
     
     def 选择角色(self,buffer):
