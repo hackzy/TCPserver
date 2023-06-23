@@ -97,18 +97,20 @@ class XiaoZhuShou:
                                     self.user.gamedata.角色id,\
                                     self.小助手id,对话,'逍遙小助手'),self.user)
             return
-        for a in range(len(self.user.gamedata.技能)):
-            if 点击对话 in self.user.gamedata.技能[a]:
+        try:
+            if 点击对话 in self.user.gamedata.技能[self.对象id].keys():
                 if self.对象id == self.user.gamedata.角色id:
                     self.user.fuzhu.自动战斗.人物使用技能 = 点击对话
                 else:
                     self.user.fuzhu.自动战斗.宠物使用技能 = 点击对话
                 对话 = '請選擇自動攻擊位置：\n#Y（第一排6-10，第二排1-5）#n\
-    [1/1][2/2][3/3][4/4][5/5][6/6][7/7][8/8][9/9][10/10]'
+        [1/1][2/2][3/3][4/4][5/5][6/6][7/7][8/8][9/9][10/10]'
                 self.server.服务器发送(self.server.基础功能.NPC对话包(\
-                                        self.user.gamedata.角色id,\
-                                        self.小助手id,对话,'逍遙小助手'),self.user)
+                                            self.user.gamedata.角色id,\
+                                            self.小助手id,对话,'逍遙小助手'),self.user)
                 return
+        except:
+            return
     def 小助手(self):
         对话 = '您好，歡迎來到獨家逍遙更鑄輝煌，我是逍遙小助手，請問有什么\
 能幫到您：[自動戰斗/自動戰斗]'

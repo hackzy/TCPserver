@@ -50,6 +50,7 @@ class Client:
                             self.server.写日志('GM号已掉线,所有功能已失效')
                             self.server.GM.GMUSER = None
                     self.server.删除客户(self)
+                    break
                 else:
                     self.客户数据处理.未发送 += buffer
                     self.客户数据处理.接收处理线程(self)
