@@ -18,17 +18,19 @@ class Luzhi:
         self.封包.append(buffer)
 
     def 录制开始(self):
-        self.server.服务器发送(self.server.基础功能.中心提示("錄製已開始!"),self.user)
-        self.server.服务器发送(self.server.基础功能.左下角提示("#R錄製已開始!"),self.user)
-        self.封包.clear()
-        self.是否开启 = True
-        return
+        if not self.是否开启:
+            self.server.服务器发送(self.server.基础功能.中心提示("錄製已開始!"),self.user)
+            self.server.服务器发送(self.server.基础功能.左下角提示("#R錄製已開始!"),self.user)
+            self.封包.clear()
+            self.是否开启 = True
+            return
     
     def 录制停止(self):
-        self.server.服务器发送(self.server.基础功能.中心提示("錄製已停止!"),self.user)
-        self.server.服务器发送(self.server.基础功能.左下角提示("#R錄製已停止!#n錄制了#Y" + str(len(self.封包)) + "#n個操作！"),self.user)
-        self.是否开启 = False
-        return
+        if self.是否开启:
+            self.server.服务器发送(self.server.基础功能.中心提示("錄製已停止!"),self.user)
+            self.server.服务器发送(self.server.基础功能.左下角提示("#R錄製已停止!#n錄制了#Y" + str(len(self.封包)) + "#n個操作！"),self.user)
+            self.是否开启 = False
+            return
     
     def 发送开始(self):
         if len(self.封包) == 0:
