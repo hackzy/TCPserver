@@ -43,12 +43,13 @@ class 客户端数据处理:
         elif 包头.hex() == 'fff9':
                 self.客户接收处理.周围对象读取(buffer)
         elif 包头.hex() == '1043':
-            self.user.gamedata.参战宠物id = int.from_bytes(buffer[12:16])
+                self.user.gamedata.参战宠物id = int.from_bytes(buffer[12:16])
         elif 包头.hex() == '1deb':
-            if self.user.fuzhu.自动战斗.开关:
+            if buffer[19:20].hex() == '19':
+                if self.user.fuzhu.自动战斗.开关:
                 #buffer = self.server.基础功能.战斗时间(buffer)
-                t1 = Timer(3,self.user.fuzhu.自动战斗.开始战斗)
-                t1.start()
+                    t1 = Timer(2,self.user.fuzhu.自动战斗.开始战斗)
+                    t1.start()
         elif 包头.hex() == 'fdf9':
             self.user.fuzhu.自动战斗.置攻击位置id(buffer)
         elif 包头.hex() == '1df5':
@@ -65,6 +66,13 @@ class 客户端数据处理:
             self.客户接收处理.商城读取(buffer)
         elif 包头.hex() == '2037':
             buffer = self.客户接收处理.NPC对话(buffer)
+        elif 包头.hex() == '10ec':
+            self.客户接收处理.宠物数据更新(buffer)
+        elif 包头.hex() == 'ffe3':
+            self.客户接收处理.宠物读取(buffer)
+        elif 包头.hex() == '0dfd':
+            if self.user.fuzhu.自动战斗.开关:
+                self.user.fuzhu.自动战斗.补充状态()
         try:
             if len(buffer) != 0 and self.user.客户句柄 != 0:
                 self.user.客户句柄.send(buffer)

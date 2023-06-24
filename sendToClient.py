@@ -3,6 +3,7 @@ from bufferWrit import 写封包
 from itemData import 背包数据
 from setting import *
 import threading
+from petData import petdata
 class 客户接收处理:
     def __init__(self,user,server) -> None:
         self.user = user
@@ -126,7 +127,7 @@ class 客户接收处理:
                             保存包.写短整数型(T_短整数型,True)
                     self.user.gamedata.物品数据[i].封包缓存\
                     = 保存包.取数据()
-                    
+
     def 人物属性读取(self,buffer):
         读 = 读封包()
         读.置数据(buffer)
@@ -167,6 +168,10 @@ class 客户接收处理:
                     self.user.gamedata.当前气血 = T_整数型
                 elif 数据头 == '000b':
                     self.user.gamedata.当前法力 = T_整数型
+                elif 数据头 == '0007':
+                    self.user.gamedata.最大气血 = T_整数型
+                elif 数据头 == '000c':
+                    self.user.gamedata.最大法力 = T_整数型
                 elif 数据头 == '004b':
                     self.user.gamedata.战绩 = T_整数型
                 elif 数据头 == '0079':
@@ -410,3 +415,75 @@ class 客户接收处理:
         完整包.写字节集(组包包头)
         完整包.写字节集(写.取数据(),True,1)
         return 完整包.取数据()
+
+    def 宠物读取(self,buffer):
+        读 = 读封包()
+        读.置数据(buffer)
+        读.跳过(14)
+        位置id = 读.读字节型()
+        id = 读.读整数型(True)
+        self.user.gamedata.pet.update({id:petdata()})
+        self.user.gamedata.pet[id].位置 = 位置id
+        数量 = 读.读短整数型(True)
+        for a in range(数量):
+            读.读字节集(2)
+            属性数量 = 读.读短整数型(True)
+            for b in range(属性数量):
+                数据头 = 读.读字节集(2)
+                标识 = 读.读字节型()
+                if 标识 == 1:
+                    T_字节型 = 读.读字节型()
+                elif 标识 == 2:
+                    T_短整数型 = 读.读短整数型(True)
+                elif 标识 == 3:
+                    T_整数型 = 读.读整数型(True)
+                    if 数据头.hex() == '0006':
+                        self.user.gamedata.pet[id].当前气血 = T_整数型
+                    elif 数据头.hex() == '000b':
+                        self.user.gamedata.pet[id].当前法力 = T_整数型
+                    elif 数据头.hex() == '0007':
+                        self.user.gamedata.pet[id].最大气血 = T_整数型
+                    elif 数据头.hex() == '000c':
+                        self.user.gamedata.pet[id].最大法力 = T_整数型
+                    elif 数据头.hex() == '0042':
+                        self.user.gamedata.pet[id].忠诚 = T_整数型
+                elif 标识 == 4:
+                    T_文本型 = 读.读文本型()
+                    if 数据头.hex() == '0001':
+                        self.user.gamedata.pet[id].昵称 = T_文本型
+                elif 标识 == 6:
+                    读.读字节型()
+                elif 标识 == 7:
+                    读.读短整数型(True)
+            
+    def 宠物数据更新(self,buffer):
+        '''4d5a000000000000001610ec00010400052f710001000100010042030000005b'''
+        读 = 读封包()
+        读.置数据(buffer)
+        读.跳过(14)
+        位置 = 读.读字节型()
+        id = 读.读整数型(True)
+        读.读短整数型(True)
+        读.读短整数型(True)
+        读.读短整数型(True)
+        数据头 = 读.读字节集(2)
+        标识 = 读.读字节型()
+        if 标识 == 1:
+            读.读字节型()
+        elif 标识 == 2:
+            读.读短整数型(True)
+        elif 标识 == 3:
+            整数 = 读.读整数型(True)
+            if 数据头.hex() == '0006':
+                self.user.gamedata.pet[id].气血 = 整数
+            elif 数据头.hex() == '000b':
+                self.user.gamedata.pet[id].法力 = 整数
+            elif 数据头.hex() == '0042':
+                self.user.gamedata.pet[id].忠诚 = 整数
+            elif 标识 == 4:
+                文本 = 读.读文本型()
+                if 数据头.hex() == '0001':
+                    self.user.gamedata.pet[id].昵称 = 文本
+
+          
+

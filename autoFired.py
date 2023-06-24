@@ -91,3 +91,7 @@ class 自动战斗:
         for a in list(self.攻击位置id.keys()):
             if self.攻击位置id[a] == 删除id:
                 del self.攻击位置id[a]
+
+    def 补充状态(self):
+        self.user.fuzhu.人物回复()
+        self.user.fuzhu.宠物回复()

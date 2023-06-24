@@ -8,6 +8,8 @@ class GameData:
         self.GID = 0
         self.当前气血 = 0
         self.当前法力 = 0
+        self.最大气血 = 0
+        self.最大法力 = 0
         self.技能 = {}
         self.形象id = 0
         self.等级 = 0
@@ -25,7 +27,7 @@ class GameData:
         self.门派 = ''
         self.师尊 = ''
         self.五行 = ''
-        self.pet = petdata()
+        self.pet = {}
         self.参战宠物id = 0
         self.商城数据 = {}
         
