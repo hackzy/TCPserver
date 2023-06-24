@@ -69,11 +69,10 @@ class 客户接收处理:
         物品总数 = 读.读短整数型(True)
         写.写短整数型(物品总数,True)
         for i in range(物品总数):
-            self.user.gamedata.物品数据.append(背包数据())
             物品位置id = 读.读字节型()
             if 物品位置id == 32:
                 物品位置id = 55
-            self.user.gamedata.物品数据[i].位置id = 物品位置id
+            temp = {物品位置id:背包数据()}
             写.写字节型(物品位置id.to_bytes(1))
             物品数据总数 = 读.读短整数型(True)
             if 物品数据总数 == 0:
@@ -109,24 +108,21 @@ class 客户接收处理:
                             if 属性标识 == b'\x02\x47':
                                 pass
                             if 属性标识 == b'\x00\x54':
-                                self.user.gamedata.物品数据[i]\
-                                .id = T_整数型
+                                temp[物品位置id].id = T_整数型
                         elif 数据类型 == 4:
                             T_文本型 = 读.读文本型()
                             保存包.写文本型(T_文本型,True)
                             if 属性标识 == b'\x00\x01':
-                                self.user.gamedata.物品数据[i]\
-                                .名称 = T_文本型
+                                temp[物品位置id].名称 = T_文本型
                         elif 数据类型 == 6:
                             T_字节型 = 读.读字节型()
                             if 属性标识 == b'\x00\xca':
-                                self.user.gamedata.物品数据[i]\
-                               .类型 = T_字节型
+                                temp[物品位置id].类型 = T_字节型
                         elif 数据类型 == 7:
                             T_短整数型 = 读.读短整数型(True)
                             保存包.写短整数型(T_短整数型,True)
-                    self.user.gamedata.物品数据[i].封包缓存\
-                    = 保存包.取数据()
+                    temp[物品位置id].封包缓存 = 保存包.取数据()
+            self.user.gamedata.物品数据.update(temp)
 
     def 人物属性读取(self,buffer):
         读 = 读封包()

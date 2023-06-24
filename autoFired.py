@@ -19,6 +19,10 @@ class 自动战斗:
             for b in self.攻击位置id.keys():
                 攻击位置 = b
                 break
+        if 技能 == '':
+            return
+        if len(self.攻击位置id) == 0:
+            return
         if 技能 == "防御":
             攻击id = id
             技能id = 0
@@ -93,5 +97,6 @@ class 自动战斗:
                 del self.攻击位置id[a]
 
     def 补充状态(self):
-        self.user.fuzhu.人物回复()
-        self.user.fuzhu.宠物回复()
+        血玲珑,法玲珑 = self.user.fuzhu.血蓝位置()
+        self.user.fuzhu.人物回复(血玲珑,法玲珑)
+        self.user.fuzhu.宠物回复(血玲珑,法玲珑)

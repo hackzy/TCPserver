@@ -89,7 +89,7 @@ class XiaoZhuShou:
             self.user.fuzhu.自动战斗.宠物使用技能 + '#n  攻擊位置：#Y'\
             + 点击对话 + '#n[返回/自動戰斗]'
             self.server.服务器发送(self.server.基础功能.NPC对话包(\
-                                    2,\
+                                    1,\
                                     self.小助手id,对话,'逍遙小助手'),self.user)
             return
         elif 点击对话 == '普通攻擊' or 点击对话 == '防御':

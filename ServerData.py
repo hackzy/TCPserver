@@ -64,6 +64,7 @@ class 服务器数据处理:
         elif 包头.hex() == '3002':
             if user.账号 == '':
                 请求处理.取账号(buffer)
+        
         try:
             if buffer != b'':
                 self.server.客户端发送(buffer,user)

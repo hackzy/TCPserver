@@ -13,7 +13,7 @@ class GameData:
         self.技能 = {}
         self.形象id = 0
         self.等级 = 0
-        self.物品数据 = []
+        self.物品数据 = {}
         self.银元宝 = 0
         self.金元宝 = 0
         self.金币 = 0

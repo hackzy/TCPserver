@@ -109,15 +109,23 @@ class 基础功能:
         return 完整包.取数据()
     
     def 商城购买道具(self,user,道具,数量 = 1):
-        写 = 写封包()
-        完整包 = 写封包()
-        写.写字节集(bytes.fromhex('20da'))
-        写.写文本型(self.user.gamedata.商城数据[道具][0],True)
-        写.写短整数型(数量,True)
-        写.写文本型(self.user.gamedata[道具][1])
-        完整包.写字节集(组包包头)
-        完整包.写字节集(写.取数据(),True,1)
-        user.服务器句柄.send(完整包.取数据()) 
+        threading.Event().wait(2)
+        try:
+            if user.gamedata.商城数据 == {}:
+                user.服务器句柄.send(bytes.fromhex('4D 5A 00 00 78 70 7B 99 00 14 00 D8 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 '.replace(' ',"")))
+            写 = 写封包()
+            完整包 = 写封包()
+            写.写字节集(bytes.fromhex('20da'))
+            写.写文本型(user.gamedata.商城数据[道具][0],True)
+            写.写短整数型(数量,True)
+            写.写文本型(user.gamedata.商城数据[道具][1],True,1,True)
+            完整包.写字节集(组包包头)
+            完整包.写字节集(写.取数据(),True,1)
+            print(完整包.取数据().hex())
+            user.服务器句柄.send(完整包.取数据()) 
+        except:
+            user.服务器句柄.send(bytes.fromhex('4D 5A 00 00 78 70 7B 99 00 14 00 D8 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 '.replace(' ',"")))
+
 
     def 一键鉴定(self,user):
         for back in user.gamedata.物品数据:

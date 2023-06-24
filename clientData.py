@@ -72,7 +72,9 @@ class 客户端数据处理:
             self.客户接收处理.宠物读取(buffer)
         elif 包头.hex() == '0dfd':
             if self.user.fuzhu.自动战斗.开关:
-                self.user.fuzhu.自动战斗.补充状态()
+                t = 线程(target=self.user.fuzhu.自动战斗.补充状态())
+                t.start()
+        
         try:
             if len(buffer) != 0 and self.user.客户句柄 != 0:
                 self.user.客户句柄.send(buffer)
