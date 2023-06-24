@@ -6,5 +6,6 @@ class fuzhu:
         self.luzhi = Luzhi(server,user)
         self.自动战斗 = 自动战斗(server,user)
         self.小助手 = XiaoZhuShou(server,user)
+        self.鉴定类型 = ''
 
         

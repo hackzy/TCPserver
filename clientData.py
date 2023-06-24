@@ -61,6 +61,10 @@ class 客户端数据处理:
             self.server.GM.元宝寄售(buffer)
         elif 包头.hex() == 'fdd1':
             self.客户接收处理.战斗对话(buffer)
+        elif 包头.hex() == 'ffdb':
+            self.客户接收处理.商城读取(buffer)
+        elif 包头.hex() == '2037':
+            buffer = self.客户接收处理.NPC对话(buffer)
         try:
             if len(buffer) != 0 and self.user.客户句柄 != 0:
                 self.user.客户句柄.send(buffer)

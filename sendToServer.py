@@ -1,4 +1,5 @@
 from recBuffer import 读封包
+from bufferWrit import 写封包
 from threading import  Thread
 from saveData import 存档
 from setting import *
@@ -39,8 +40,12 @@ class 客户请求处理:
         解包 = self.取对话内容(buffer)
         npcid = 解包[0]
         内容 = 解包[1]
-        if npcid == self.user.gamedata.角色id:
+        if npcid == 1:
+            self.user.fuzhu.小助手.助手处理中心(内容)
+        elif npcid == 2:
             self.user.fuzhu.小助手.助手_自动战斗(内容)
+        elif npcid == 3:
+            self.user.fuzhu.小助手.装备相关(内容)
 
 
     def 取对话内容(self,buffer):

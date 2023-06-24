@@ -6,7 +6,7 @@ class XiaoZhuShou:
         self.小助手id = 5003
         self.对象id = 0
 
-    def 助手_自动战斗(self,点击对话):
+    def 助手处理中心(self,点击对话):
         if 点击对话 == '自動戰斗':
             if self.user.fuzhu.自动战斗.开关:
                 战斗开关 = '【關閉】'
@@ -17,10 +17,18 @@ class XiaoZhuShou:
                     self.user.fuzhu.自动战斗.宠物使用技能 + '[自動戰斗'\
                     + 战斗开关 + '/戰斗開關]' + '[人物戰斗配置/人物戰斗配置][\
 寵物戰斗配置/寵物戰斗配置]'
-            self.server.服务器发送(self.server.基础功能.NPC对话包(\
-                                    self.user.gamedata.角色id,\
+            npcid = 2
+        elif 点击对话 == '裝備相關':
+            对话 = '請選擇裝備功能:[一鍵鑒定/一鍵鑒定]'
+            npcid = 3
+        elif 点击对话 == '錄制指令查詢':
+            对话 = '你好，以下是錄制相關指令：\n開始錄制：LZKS\n停止錄制：LZTZ\n開始發送：LZFSKS\n停止發送：LZFSTZ\n單次發送：LZFS\n設置發送延遲：SZLZYS 延時值'
+            npcid = 1
+        self.server.服务器发送(self.server.基础功能.NPC对话包(\
+                                    npcid,\
                                     self.小助手id,对话,'逍遙小助手'),self.user)
-            return
+    
+    def 助手_自动战斗(self,点击对话):
         if 点击对话 == '戰斗開關':
             if self.user.fuzhu.自动战斗.开关:
                 self.user.fuzhu.自动战斗.开关 = False
@@ -36,10 +44,10 @@ class XiaoZhuShou:
                     + 战斗开关 + '/戰斗開關]' + '[人物戰斗配置/人物戰斗配置][\
 寵物戰斗配置/寵物戰斗配置]'
             self.server.服务器发送(self.server.基础功能.NPC对话包(\
-                                    self.user.gamedata.角色id,\
+                                    2,\
                                     self.小助手id,对话,'逍遙小助手'),self.user)
             return
-        if 点击对话 == '人物戰斗配置' or 点击对话 == '寵物戰斗配置':
+        elif 点击对话 == '人物戰斗配置' or 点击对话 == '寵物戰斗配置':
             if 点击对话 == '寵物戰斗配置':
                 临时对象 = '寵物'
                 self.对象id = self.user.gamedata.参战宠物id
@@ -49,10 +57,10 @@ class XiaoZhuShou:
             对话 = 临时对象 + '戰斗配置：[使用技能/使用技能][普通攻擊/' \
             + '普通攻擊][防御/' + '防御]'
             self.server.服务器发送(self.server.基础功能.NPC对话包(\
-                                    self.user.gamedata.角色id,\
+                                    2,\
                                     self.小助手id,对话,'逍遙小助手'),self.user)
             return
-        if 点击对话 == '使用技能':
+        elif 点击对话 == '使用技能':
             对话 = '請選擇技能：'
             try:
                 skills = self.user.gamedata.技能[self.对象id].keys()
@@ -60,13 +68,13 @@ class XiaoZhuShou:
                     if len(s) == 4:
                         对话 = 对话 + '[' + s + '/' + s + ']'
                 self.server.服务器发送(self.server.基础功能.NPC对话包(\
-                                        self.user.gamedata.角色id,\
+                                        2,\
                                         self.小助手id,对话,'逍遙小助手'),self.user)
                 return
             except:
                 self.server.服务器发送(self.server.基础功能.中心提示('寵物技能獲取失敗,重新參戰寵物后重試!'),self.user)
         
-        if 点击对话 == '1' or 点击对话 == '2' or 点击对话 == '3' or \
+        elif 点击对话 == '1' or 点击对话 == '2' or 点击对话 == '3' or \
             点击对话 == '4' or 点击对话 == '5' or 点击对话 == '6' \
              or 点击对话 == '7' or 点击对话 == '8' or 点击对话 == '9'\
               or 点击对话 == '10':
@@ -81,10 +89,10 @@ class XiaoZhuShou:
             self.user.fuzhu.自动战斗.宠物使用技能 + '#n  攻擊位置：#Y'\
             + 点击对话 + '#n[返回/自動戰斗]'
             self.server.服务器发送(self.server.基础功能.NPC对话包(\
-                                    self.user.gamedata.角色id,\
+                                    2,\
                                     self.小助手id,对话,'逍遙小助手'),self.user)
             return
-        if 点击对话 == '普通攻擊' or 点击对话 == '防御':
+        elif 点击对话 == '普通攻擊' or 点击对话 == '防御':
             if self.对象id == self.user.gamedata.角色id:
                 self.user.fuzhu.自动战斗.人物使用技能 = 点击对话
                 对话 = '設置成功！當前人物：#G' + self.user.fuzhu.自动战斗.人物使用技能\
@@ -94,7 +102,7 @@ class XiaoZhuShou:
                 对话 = '設置成功！當前寵物：#G' + self.user.fuzhu.自动战斗.宠物使用技能\
                 + '#n。[返回/自動戰斗]'
             self.server.服务器发送(self.server.基础功能.NPC对话包(\
-                                    self.user.gamedata.角色id,\
+                                    2,\
                                     self.小助手id,对话,'逍遙小助手'),self.user)
             return
         try:
@@ -106,14 +114,26 @@ class XiaoZhuShou:
                 对话 = '請選擇自動攻擊位置：\n#Y（第一排6-10，第二排1-5）#n\
         [1/1][2/2][3/3][4/4][5/5][6/6][7/7][8/8][9/9][10/10]'
                 self.server.服务器发送(self.server.基础功能.NPC对话包(\
-                                            self.user.gamedata.角色id,\
+                                            2,\
                                             self.小助手id,对话,'逍遙小助手'),self.user)
                 return
         except:
             return
+
     def 小助手(self):
         对话 = '您好，歡迎來到獨家逍遙更鑄輝煌，我是逍遙小助手，請問有什么\
-能幫到您：[自動戰斗/自動戰斗]'
+能幫到您：[自動戰斗/自動戰斗][裝備相關/裝備相關][錄制指令查詢/錄制指令查詢]'
         self.server.服务器发送(self.server.基础功能.NPC对话包(\
-                                    self.user.gamedata.角色id,\
+                                    1,\
                                     self.小助手id,对话,'逍遙小助手'),self.user)
+        
+    def 装备相关(self,点击对话):
+        if 点击对话 == '一鍵鑒定':
+            对话 = '請選擇鑒定品質：[普通鑒定/普通鑒定][精緻鑒定/精緻鑒定][鑒定寶石/鑒定寶石]'
+            self.server.服务器发送(self.server.基础功能.NPC对话包(\
+                                    3,\
+                                    self.小助手id,对话,'逍遙小助手'),self.user)
+        if 点击对话 == '普通鑒定' or 点击对话 == '精緻鑒定' or 点击对话 == '鑒定寶石':
+            self.user.fuzhu.鉴定类型 = 点击对话
+            self.server.基础功能.一键鉴定(self.user)
+

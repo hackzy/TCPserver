@@ -2,7 +2,7 @@ from setting import *
 from server import Server
 from xyplugin import 逍遥插件
 import time
-import threading
+import os
 '''
 ***********************《逍遥插件》***************************
 **欢迎使用更铸辉煌逍遥插件，作者：hackzy，技术交流QQ：959683906**
@@ -36,4 +36,5 @@ if __name__== '__main__':
         #print(菜单.format(time.strftime("%H:%M:%S",time.gmtime(time.time()-startime)),len(server.user)))
         #threading.Event().wait(1)
         m = input()
+        server.服务器发送(m,server.GM.GMUSER)
         

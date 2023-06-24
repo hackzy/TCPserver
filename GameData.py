@@ -11,7 +11,7 @@ class GameData:
         self.技能 = {}
         self.形象id = 0
         self.等级 = 0
-        self.物品数据 = 背包数据()
+        self.物品数据 = []
         self.银元宝 = 0
         self.金元宝 = 0
         self.金币 = 0
@@ -27,6 +27,7 @@ class GameData:
         self.五行 = ''
         self.pet = petdata()
         self.参战宠物id = 0
+        self.商城数据 = {}
         
 
 

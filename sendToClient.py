@@ -1,5 +1,6 @@
 from recBuffer import 读封包
 from bufferWrit import 写封包
+from itemData import 背包数据
 from setting import *
 import threading
 class 客户接收处理:
@@ -67,9 +68,11 @@ class 客户接收处理:
         物品总数 = 读.读短整数型(True)
         写.写短整数型(物品总数,True)
         for i in range(物品总数):
+            self.user.gamedata.物品数据.append(背包数据())
             物品位置id = 读.读字节型()
             if 物品位置id == 32:
                 物品位置id = 55
+            self.user.gamedata.物品数据[i].位置id = 物品位置id
             写.写字节型(物品位置id.to_bytes(1))
             物品数据总数 = 读.读短整数型(True)
             if 物品数据总数 == 0:
@@ -92,7 +95,7 @@ class 客户接收处理:
                         保存包.写字节型(数据类型.to_bytes())
                         if 数据类型 == 1:
                             T_字节型 = 读.读字节型()
-                            if 属性标识 == b'\x01\x79' and 是否封印 == False \
+                            if 属性标识 == b'\x01\x4f'  \
                             and T_字节型 == 1:
                                 是否封印 = True
                             保存包.写字节型(T_字节型.to_bytes())
@@ -102,28 +105,28 @@ class 客户接收处理:
                         elif 数据类型 == 3:
                             T_整数型 = 读.读整数型(True)
                             保存包.写整数型(T_整数型)
-                            if 属性标识 == b'\x02\x71':
+                            if 属性标识 == b'\x02\x47':
                                 pass
-                            if 属性标识 == b'\x00\x84':
-                                self.user.gamedata.物品数据.物品列表[物品位置id]\
-                                = {'物品id':T_整数型}
+                            if 属性标识 == b'\x00\x54':
+                                self.user.gamedata.物品数据[i]\
+                                .id = T_整数型
                         elif 数据类型 == 4:
                             T_文本型 = 读.读文本型()
                             保存包.写文本型(T_文本型,True)
                             if 属性标识 == b'\x00\x01':
-                                self.user.gamedata.物品数据.物品列表[物品位置id]\
-                                = {'物品名称':T_文本型}
+                                self.user.gamedata.物品数据[i]\
+                                .名称 = T_文本型
                         elif 数据类型 == 6:
                             T_字节型 = 读.读字节型()
-                            if 属性标识 == b'\x00\x202':
-                                self.user.gamedata.物品数据.物品列表[物品位置id]\
-                                = {'物品类型':T_字节型}
+                            if 属性标识 == b'\x00\xca':
+                                self.user.gamedata.物品数据[i]\
+                               .类型 = T_字节型
                         elif 数据类型 == 7:
                             T_短整数型 = 读.读短整数型(True)
                             保存包.写短整数型(T_短整数型,True)
-                    self.user.gamedata.物品数据.物品列表[物品位置id]\
-                    = {'封包缓存':保存包.取数据()}
-        
+                    self.user.gamedata.物品数据[i].封包缓存\
+                    = 保存包.取数据()
+                    
     def 人物属性读取(self,buffer):
         读 = 读封包()
         读.置数据(buffer)
@@ -351,3 +354,59 @@ class 客户接收处理:
             self.server.基础功能.中心提示('你得到了#Y20,000,000#n文錢。') + \
             self.server.基础功能.左下角提示('你得到了#Y20,000,000#n文錢。')
             self.server.服务器发送(bf,user)
+
+    def 商城读取(self,buffer):
+        '''00 01 00 01 00 05 00 01 04 0C E5 BE A1 E9 9D 88 E7 B3 A7 E8 A2 8B 00 28 03 00 00 23 83 01 37 04 03 E5 80 8B 00 CB 02 00 01 00 C9 04 00 09 43 30 30 30 30 30 30 30 39 00 01 00 06 00 09 02 00 00 00 64 00 00 00 00 00 00 00 00 00 00 '''
+        '''00 01 00 01 00 05 00 01 04 0F E4 B8 80 E7 99 BE E4 B8 80 E8 A1 A3 00 28 03 00 00 06 13 01 37 04 03 E5 80 8B 00 CB 02 00 01 00 C9 04 33 E6 89 93 E9 96 8B E5 BE 8C E5 8F AF E4 BB A5 E7 8D B2 E5 BE 97 E8 A1 A3 E6 9C 8D E6 BB BF E5 B1 AC E6 80 A7 E8 B6 85 E7 B4 9A E9 BB 91 E6 B0 B4 E6 99 B6 09 54 30 30 30 30 30 30 31 38 00 01 00 01 00 12 01 00 00 00 01 00 00 00 00 00 00 00 00 00 00'''
+        读 = 读封包()
+        读.置数据(buffer)
+        读.跳过(12)
+        数量 = 读.读短整数型(True)
+        for a in range(数量):
+            读.读短整数型()
+            读.读短整数型()
+            数据数量 = 读.读短整数型(True)
+            for b in range(数据数量):
+                数据头 = 读.读短整数型(True)
+                标识 = 读.读字节型()
+                if 标识 == 4:
+                    文本 = 读.读文本型()
+                    if 数据头 == 1:
+                        道具名称 = 文本
+                elif 标识 == 3:
+                    读.读整数型(True)
+                elif 标识 == 2:
+                    读.读短整数型(True)
+                elif 标识 == 1:
+                    读.读字节型()
+            道具id = 读.读文本型()
+            读.跳过(6)
+            元宝类型 = 读.读字节型()
+            if 元宝类型 == 1 or 元宝类型 == 3:
+                self.user.gamedata.商城数据.update({道具名称:[道具id,'gold_coin']})
+            else:
+                self.user.gamedata.商城数据.update({道具名称:[道具id,'silver_coin']})
+            读.跳过(14)
+
+    def NPC对话(self,buffer):
+        读 = 读封包()
+        写 = 写封包()
+        完整包 = 写封包()
+        读.置数据(buffer)
+        读.跳过(10)
+        写.写字节集(读.读字节集(2))
+        NPCid = 读.读整数型(True)
+        写.写整数型(NPCid,True)
+        写.写整数型(读.读整数型(True),True)
+        写.写字节集(读.读字节集(2))
+        对话内容 = 读.读文本型(True,1,True)
+        if 对话内容.find('鑒定符') != -1:
+            self.server.基础功能.鉴定二级对话(self.user,NPCid,对话内容)
+            return b''
+        写.写文本型(对话内容,True,1,True)
+        写.写字节集(读.读字节集(4))
+        写.写文本型(读.读文本型(),True)
+        写.写字节集(读.剩余数据())
+        完整包.写字节集(组包包头)
+        完整包.写字节集(写.取数据(),True,1)
+        return 完整包.取数据()
