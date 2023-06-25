@@ -12,7 +12,7 @@ class Luzhi:
     def 录制封包(self,buffer):
         if len(self.封包) >= 30:
             self.server.服务器发送(self.server.基础功能\
-                    .中心提醒("錄製操作超過上限！已自動停止!"),self.user)
+                    .中心提示("錄製操作超過上限！已自動停止!"),self.user)
             self.录制停止()
             return
         self.封包.append(buffer)

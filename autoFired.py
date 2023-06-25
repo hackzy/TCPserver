@@ -39,12 +39,8 @@ class 自动战斗:
                 if 辅助技能.find(技能) != -1:
                     攻击id = id
             except:
-                攻击id = self.攻击位置id[攻击位置]
-                key = self.user.gamedata.技能[id].keys()[0]
-                技能id = self.user.gamedata.技能[id][key]
-                攻击类型 = 3
-                if 辅助技能.find(技能) != -1:
-                    攻击id = id
+                self.server.基础功能.中心提示('自動戰斗配置錯誤，請重新配置！')
+                return b''
         写包 = 写封包()
         完整包 = 写封包()
         写包.写字节集(bytes.fromhex("3202"))
