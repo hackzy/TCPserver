@@ -314,9 +314,12 @@ class 客户接收处理:
         地图id = 读.读整数型(True)
         读.读整数型()
         地图名 = 读.读文本型()
-        if 地图名 == '天墉城':
-            self.server.服务器发送(bytes.fromhex('4D 5A 00 00 00 00 00 00 00 A9 FF F9 00 00 2D F6 00 EF 00 CF 00 02 00 00 04 8E 00 00 00 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 79 1E 00 00 9C 42 00 00 00 00 10 E9 80 8D E9 81 99 E5 A4 A7 E9 A3 9B 79 54 35 34 00 00 00 00 00 8B 0C E9 80 8D E9 81 99 E5 A4 A7 E9 A3 9B 07 75 70 67 72 61 64 65 12 E7 B5 82 E5 8D 97 E5 B1 B1 E7 8E 89 E6 9F B1 E6 B4 9E 00 00 00 0A 00 00 04 00 00 00 00 00 00 1B 5A 00 00 00 00 00 00 1B 5A 00 0B BF DC 00 04 00 01 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 '.replace(' ','')),self.user)
-            self.server.服务器发送(bytes.fromhex('4D 5A 00 00 00 00 00 00 00 3F F0 E7 00 00 2D F600 03 0F E6 AD A3 E5 9C A8 E9 9A B1 E8 BA AB E4 B8 AD 0C E4 BD 8D E5 88 97 E4 BB 99 E7 8F AD 19 E5 90 8C E7 A6 8F E5 AE A2 E6 A3 A7 20 E5 B9 AB E6 B4 BE E7 B2 BE E8 8B B1 '.replace(' ','')),self.user)
+        self.user.gamedata.当前地图 = 地图名
+        if 地图名 == '幽雅小居' or 地图名 == '豪華居所' \
+            or 地图名 == '花園別墅' or 地图名 == '翡翠莊園':
+            self.user.gamedata.屏蔽垃圾 = False
+        else:
+            self.user.gamedata.屏蔽垃圾 = True
 
     def 战斗对话(self,buffer):
         '''4D 5A 00 00 00 00 00 00 00 52 FD D1 00\

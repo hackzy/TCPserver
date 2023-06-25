@@ -90,9 +90,9 @@ class 基础功能:
         return 完整包.取数据()
 
     def 取背包物品id(self,物品名称,user):
-        for item in user.gamedata.背包数据:
-            if item.名称 == 物品名称:
-                return item.id
+        for item in user.gamedata.物品数据:
+            if user.gamedata.物品数据[item].名称 == 物品名称:
+                return user.gamedata.物品数据[item].id
             
     def T8飞NPC(self,NPC,user):
         写 = 写封包()
@@ -129,11 +129,11 @@ class 基础功能:
 
     def 一键鉴定(self,user):
         for back in user.gamedata.物品数据:
-            if back.位置id > 100:
+            if back > 100:
                 写 = 写封包()
                 写.写字节集(组包包头)
                 写.写字节集(bytes.fromhex('0006301c'))
-                写.写整数型(back.位置id,True)
+                写.写整数型(back,True)
                 user.服务器句柄.send(写.取数据())
                 threading.Event().wait(timeout=0.2)
 

@@ -35,6 +35,6 @@ if __name__== '__main__':
     while True:
         #print(菜单.format(time.strftime("%H:%M:%S",time.gmtime(time.time()-startime)),len(server.user)))
         #threading.Event().wait(1)
-        m = input()
-        server.服务器发送(m,server.GM.GMUSER)
+        m = input('输入封包')
+        server.封包测试(m.replace(' ',''))
         

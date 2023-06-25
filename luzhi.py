@@ -34,7 +34,7 @@ class Luzhi:
     
     def 发送开始(self):
         if len(self.封包) == 0:
-            self.server.服务器发送(self.server.基础功能.中心提示("沒用錄製任何操作!請檢查！"),self.user)
+            self.server.服务器发送(self.server.基础功能.中心提示("沒有錄製任何操作!請檢查！"),self.user)
             return
         self.server.服务器发送(self.server.基础功能.中心提示("發送已開始!"),self.user)
         self.server.服务器发送(self.server.基础功能.左下角提示("#R發送已開始!"),self.user)
@@ -56,7 +56,7 @@ class Luzhi:
     def 发送线程(self):
         while self.是否发送:
             for i in range(len(self.封包)):
-                self.server.客户端发送(self.封包[i])
+                self.server.客户端发送(self.封包[i],self.user)
                 time.sleep(self.发送延时/1000)
 
     def 单次发送(self):

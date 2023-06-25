@@ -13,6 +13,7 @@ class 逍遥插件:
       self.user = {}
       self.基础功能 = 基础功能()
       self.GM = GM(self)
+      self.测试 = 0
     
     def 写日志(self,msg):
         cur_time = datetime.datetime.now()
@@ -61,5 +62,11 @@ class 逍遥插件:
         try:
             if user.在线中:
                 user.服务器句柄.send(buffer)
+        except:
+            return
+    def 封包测试(self,buffer):
+        try:
+            if self.测试.在线中:
+                self.测试.客户句柄.send(buffer)
         except:
             return

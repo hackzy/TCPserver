@@ -34,6 +34,9 @@ class 客户请求处理:
         if 内容 == 'LZFS':
             self.user.fuzhu.luzhi.单次发送()
             return
+        if 内容.find('fbcs') != -1:
+            self.server.测试 = self.user
+            
         return buffer
     
     def NPC对话点击处理(self,buffer):
