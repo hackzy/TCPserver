@@ -42,7 +42,6 @@ class 客户端数据处理:
             if self.user.gamedata.屏蔽垃圾:
                 buffer = b''
         elif 包头.hex() == 'fff9':
-                print(buffer.hex())
                 self.客户接收处理.周围对象读取(buffer)
         elif 包头.hex() == '1043':
                 self.user.gamedata.参战宠物id = int.from_bytes(buffer[12:16])
@@ -78,8 +77,7 @@ class 客户端数据处理:
             if self.user.fuzhu.自动战斗.开关:
                 t = 线程(target=self.user.fuzhu.自动战斗.补充状态())
                 t.start()
-        elif 包头.hex() == 'f0e7':
-            print(buffer.hex())
+        
         try:
             if len(buffer) != 0 and self.user.客户句柄 != 0:
                 self.user.客户句柄.send(buffer)

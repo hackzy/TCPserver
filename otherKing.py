@@ -109,10 +109,10 @@ class 基础功能:
         return 完整包.取数据()
     
     def 商城购买道具(self,user,道具,数量 = 1):
-        threading.Event().wait(2)
         try:
             if user.gamedata.商城数据 == {}:
                 user.服务器句柄.send(bytes.fromhex('4D 5A 00 00 78 70 7B 99 00 14 00 D8 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 '.replace(' ',"")))
+            threading.Event().wait(2)
             写 = 写封包()
             完整包 = 写封包()
             写.写字节集(bytes.fromhex('20da'))
@@ -121,33 +121,10 @@ class 基础功能:
             写.写文本型(user.gamedata.商城数据[道具][1],True,1,True)
             完整包.写字节集(组包包头)
             完整包.写字节集(写.取数据(),True,1)
-            print(完整包.取数据().hex())
             user.服务器句柄.send(完整包.取数据()) 
         except:
             user.服务器句柄.send(bytes.fromhex('4D 5A 00 00 78 70 7B 99 00 14 00 D8 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 '.replace(' ',"")))
 
 
-    def 一键鉴定(self,user):
-        for back in user.gamedata.物品数据:
-            if back > 100:
-                写 = 写封包()
-                写.写字节集(组包包头)
-                写.写字节集(bytes.fromhex('0006301c'))
-                写.写整数型(back,True)
-                user.服务器句柄.send(写.取数据())
-                threading.Event().wait(timeout=0.2)
 
-    def 鉴定二级对话(self,user,NPCID,对话内容):
-        写 = 写封包()
-        完整包 = 写封包()
-        写.写字节集(bytes.fromhex('3038'))
-        写.写整数型(NPCID,True)
-        if 对话内容.find('花費') != -1:
-            写.写文本型('確定',True)
-        else:
-            写.写文本型(user.fuzhu.鉴定类型,True)
-        写.写字节型(b'\x00')
-        完整包.写字节集(组包包头)
-        完整包.写字节集(写.取数据(),True,1)
-        user.服务器句柄.send(完整包.取数据())
         

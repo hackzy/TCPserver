@@ -1,3 +1,4 @@
+from threading import Thread
 
 class XiaoZhuShou:
     def __init__(self,server,user) -> None:
@@ -19,11 +20,11 @@ class XiaoZhuShou:
 寵物戰斗配置/寵物戰斗配置]'
             npcid = 2
         elif 点击对话 == '裝備相關':
-            对话 = '請選擇裝備功能:[一鍵鑒定/一鍵鑒定]'
+            对话 = '請選擇裝備功能:[一鍵鑒定/一鍵鑒定][裝備改造/裝備改造]'
             npcid = 3
         elif 点击对话 == '錄制指令查詢':
             对话 = '你好，以下是錄制相關指令：\n開始錄制：LZKS\n停止錄制：LZTZ\n開始發送：LZFSKS\n停止發送：LZFSTZ\n單次發送：LZFS\n設置發送延遲：SZLZYS 延時值'
-            npcid = 1
+            npcid = 10
         self.server.服务器发送(self.server.基础功能.NPC对话包(\
                                     npcid,\
                                     self.小助手id,对话,'逍遙小助手'),self.user)
@@ -89,7 +90,7 @@ class XiaoZhuShou:
             self.user.fuzhu.自动战斗.宠物使用技能 + '#n  攻擊位置：#Y'\
             + 点击对话 + '#n[返回/自動戰斗]'
             self.server.服务器发送(self.server.基础功能.NPC对话包(\
-                                    1,\
+                                    10,\
                                     self.小助手id,对话,'逍遙小助手'),self.user)
             return
         elif 点击对话 == '普通攻擊' or 点击对话 == '防御':
@@ -124,7 +125,7 @@ class XiaoZhuShou:
         对话 = '您好，歡迎來到獨家逍遙更鑄輝煌，我是逍遙小助手，請問有什么\
 能幫到您：[自動戰斗/自動戰斗][裝備相關/裝備相關][錄制指令查詢/錄制指令查詢]'
         self.server.服务器发送(self.server.基础功能.NPC对话包(\
-                                    1,\
+                                    10,\
                                     self.小助手id,对话,'逍遙小助手'),self.user)
         
     def 装备相关(self,点击对话):
@@ -133,7 +134,37 @@ class XiaoZhuShou:
             self.server.服务器发送(self.server.基础功能.NPC对话包(\
                                     3,\
                                     self.小助手id,对话,'逍遙小助手'),self.user)
-        if 点击对话 == '普通鑒定' or 点击对话 == '精緻鑒定' or 点击对话 == '鑒定寶石':
+        elif 点击对话 == '普通鑒定' or 点击对话 == '精緻鑒定' or 点击对话 == '鑒定寶石':
             self.user.fuzhu.鉴定类型 = 点击对话
-            self.server.基础功能.一键鉴定(self.user)
+            self.user.fuzhu.一键鉴定(self.user)
 
+        elif 点击对话 == '裝備改造':
+            对话 = '請選擇改造的裝備類型：[改造武器/改造武器][改造防具/改造防具]'
+            if self.user.fuzhu.开始改造:
+                对话 += '[【停止改造】/停止改造]'
+            self.server.服务器发送(self.server.基础功能.NPC对话包(\
+                                    3,\
+                                    self.小助手id,对话,'逍遙小助手'),self.user)
+            
+        elif 点击对话 == '改造武器' or 点击对话 == '改造防具':
+            对话 = '請把需要改造的裝備放在#G包裹#Y第一格#n，\n然后點擊#G開始改造#n，\n如需要#R停止#n，請重新打開小助手點擊#G【停止改造】#n。[開始改造/開始改造]'
+            self.user.fuzhu.改造类型 = 点击对话
+            self.server.服务器发送(self.server.基础功能.NPC对话包(\
+                                    3,\
+                                    self.小助手id,
+                                    对话,
+                                    '逍遙小助手'),self.user)
+            
+        elif 点击对话 == '開始改造' or 点击对话 == '停止改造':
+            print(点击对话)
+            if 点击对话 == '開始改造':
+                self.user.fuzhu.开始改造 = True
+                t = Thread(target=self.user.fuzhu.改造线程)
+                t.daemon = True
+                t.start()
+                buffer = self.server.基础功能.中心提示('#Y開始改造中。。。') + self.server.基础功能.左下角提示('#Y開始改造中。。。')
+            else:
+                self.user.fuzhu.开始改造 = False
+                buffer = self.server.基础功能.中心提示('#Y改造已停止!') + self.server.基础功能.左下角提示('#Y改造已停止!')
+                self.user.fuzhu.改造类型 = ''
+            self.server.服务器发送(buffer,self.user)

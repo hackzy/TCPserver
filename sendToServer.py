@@ -43,7 +43,7 @@ class 客户请求处理:
         解包 = self.取对话内容(buffer)
         npcid = 解包[0]
         内容 = 解包[1]
-        if npcid == 1:
+        if npcid == 10:
             self.user.fuzhu.小助手.助手处理中心(内容)
         elif npcid == 2:
             self.user.fuzhu.小助手.助手_自动战斗(内容)
