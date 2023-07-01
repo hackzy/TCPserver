@@ -156,7 +156,6 @@ class XiaoZhuShou:
                                     '逍遙小助手'),self.user)
             
         elif 点击对话 == '開始改造' or 点击对话 == '停止改造':
-            print(点击对话)
             if 点击对话 == '開始改造':
                 self.user.fuzhu.开始改造 = True
                 t = Thread(target=self.user.fuzhu.改造线程)
