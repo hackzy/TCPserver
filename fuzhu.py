@@ -81,18 +81,20 @@ class fuzhu:
         except:
             return
         
-    def 一键鉴定(self,user):
-        for back in user.gamedata.物品数据:
+    def 一键鉴定(self):
+        if len(self.user.gamedata.物品数据) == 0:
+            return
+        for back in self.user.gamedata.物品数据:
             if back > 100:
                 写 = 写封包()
                 写.写字节集(组包包头)
                 写.写字节集(bytes.fromhex('0006301c'))
                 写.写整数型(back,True)
-                user.服务器句柄.send(写.取数据())
+                self.user.服务器句柄.send(写.取数据())
                 threading.Event().wait(timeout=0.2)
-        user.fuzhu.鉴定类型 = ''
+        self.鉴定类型 = ''
 
-    def 鉴定二级对话(self,user,NPCID,对话内容):
+    def 鉴定二级对话(self,NPCID,对话内容):
         写 = 写封包()
         完整包 = 写封包()
         写.写字节集(bytes.fromhex('3038'))
@@ -100,11 +102,11 @@ class fuzhu:
         if 对话内容.find('花費') != -1:
             写.写文本型('確定',True)
         else:
-            写.写文本型(user.fuzhu.鉴定类型,True)
+            写.写文本型(self.鉴定类型,True)
         写.写字节型(b'\x00')
         完整包.写字节集(组包包头)
         完整包.写字节集(写.取数据(),True,1)
-        user.服务器句柄.send(完整包.取数据())
+        self.user.服务器句柄.send(完整包.取数据())
         
     def 装备改造(self):
         item = []
@@ -125,6 +127,8 @@ class fuzhu:
             for a in self.user.gamedata.物品数据:
                 if self.user.gamedata.物品数据[a].名称 == 改造道具:
                     item.append(a)
+        if len(item) < 6:
+            return
         写.写字节集(bytes.fromhex('508A'))
         写.写整数型(self.user.gamedata.角色id,True)
         写.写短整数型(1,True)

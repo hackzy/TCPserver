@@ -136,7 +136,7 @@ class XiaoZhuShou:
                                     self.小助手id,对话,'逍遙小助手'),self.user)
         elif 点击对话 == '普通鑒定' or 点击对话 == '精緻鑒定' or 点击对话 == '鑒定寶石':
             self.user.fuzhu.鉴定类型 = 点击对话
-            self.user.fuzhu.一键鉴定(self.user)
+            self.user.fuzhu.一键鉴定()
 
         elif 点击对话 == '裝備改造':
             对话 = '請選擇改造的裝備類型：[改造武器/改造武器][改造防具/改造防具]'

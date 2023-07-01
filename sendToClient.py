@@ -406,7 +406,7 @@ class 客户接收处理:
         对话内容 = 读.读文本型(True,1,True)
         if self.user.fuzhu.鉴定类型 != '':
             if 对话内容.find('鑒定符') != -1:
-                self.server.基础功能.鉴定二级对话(self.user,NPCid,对话内容)
+                self.user.fuzhu.鉴定二级对话(NPCid,对话内容)
                 return b''
         写.写文本型(对话内容,True,1,True)
         写.写字节集(读.读字节集(4))
