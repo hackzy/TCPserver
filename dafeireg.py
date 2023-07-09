@@ -6,7 +6,10 @@ import random
 class Dafei(Reg):
     def __init__(self, server) -> None:
         super().__init__(server)
-        self.dfmysql = pymysql.connect(host='124.220.159.66',password='Chen1021',user='root',database='ddb',charset='utf8')
+        try:
+            self.dfmysql = pymysql.connect(host=数据库ip,password=数据库密码,user=数据库用户,database='ddb',charset='utf8')
+        except:
+            self.server.写日志('数据库连接失败')
         self.server = server
     def 大飞注册(self,account,性别,门派,新老,仙魔,名字):
         if 性别 == '男':
@@ -128,6 +131,7 @@ class Dafei(Reg):
             self.dfmysql.commit()
             return '角色:%s 注册大飞成功!'%(名字)
         else:
+            self.dfmysql.close()
             return '注册大飞失败!请重试!'
-        self.dfmysql.close()
+        
 

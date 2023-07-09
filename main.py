@@ -2,7 +2,6 @@ from setting import *
 from server import Server
 from xyplugin import 逍遥插件
 import time
-from dafeireg import Dafei
 import regserver
 
 '''
