@@ -5,6 +5,8 @@ from otherKing import 基础功能
 from gm import GM
 from setting import *
 import os
+from server import Server
+from regserver import Regserver
 class 逍遥插件:
     '''全局管理类，负责保存分配客户与服务端信息'''
     def __init__(self) -> None:
@@ -73,10 +75,11 @@ class 逍遥插件:
                 self.测试.客户句柄.send(buffer)
         except:
             return
-    def getCheckSum(self):
-        
-        return os.popen("checksum.exe top_list401({'00000000000002B4','000000000000068D','0000000000000B7F',})").read()
-    
-        #return os.popen(szTest).read()
-        
-        
+    def starServer(self):
+        for sid in range(len(服务器监听端口)):
+            #启动插件网关,根据线路数量创建服务端，一个线路一个服务端
+            self.server.append(Server(self))  #创建服务器对象
+            self.server[sid].启动服务器(游戏IP,游戏端口[sid],服务器监听地址,服务器监听端口[sid]) #初始化并创建服务端
+        #启动注册网关
+        self.regserver = Regserver(self)
+        self.regserver.启动服务器(服务器监听地址,2877)
