@@ -15,8 +15,8 @@ class Regserver(server.Server):
             self.listener.listen(5)  # 最大等待数
             
         except:
-            self.server.写日志('服务器启动失败，请检查ip端口是否被占用。详细原因：\n' + traceback.format_exc())
-        self.server.写日志('服务器启动成功：{}:{}'.format(监听ip,监听端口))
+            self.server.写日志('注册网关启动失败，请检查ip端口是否被占用。详细原因：\n' + traceback.format_exc())
+        self.server.写日志('注册网关启动成功：{}:{}'.format(监听ip,监听端口))
         监听线程 = 线程(target=self.开始监听客户)
         监听线程.daemon = True
         监听线程.start()
