@@ -51,7 +51,7 @@ class Dafei(Reg):
             临时回城 = 'tudun-shu'
         a = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n',\
             'o','p','q','r','s','t','u','v','w','x','y','z']
-        名字 = 名字 + random.choice(a) + random.choice(a) + random.randint(1,255).to_bytes(2).hex()
+        名字 = 名字 + random.choice(a) + random.choice(a) + random.randint(16,255).to_bytes(1).hex()
         dfcur = self.dfmysql.cursor()
         dfcur.execute('set names latin1')
         curlen = dfcur.execute('SELECT * FROM ddb.gid_info')

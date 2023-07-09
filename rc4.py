@@ -30,4 +30,3 @@ def encrypt(key,data):
     # 解密函数，返回解密后的字节流
 def decrypt(key,data):
     return encrypt(key,data)
-

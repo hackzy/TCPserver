@@ -8,27 +8,27 @@ class Reg:
             self.mysql = pymysql.connect(host=数据库ip,password=数据库密码,user=数据库用户,charset='utf8',database='adb')
         except:
             self.server.写日志('数据库连接失败')
+            return
         
         self.server = server
 
     def accreg(self,账号密码,ip):
-        accpw = 账号密码.split('#o_o')
-        if len(accpw) < 3:
+        if len(账号密码) < 3:
             return '缺少必要信息，请检查后重试！'
         cur = self.mysql.cursor()
-        cur.execute('SELECT * FROM account WHERE account=\'%s\'' % (accpw[0]))
+        cur.execute('SELECT * FROM account WHERE account=\'%s\'' % (账号密码[0]))
         if len(cur.fetchall()) >= 1:
             return '账号已存在，请更换后重试！'
         cur.close()
-        password = self.MD5(accpw[1])
-        password = self.MD5(accpw[0] + password + '20070201')
-        checksum = self.MD5(accpw[0] + password + 注册权限.to_bytes(4).hex() + goldcoin.to_bytes(4).hex() + silvercoin.to_bytes(4).hex() + 'ABCDEF')
+        password = self.MD5(账号密码[1])
+        password = self.MD5(账号密码[0] + password + '20070201')
+        checksum = self.MD5(账号密码[0] + password + 注册权限.to_bytes(4).hex() + goldcoin.to_bytes(4).hex() + silvercoin.to_bytes(4).hex() + 'ABCDEF')
         insert = 'insert into account (account,password,gold_coin,silver_coin,checksum,privilege,blocked_time) values (\'%s\',\'%s\',\'%d\',\'%d\',\'%s\',\'%d\',\'\');'\
-            %(accpw[0],password,goldcoin,silvercoin,checksum,注册权限)
+            %(账号密码[0],password,goldcoin,silvercoin,checksum,注册权限)
         cur = self.mysql.cursor()
         if cur.execute(insert) == 1:
             insert = 'insert into linxz (zh,mm,ip,sj,aqm) values (\'%s\',\'%s\',\'%s\',\'%s\',\'%s\');'\
-            %(accpw[0],accpw[1],ip,str(datetime.datetime.now()),accpw[2])
+            %(账号密码[0],账号密码[1],ip,str(datetime.datetime.now()),账号密码[2])
             cur.execute(insert)
             self.mysql.commit()
             self.mysql.close()

@@ -26,7 +26,6 @@ class Regserver(server.Server):
             '''开始监听客户'''
             client, 客户IP = self.listener.accept()          #阻塞，等待客户端连接
             self.开始接受请求(client,客户IP[0])
-
     def 开始接受请求(self,user,ip):
         数据处理 = RegData(self.server,ip)
         thread = 线程(target=数据处理.请求处理线程,args=(user,))
