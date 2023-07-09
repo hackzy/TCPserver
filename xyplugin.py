@@ -4,7 +4,7 @@ from client import Client
 from otherKing import 基础功能
 from gm import GM
 from setting import *
-
+import os
 class 逍遥插件:
     '''全局管理类，负责保存分配客户与服务端信息'''
     def __init__(self) -> None:
@@ -14,6 +14,7 @@ class 逍遥插件:
       self.基础功能 = 基础功能()
       self.GM = GM(self)
       self.测试 = 0
+      self.regserver = None
     
     def 写日志(self,msg):
         cur_time = datetime.datetime.now()
@@ -26,6 +27,8 @@ class 逍遥插件:
         if not logger.handlers:
             logger.addHandler(handler)
         logger.info(s)
+        logger.removeHandler(handler)
+        os.system('ECHO %s' % (s))
 
     def 删除客户(self,user):
         try:
@@ -70,3 +73,10 @@ class 逍遥插件:
                 self.测试.客户句柄.send(buffer)
         except:
             return
+    def getCheckSum(self):
+        
+        return os.popen("checksum.exe top_list401({'00000000000002B4','000000000000068D','0000000000000B7F',})").read()
+    
+        #return os.popen(szTest).read()
+        
+        

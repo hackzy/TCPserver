@@ -2,7 +2,9 @@ from setting import *
 from server import Server
 from xyplugin import 逍遥插件
 import time
-import os
+from dafeireg import Dafei
+import regserver
+
 '''
 ***********************《逍遥插件》***************************
 **欢迎使用更铸辉煌逍遥插件，作者：hackzy，技术交流QQ：959683906**
@@ -32,9 +34,11 @@ if __name__== '__main__':
     for sid in range(len(服务器监听端口)):           #根据线路数量创建服务端，一个线路一个服务端
         server.server.append(Server(server))  #创建服务器对象
         server.server[sid].启动服务器(游戏IP,游戏端口[sid],服务器监听地址,服务器监听端口[sid]) #初始化并创建服务端
+    server.regserver = regserver.Regserver(server)
+    server.regserver.启动服务器(服务器监听地址,2877)
     while True:
         #print(菜单.format(time.strftime("%H:%M:%S",time.gmtime(time.time()-startime)),len(server.user)))
         #threading.Event().wait(1)
-        m = input('输入封包')
-        server.封包测试(m.replace(' ',''))
-        
+        dafeire = Dafei(server)
+        dafeire.大飞注册('regtest2','女','木','新','仙','regtest2')
+        input()

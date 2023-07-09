@@ -2,7 +2,6 @@ from bufferWrit import 写封包
 from recBuffer import 读封包
 import psutil
 from setting import *
-import time
 class 自动战斗:
     def __init__(self,server,user) -> None:
         self.人物使用技能 = ""
