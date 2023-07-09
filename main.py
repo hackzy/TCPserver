@@ -39,6 +39,4 @@ if __name__== '__main__':
     while True:
         #print(菜单.format(time.strftime("%H:%M:%S",time.gmtime(time.time()-startime)),len(server.user)))
         #threading.Event().wait(1)
-        dafeire = Dafei(server)
-        dafeire.大飞注册('regtest2','女','木','新','仙','regtest2')
         input()
