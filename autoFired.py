@@ -27,12 +27,12 @@ class 自动战斗:
             技能id = 0
             攻击类型 = 1
         elif 技能 == "普通攻擊":
-            攻击id = self.攻击位置id[攻击位置]
+            攻击id = self.攻击位置id[攻击位置]['id']
             技能id = 0
             攻击类型 = 2
         else:
             try:
-                攻击id = self.攻击位置id[攻击位置]
+                攻击id = self.攻击位置id[攻击位置]['id']
                 技能id = self.user.gamedata.技能[id][技能]
                 攻击类型 = 3
                 if 辅助技能.find(技能) != -1:
@@ -71,13 +71,15 @@ class 自动战斗:
             id = 读.读整数型(True)
             读.跳过(6)
             位置 = 读.读短整数型(True)
-            self.攻击位置id.update({位置:id})
+            self.攻击位置id.update({位置:{'id':id}})
             信息数量 = 读.读短整数型(True)
             for b in range(信息数量):
-                读.读短整数型()
+                类型 = 读.读短整数型(True)
                 标识 = 读.读字节型()
                 if 标识 == 4:
-                    读.读文本型(True)
+                    文本 = 读.读文本型(True)
+                    if 类型 == 1:
+                        self.攻击位置id.update({位置:{'名称':文本}})
                 if 标识 == 3:
                     读.读整数型()
             读.跳过(65)
@@ -88,9 +90,20 @@ class 自动战斗:
         读.跳过(12)
         删除id = 读.读整数型(True)
         for a in list(self.攻击位置id.keys()):
-            if self.攻击位置id[a] == 删除id:
+            if self.攻击位置id[a]['id'] == 删除id:
                 del self.攻击位置id[a]
 
+    def 捕捉(self,名称):
+        写 = 写封包()
+        完整包 = 写封包()
+        for 位置 in self.攻击位置id:
+            if self.攻击位置id[位置]['名称'] == 名称:
+                break
+        写.写字节集(bytes.fromhex('1208'))
+        写.写整数型(self.user.gamedata.角色id,True)
+        完整包.写字节集(写.取数据(),True,1)
+        return 完整包.取数据()
+    
     def 补充状态(self):
         血玲珑,法玲珑 = self.user.fuzhu.血蓝位置()
         self.user.fuzhu.人物回复(血玲珑,法玲珑)

@@ -25,6 +25,16 @@ class XiaoZhuShou:
         elif 点击对话 == '錄制指令查詢':
             对话 = '你好，以下是錄制相關指令：\n開始錄制：LZKS\n停止錄制：LZTZ\n開始發送：LZFSKS\n停止發送：LZFSTZ\n單次發送：LZFS\n設置發送延遲：SZLZYS 延時值'
             npcid = 10
+        elif 点击对话 == '自動遇怪':
+            if self.user.fuzhu.是否遇怪:
+                self.user.fuzhu.是否遇怪 = False
+                return
+            self.user.fuzhu.是否遇怪 = True
+            print('自动遇怪启动')
+            遇怪线程 = Thread(target=self.user.fuzhu.自动遇怪线程,name='遇怪线程')
+            遇怪线程.daemon = True
+            遇怪线程.start()
+            return
         self.server.服务器发送(self.server.基础功能.NPC对话包(\
                                     npcid,\
                                     self.小助手id,对话,'逍遙小助手'),self.user)
@@ -123,7 +133,7 @@ class XiaoZhuShou:
 
     def 小助手(self):
         对话 = '您好，歡迎來到獨家逍遙更鑄輝煌，我是逍遙小助手，請問有什么\
-能幫到您：[自動戰斗/自動戰斗][裝備相關/裝備相關][錄制指令查詢/錄制指令查詢]'
+能幫到您：[自動戰斗/自動戰斗][自動遇怪/自動遇怪][裝備相關/裝備相關][錄制指令查詢/錄制指令查詢]'
         self.server.服务器发送(self.server.基础功能.NPC对话包(\
                                     10,\
                                     self.小助手id,对话,'逍遙小助手'),self.user)

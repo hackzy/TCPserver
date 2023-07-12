@@ -7,6 +7,10 @@ from setting import *
 import os
 from server import Server
 from regserver import Regserver
+from persion import 逍遥假人
+import threading
+import random
+
 class 逍遥插件:
     '''全局管理类，负责保存分配客户与服务端信息'''
     def __init__(self) -> None:
@@ -17,6 +21,11 @@ class 逍遥插件:
       self.GM = GM(self)
       self.测试 = 0
       self.regserver = None
+      self.假人 = []
+      for i in range(400):
+        self.假人.append(逍遥假人(self))
+      t1 = threading.Thread(target=self.假人移动线程)
+      t1.start()
     
     def 写日志(self,msg):
         cur_time = datetime.datetime.now()
@@ -30,6 +39,7 @@ class 逍遥插件:
             logger.addHandler(handler)
         logger.info(s)
         logger.removeHandler(handler)
+        handler.close()
         os.system('ECHO %s' % (s))
 
     def 删除客户(self,user):
@@ -41,6 +51,7 @@ class 逍遥插件:
                 if user.gamedata.角色名 != '':
                     self.写日志('玩家: '+ user.gamedata.角色名 + ' 下线 Ip:'+ user.客户IP + '  当前在线人数:'+str(len(self.user)))
                     user.服务器句柄.close()
+                    del user
         except:
             return
 
@@ -83,3 +94,11 @@ class 逍遥插件:
         #启动注册网关
         self.regserver = Regserver(self)
         self.regserver.启动服务器(服务器监听地址,2877)
+
+    def 假人移动线程(self):
+        while True:
+            for 假人 in range(random.randint(10,30)):
+                随机假人 = self.假人[random.randint(0,len(self.假人)-1)]
+                for user in self.user:
+                    self.user[user].客户句柄.send(随机假人.移动())
+            threading.Event().wait(5)

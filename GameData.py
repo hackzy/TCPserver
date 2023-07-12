@@ -30,7 +30,8 @@ class GameData:
         self.pet = {}
         self.参战宠物id = 0
         self.商城数据 = {}
-        self.当前地图 = ''
+        self.当前地图 = []
+        self.当前坐标 = [0,0]
         self.屏蔽垃圾 = True
         
 

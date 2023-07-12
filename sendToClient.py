@@ -190,32 +190,7 @@ class 客户接收处理:
                 except:
                     return
     def 技能读取(self,buffer):
-        '''4d5a00000000000001a97feb0002ff
-        79000500ff000002120ce9818ae8aaaae
-        4b98be8888c00f6000900000066000000
-        0000000000000b0000000500000004000
-        000064e0100020d70617274792f636f6e
-        74726962000000070463617368000002d
-        c0001000100 01080000140a0ce4ba94e8
-        89b2e58589e792b000f600170000023d0
-        000000000000000000c00000005000000
-        0200ffffffff0100020d70617274792f6
-        36f6e747269620000000e046361736800
-        00084600010001000106000004060ce6b
-        395e58a9be8adb7e79bbe00f600230000
-        02420000000000000000000b000000050
-        000000a00ffffffff0100020d70617274
-        792f636f6e74726962000000140463617
-        36800000f5a000100010001090000342a
-        0ce68da8e8baabe58f96e7bea900f6001
-        90000013c0000000000000000000c0000
-        00050000000300ffffffff0100020d706
-        17274792f636f6e747269620000000f04
-        636173680000094c000100010003ed000
-        000060ce9a48ae7b2bee89384e98ab300
-        f600a00000000000000000003c0000000
-        c0000000f0000000000000003a4010002
-        03706f740167578006636173685f310008ec200001000100'''
+        
         读 = 读封包()
         读.置数据(buffer)
         读.跳过(12)
@@ -314,12 +289,27 @@ class 客户接收处理:
         地图id = 读.读整数型(True)
         读.读整数型()
         地图名 = 读.读文本型()
-        self.user.gamedata.当前地图 = 地图名
-        if 地图名 == '幽雅小居' or 地图名 == '豪華居所' \
+        self.user.gamedata.当前地图 = [地图id,地图名]
+        self.user.gamedata.当前坐标[0] = 读.读短整数型(True)
+        self.user.gamedata.当前坐标[1] = 读.读短整数型(True)
+        if 地图名 == '天墉城':
+            if self.user.gamedata.当前坐标[0] <= 375 or self.user.gamedata.当前坐标[0] >= 275 and \
+                self.user.gamedata.当前坐标[1] <= 275 or self.user.gamedata.当前坐标[1] >= 175:
+                t1 = threading.Thread(target=self.假人线程)
+                t1.start()
+        elif 地图名 == '幽雅小居' or 地图名 == '豪華居所' \
             or 地图名 == '花園別墅' or 地图名 == '翡翠莊園':
             self.user.gamedata.屏蔽垃圾 = False
         else:
             self.user.gamedata.屏蔽垃圾 = True
+
+    def 假人线程(self):
+        for a in range(50):
+            temp = self.server.假人[a*50:a*50+50]
+            for i in temp:
+                self.server.服务器发送(i.属性封包(),self.user)
+                self.server.服务器发送(i.显示(),self.user)
+            threading.Event().wait(30)
 
     def 战斗对话(self,buffer):
         '''4D 5A 00 00 00 00 00 00 00 52 FD D1 00\
@@ -485,5 +475,11 @@ class 客户接收处理:
                 if 数据头.hex() == '0001':
                     self.user.gamedata.pet[id].昵称 = 文本
 
-          
+    def 读当前坐标(self,buffer:bytes):
+        recBuffer = 读封包()
+        recBuffer.置数据(buffer)
+        recBuffer.跳过(12)
+        id = recBuffer.读整数型(True)
+        if id == self.user.gamedata.角色id:
+            self.user.gamedata.当前坐标 = [recBuffer.读短整数型(True),recBuffer.读短整数型(True)]
 

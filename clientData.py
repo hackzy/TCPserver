@@ -23,7 +23,7 @@ class 客户端数据处理:
                 continue
             break
 
-    def 接收处理中心(self,buffer):
+    def 接收处理中心(self,buffer:bytes):
         包头 = buffer[10:12]
         if 包头.hex() == "3357":
             buffer = self.客户接收处理.登录线路(buffer)
@@ -77,7 +77,8 @@ class 客户端数据处理:
             if self.user.fuzhu.自动战斗.开关:
                 t = 线程(target=self.user.fuzhu.自动战斗.补充状态())
                 t.start()
-        
+        elif 包头.hex() == '402f':
+            self.客户接收处理.读当前坐标(buffer)
         try:
             if len(buffer) != 0 and self.user.客户句柄 != 0:
                 self.user.客户句柄.send(buffer)

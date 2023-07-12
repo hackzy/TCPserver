@@ -3,7 +3,8 @@ from autoFired import 自动战斗
 from xiaozhushou import XiaoZhuShou
 from bufferWrit import 写封包
 from setting import *
-import threading
+from threading import Event,Thread
+import random
 class fuzhu:
     def __init__(self,server,user) -> None:
         self.luzhi = Luzhi(server,user)
@@ -14,6 +15,7 @@ class fuzhu:
         self.server = server
         self.开始改造 = False
         self.改造类型 = ''
+        self.是否遇怪 = False
 
     def 血蓝位置(self):
         法玲珑 = 0
@@ -91,7 +93,7 @@ class fuzhu:
                 写.写字节集(bytes.fromhex('0006301c'))
                 写.写整数型(back,True)
                 self.user.服务器句柄.send(写.取数据())
-                threading.Event().wait(timeout=0.2)
+                Event().wait(timeout=0.2)
         self.鉴定类型 = ''
 
     def 鉴定二级对话(self,NPCID,对话内容):
@@ -123,7 +125,7 @@ class fuzhu:
         if len(item) < 6:
             数量 = 6 - len(item)
             self.server.基础功能.商城购买道具(self.user,改造道具,数量=数量)
-            threading.Event().wait(0.3)
+            Event().wait(0.3)
             for a in self.user.gamedata.物品数据:
                 if self.user.gamedata.物品数据[a].名称 == 改造道具:
                     item.append(a)
@@ -143,4 +145,50 @@ class fuzhu:
     def 改造线程(self):
         while self.开始改造:
             self.server.客户端发送(self.装备改造(),self.user)
-            threading.Event().wait(0.3)
+            Event().wait(0.3)
+
+    def 自动遇怪(self):
+        '''4D 5A 00 00 15 59 D5 D8 00 32 F0 C2 00 05 06 D0 00 00 5D C0 
+        00 08 00 0F 00 11 00 0E 00 10 00 0D 00 0F 00 0D 00 0E 00 0C 00 0D 00 0B 00 0C 00 0B 00 0B 00 0A 00 0A 00 01 15 59 D5 D8 '''
+        swrite = 写封包()
+        swall = 写封包()
+        swrite.写字节集(bytes.fromhex('F0C2'))
+        swrite.写整数型(self.user.gamedata.角色id,True)
+        swrite.写整数型(self.user.gamedata.当前地图[0],True)
+        swrite.写短整数型(5,True)
+        for i in range(5):
+            x,y = random.randint(-1,1),random.randint(-1,1)
+            if x == 0 and y == 0:
+                x == 1
+            x += self.user.gamedata.当前坐标[0]
+            y += self.user.gamedata.当前坐标[1]
+            swrite.写短整数型(x,True)
+            swrite.写短整数型(y,True)
+            self.user.gamedata.当前坐标[0] = x
+            self.user.gamedata.当前坐标[1] = y
+        ck = random.randint(1,5)
+        swrite.写短整数型(ck,True)
+        swrite.写整数型(0,True)
+        swall.写字节集(组包包头)
+        swall.写字节集(swrite.取数据(),True,1)
+        self.server.客户端发送(swall.取数据(),self.user)
+        print(swall.取数据().hex())
+        cwrite = 写封包()
+        cwall = 写封包()
+        cwrite.写字节集(bytes.fromhex('402F'))
+        cwrite.写整数型(self.user.gamedata.角色id,True)
+        cwrite.写短整数型(self.user.gamedata.当前坐标[0],True)
+        cwrite.写短整数型(self.user.gamedata.当前坐标[1],True)
+        cwrite.写短整数型(ck,True)
+        cwall.写字节集(组包包头)
+        cwall.写字节集(cwrite.取数据(),True,1)
+        self.server.服务器发送(cwall.取数据(),self.user)
+        print(cwall.取数据().hex())
+        print('遇怪封包')
+
+    def 自动遇怪线程(self):
+        print('遇怪线程启动')
+        while self.是否遇怪:
+            print('循环遇怪中')
+            self.自动遇怪()
+            Event().wait(5)
