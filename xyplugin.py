@@ -14,18 +14,30 @@ import random
 class 逍遥插件:
     '''全局管理类，负责保存分配客户与服务端信息'''
     def __init__(self) -> None:
-      self.server = []
-      self.sid = 0
-      self.user = {}
-      self.基础功能 = 基础功能()
-      self.GM = GM(self)
-      self.测试 = 0
-      self.regserver = None
-      self.假人 = []
-      for i in range(400):
-        self.假人.append(逍遥假人(self))
-      t1 = threading.Thread(target=self.假人移动线程)
-      t1.start()
+        self.server = []
+        self.sid = 0
+        self.user = {}
+        self.基础功能 = 基础功能()
+        self.GM = GM(self)
+        self.测试 = 0
+        self.regserver = None
+        self.假人 = []
+        self.擂台假人 = []
+        self.商会假人 = []
+        self.拍卖行假人 = []
+        self.活动大使假人 = []
+        for i in range(400):
+            self.假人.append(逍遥假人(self,'所有'))
+        for i in range(50):
+            self.擂台假人.append(逍遥假人(self,'擂台'))
+        for i in range(50):
+            self.商会假人.append(逍遥假人(self,'商会'))
+        for i in range(50):
+            self.拍卖行假人.append(逍遥假人(self,'拍卖'))
+        for i in range(50):
+            self.活动大使假人.append(逍遥假人(self,'活动大使'))
+        移动线程 = threading.Thread(target=self.假人移动线程)
+        移动线程.start()
     
     def 写日志(self,msg):
         cur_time = datetime.datetime.now()
@@ -97,8 +109,19 @@ class 逍遥插件:
 
     def 假人移动线程(self):
         while True:
-            for 假人 in range(random.randint(10,30)):
+            for 假人 in range(random.randint(30,60)):
                 随机假人 = self.假人[random.randint(0,len(self.假人)-1)]
-                for user in self.user:
-                    self.user[user].客户句柄.send(随机假人.移动())
-            threading.Event().wait(5)
+                try:
+                    for user in self.user:
+                        
+                            if self.user[user].gamedata.当前地图[1] == '天墉城':
+                                self.user[user].客户句柄.send(随机假人.移动())
+                                if 随机假人.x >= self.user[user].gamedata.当前坐标[0] + 80 or \
+                                    随机假人.y >= self.user[user].gamedata.当前坐标[1] + 80 or \
+                                        随机假人.x <= self.user[user].gamedata.当前坐标[0] - 80 or \
+                                            随机假人.y <= self.user[user].gamedata.当前坐标[1] - 80:
+                                    self.user[user].客户句柄.send(随机假人.删除假人())
+                                    随机假人.重置假人(self.user[user])
+                except:
+                    continue
+            threading.Event().wait(1)
