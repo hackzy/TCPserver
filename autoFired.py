@@ -90,9 +90,11 @@ class 自动战斗:
         读.跳过(12)
         删除id = 读.读整数型(True)
         for a in list(self.攻击位置id.keys()):
-            if self.攻击位置id[a]['id'] == 删除id:
-                del self.攻击位置id[a]
-
+            try:
+                if self.攻击位置id[a]['id'] == 删除id:
+                    del self.攻击位置id[a]
+            except:
+                continue
     def 捕捉(self,名称):
         写 = 写封包()
         完整包 = 写封包()

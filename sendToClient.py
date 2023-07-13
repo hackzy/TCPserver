@@ -330,7 +330,9 @@ class 客户接收处理:
         else:
             self.user.gamedata.屏蔽垃圾 = True
             if self.user.gamedata.上一地图 == '天墉城':
-                for 假人 in self.server.假人:
+                删除假人 = threading.Thread(target=self.假人删除线程)
+                删除假人.start()
+                '''for 假人 in self.server.假人:
                     self.server.服务器发送(假人.删除假人(),self.user)
                 threading.Event().wait(1)
                 if self.假人擂台:
@@ -344,7 +346,7 @@ class 客户接收处理:
                 if self.假人擂台:
                     for 拍卖行假人 in self.server.拍卖行假人:
                         self.server.服务器发送(拍卖行假人.删除假人(),self.user)
-            
+            '''
     def 假人线程(self,假人类型):
         for a in range(50):
             if 假人类型 == '所有':
@@ -361,6 +363,25 @@ class 客户接收处理:
                 self.server.服务器发送(i.属性封包(),self.user)
                 self.server.服务器发送(i.显示(),self.user)
             #threading.Event().wait(30)
+
+    def 假人删除线程(self):
+        for 假人 in self.server.假人:
+            self.server.服务器发送(假人.删除假人(),self.user)
+        if self.假人擂台:
+            for 擂台假人 in self.server.擂台假人:
+                self.server.服务器发送(擂台假人.删除假人(),self.user)
+            threading.Event().wait(2)
+        if self.假人商会:
+            for 商会假人 in self.server.商会假人:
+                self.server.服务器发送(商会假人.删除假人(),self.user)
+            threading.Event().wait(2)
+            for 活动大使假人 in self.server.活动大使假人:
+                self.server.服务器发送(活动大使假人.删除假人(),self.user)
+            threading.Event().wait(2)
+        if self.假人擂台:
+            for 拍卖行假人 in self.server.拍卖行假人:
+                self.server.服务器发送(拍卖行假人.删除假人(),self.user)
+            threading.Event().wait(2)
 
     def 战斗对话(self,buffer):
         读 = 读封包()

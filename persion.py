@@ -81,7 +81,7 @@ class 逍遥假人:
                 self.显示形象 = self.装备形象
                 self.变身形象 = self.装备形象
                 if self.相性 == '2' and self.性别 == '6' or self.相性 == '3' and self.性别 == '6' or self.相性 == '5' and self.性别 == '6' :
-                    self.形象类型1 = 1
+                    self.形象类型1 = 5
         if self.是否飞行 == 2:
             self.飞行法宝 = random.choice(假人飞行法宝)
         else:
