@@ -34,7 +34,11 @@ class GameData:
         self.当前坐标 = [0,0]
         self.屏蔽垃圾 = True
         self.上一地图 = ''
-        
+        self.假人所有 = False
+        self.假人擂台 = False
+        self.假人商会 = False
+        self.假人拍卖行 = False
+
 
 
 

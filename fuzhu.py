@@ -15,7 +15,6 @@ class fuzhu:
         self.server = server
         self.开始改造 = False
         self.改造类型 = ''
-        self.是否遇怪 = False
 
     def 血蓝位置(self):
         法玲珑 = 0
@@ -147,10 +146,8 @@ class fuzhu:
             self.server.客户端发送(self.装备改造(),self.user)
             Event().wait(0.3)
 
-    def 自动遇怪(self):
-        '''4D 5A 00 00 15 59 D5 D8 00 32 F0 C2 00 05 06 D0 00 00 5D C0 
-        00 08 00 0F 00 11 00 0E 00 10 00 0D 00 0F 00 0D 00 0E 00 0C 00 0D 00 0B 00 0C 00 0B 00 0B 00 0A 00 0A 00 01 15 59 D5 D8 '''
-        swrite = 写封包()
+'''    def 自动遇怪(self):
+        
         swall = 写封包()
         swrite.写字节集(bytes.fromhex('F0C2'))
         swrite.写整数型(self.user.gamedata.角色id,True)
@@ -191,4 +188,4 @@ class fuzhu:
         while self.是否遇怪:
             print('循环遇怪中')
             self.自动遇怪()
-            Event().wait(5)
+            Event().wait(5)'''

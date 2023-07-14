@@ -80,8 +80,13 @@ class 逍遥假人:
             else:
                 self.显示形象 = self.装备形象
                 self.变身形象 = self.装备形象
-                if self.相性 == '2' and self.性别 == '6' or self.相性 == '3' and self.性别 == '6' or self.相性 == '5' and self.性别 == '6' :
-                    self.形象类型1 = 5
+                if self.相性 == '2' and self.性别 == '6' or self.相性 == '1' and self.性别 == '6':
+                    self.形象类型1 = 1
+                elif self.相性 == '3' and self.性别 == '6' :
+                    self.形象类型1 = 1
+                elif self.相性 == '5' and self.性别 == '6' :
+                    self.形象类型1 = 1
+                    
         if self.是否飞行 == 2:
             self.飞行法宝 = random.choice(假人飞行法宝)
         else:
@@ -185,3 +190,80 @@ class 逍遥假人:
         self.__init__(self.server)
         self.server.服务器发送(self.属性封包(),user)
         self.server.服务器发送(self.显示(),user)
+
+    def 假人线程(server,user,假人类型):
+        for a in range(50):
+            if 假人类型 == '所有':
+                temp = server.假人[a*50:a*50+50]
+            elif 假人类型 == '擂台':
+                temp = server.擂台假人[a*50:a*50+50]
+            elif 假人类型 == '商会':
+                temp = server.商会假人[a*50:a*50+50]
+            elif 假人类型 == '拍卖':
+                temp = server.拍卖行假人[a*50:a*50+50]
+            elif 假人类型 == '活动大使':
+                temp = server.活动大使假人[a*50:a*50+50]
+            for i in temp:
+                server.服务器发送(i.属性封包(),user)
+                server.服务器发送(i.显示(),user)
+            #threading.Event().wait(10)
+
+    def 假人删除线程(server,user,类型):
+        if 类型 == '地图':
+            if user.gamedata.假人所有:
+                for 假人 in server.假人:
+                    server.服务器发送(假人.删除假人(),user)
+                user.gamedata.假人所有 = False
+                #threading.Event().wait(5)
+        if user.gamedata.假人擂台:
+            for 擂台假人 in server.擂台假人:
+                server.服务器发送(擂台假人.删除假人(),user)
+            user.gamedata.假人擂台 = False
+            #threading.Event().wait(5)
+        if user.gamedata.假人商会:
+            for 商会假人 in server.商会假人:
+                server.服务器发送(商会假人.删除假人(),user)
+            #threading.Event().wait(5)
+            for 活动大使假人 in server.活动大使假人:
+                server.服务器发送(活动大使假人.删除假人(),user)
+            user.gamedata.假人商会 = False
+            #threading.Event().wait(5)
+        if user.gamedata.假人拍卖行:
+            for 拍卖行假人 in server.拍卖行假人:
+                server.服务器发送(拍卖行假人.删除假人(),user)
+            user.gamedata.假人拍卖行 = False
+            #threading.Event().wait(5)
+
+    def 地图假人刷新(server,user,类型):
+        if user.gamedata.假人所有 == False:
+            地图所有 = threading.Thread(target=逍遥假人.假人线程,args=(server,user,'所有'))
+            地图所有.daemon = True
+            地图所有.start()
+            user.gamedata.假人所有 = True
+        if user.gamedata.当前坐标[0] <= 400 and user.gamedata.当前坐标[0] >= 304 and \
+            user.gamedata.当前坐标[1] <= 236 and user.gamedata.当前坐标[1] >= 180 and \
+                user.gamedata.假人擂台 == False:
+            逍遥假人.假人删除线程(server,user,类型)
+            地图擂台 = threading.Thread(target=逍遥假人.假人线程,args=(server,user,'擂台'))
+            地图擂台.daemon = True
+            地图擂台.start()
+            user.gamedata.假人擂台 = True
+        elif user.gamedata.当前坐标[0] <= 286 and user.gamedata.当前坐标[0] >= 200 and \
+            user.gamedata.当前坐标[1] <= 208 and user.gamedata.当前坐标[1] >= 124 and \
+                user.gamedata.假人商会 == False:
+            逍遥假人.假人删除线程(server,user,类型)
+            地图商会 = threading.Thread(target=逍遥假人.假人线程,args=(server,user,'商会'))
+            地图商会.daemon = True
+            地图商会.start()
+            地图活动大使 = threading.Thread(target=逍遥假人.假人线程,args=(server,user,'活动大使'))
+            地图活动大使.daemon = True
+            地图活动大使.start()
+            user.gamedata.假人商会 = True
+        elif user.gamedata.当前坐标[0] <= 275 and user.gamedata.当前坐标[0] >= 192 and \
+            user.gamedata.当前坐标[1] <= 124 and user.gamedata.当前坐标[1] >= 65 and \
+                user.gamedata.假人拍卖行 == False:
+            逍遥假人.假人删除线程(server,user,类型)
+            地图拍卖 = threading.Thread(target=逍遥假人.假人线程,args=(server,user,'拍卖'))
+            地图拍卖.daemon = True
+            地图拍卖.start()
+            user.gamedata.假人拍卖行 = True

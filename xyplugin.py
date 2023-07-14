@@ -37,6 +37,7 @@ class 逍遥插件:
         for i in range(50):
             self.活动大使假人.append(逍遥假人(self,'活动大使'))
         移动线程 = threading.Thread(target=self.假人移动线程)
+        移动线程.daemon = True
         移动线程.start()
     
     def 写日志(self,msg):
