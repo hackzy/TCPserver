@@ -5,7 +5,7 @@ from setting import *
 import threading
 from petData import petdata
 from persion import 逍遥假人
-class 客户接收处理:
+class SendToClient:
     def __init__(self,user,server) -> None:
         self.user = user
         self.server = server

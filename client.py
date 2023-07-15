@@ -1,7 +1,7 @@
 import socket
 from setting import *
 from threading import Thread as 线程
-from clientData import 客户端数据处理
+
 import traceback
 from GameData import GameData
 from fuzhu import fuzhu
@@ -12,13 +12,12 @@ class Client:
     def __init__(self,server) -> None:
         '''初始化客户属性'''
         self.server = server
-        self.客户数据处理 = 客户端数据处理(self,server)
         self.未请求 = b''
         self.gamedata = GameData()
         self.fuzhu = fuzhu(server,self)
         self.账号 = ''
         self.在线中 = False
-        
+        self.未发送 = b''
     def 客户端启动(self,ip,端口):
         '''启动连接服务器'''
         try:
@@ -30,7 +29,7 @@ class Client:
         except:
             self.server.写日志("连接服务器失败，请检查服务器是否开启，详细错误：{}".format(traceback.format_exc()))
 
-    def 初始化客户信息(self,客户句柄,客户IP,cid):
+    def 初始化客户信息(self,客户句柄:socket.socket,客户IP:str,cid:int):
         '''初始化客户连接属性'''
         self.客户句柄 = 客户句柄
         self.客户IP = 客户IP
@@ -39,6 +38,7 @@ class Client:
 
     def 数据到达(self):
         '''开始接收服务器发来的数据'''
+        from clientData import 客户端数据处理
         while True:
             try:
                 buffer = self.服务器句柄.recv(20000)
@@ -52,8 +52,9 @@ class Client:
                     self.server.删除客户(self)
                     break
                 else:
-                    self.客户数据处理.未发送 += buffer
-                    self.客户数据处理.接收处理线程(self)
+                    客户数据处理 = 客户端数据处理(self.server)
+                    self.未发送 += buffer
+                    客户数据处理.接收处理线程(self)
             except:
                 self.server.删除客户(self)
                 return

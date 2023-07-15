@@ -1,6 +1,5 @@
 import datetime
 import logging
-from client import Client
 from otherKing import 基础功能
 from gm import GM
 from setting import *
@@ -74,6 +73,7 @@ class 逍遥插件:
                 return a
 
     def 客户连接(self,client,ip,sid):
+        from client import Client
         cid = self.分配空闲客户()
         self.user.update({cid:Client(self)})
         self.user[cid].初始化客户信息(client,ip,cid)  #保存客户属性
@@ -121,7 +121,6 @@ class 逍遥插件:
                                     随机假人.y >= self.user[user].gamedata.当前坐标[1] + 80 or \
                                         随机假人.x <= self.user[user].gamedata.当前坐标[0] - 80 or \
                                             随机假人.y <= self.user[user].gamedata.当前坐标[1] - 80:
-                                    self.user[user].客户句柄.send(随机假人.删除假人())
                                     随机假人.重置假人(self.user[user])
                 except:
                     continue

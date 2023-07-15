@@ -4,14 +4,13 @@ import datetime
 from setting import *
 class Reg:
     def __init__(self,server) -> None:
+        self.server = server
         try:
             self.mysql = pymysql.connect(host=数据库ip,password=数据库密码,user=数据库用户,charset='utf8',database='adb')
         except:
             self.server.写日志('数据库连接失败')
             return
         
-        self.server = server
-
     def accreg(self,账号密码,ip):
         if len(账号密码) < 3:
             return '缺少必要信息，请检查后重试！'

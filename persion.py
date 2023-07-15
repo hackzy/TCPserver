@@ -185,11 +185,12 @@ class 逍遥假人:
         allWrit.写字节集(组包包头)
         allWrit.写字节集(writ.取数据(),True,1)
         return allWrit.取数据()
-    
+
     def 重置假人(self,user):
         self.__init__(self.server)
         self.server.服务器发送(self.属性封包(),user)
         self.server.服务器发送(self.显示(),user)
+        self.server.服务器发送(self.移动(),user)
 
     def 假人线程(server,user,假人类型):
         for a in range(50):

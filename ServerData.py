@@ -10,7 +10,7 @@ class 服务器数据处理:
         # 接收数据
         try:
             while True:
-                buffer = user.客户句柄.recv(500)  # 我们这里只做一个简单的服务端框架，不去做分包处理。所以每个数据包不要大于2048
+                buffer = user.客户句柄.recv(500)  # 
                 if len(buffer) > 500:
                     buffer = b''
                     self.server.写日志("客户数据过大")
@@ -45,12 +45,10 @@ class 服务器数据处理:
     def 请求处理中心(self,buffer,user):
         包头 = buffer[10:12]
         请求处理 = 客户请求处理(user,self.server)
-
         if user.fuzhu.luzhi.是否开启:
             if 包头.hex() != '10b2' and 包头.hex() != 'f0c2'\
                                     and 包头.hex() != '4062':
                 user.fuzhu.luzhi.录制封包(buffer)
-
         if 包头.hex() == '4062':
             buffer = 请求处理.喊话(buffer)
         elif 包头.hex() == '3038':
