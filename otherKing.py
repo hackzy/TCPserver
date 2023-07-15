@@ -30,7 +30,23 @@ class 基础功能:
         完整包.写字节集(组包包头)
         完整包.写字节集(写.取数据(),True,1,True)
         return 完整包.取数据()
-
+    
+    def 输入框(self,ID:int,形象ID:int,内容:str,名字:str):
+        write = 写封包()
+        allWrite = 写封包()
+        write.写字节集(bytes.fromhex('2037'))
+        write.写整数型(ID,True)
+        write.写整数型(形象ID,True)
+        write.写短整数型(1,True)
+        内容 = '[@請輸入/!請輸入#prompt:' + 内容 + ']'
+        write.写文本型(内容,True,1,True)
+        write.写整数型(0,True)
+        write.写文本型(名字,True)
+        allWrite.写字节集(组包包头)
+        allWrite.写字节集(write.取数据(),True,1)
+        print(allWrite.取数据().hex())
+        return allWrite.取数据()
+    
     def NPC对话包(self,ID,形象ID,对话内容,名字):
         写 = 写封包()
         完整包 = 写封包()
@@ -68,7 +84,6 @@ class 基础功能:
         return 完整包.取数据()
     
     def 系统邮件(self,内容):
-        
         写 = 写封包()
         完整包 = 写封包()
         写.写字节集(bytes.fromhex('3fff'))

@@ -2,6 +2,9 @@
 import time
 from threading import Thread
 class Luzhi:
+    
+    #from client import Client
+    #from xyplugin import 逍遥插件
     def __init__(self,server,user) -> None:
         self.是否开启 = False
         self.封包 = []
@@ -86,3 +89,24 @@ class Luzhi:
         except:
             self.server.服务器发送(self.server.基础功能.左下角提示(
                     "延時設置失敗！設定範圍：100-1000"),self.user)
+            
+    def 保存录制(self,名称):
+        if len(self.封包) == 0:
+            return False
+        self.user.fuzhu.录制保存.update({名称:self.封包})
+        self.server.服务器发送(self.server.基础功能.中心提示("保存成功!"),self.user)
+        self.server.服务器发送(self.server.基础功能.左下角提示("#G錄制保存成功!當前存有錄制:#Y%s#n"%(list(self.user.fuzhu.录制保存.keys()))),self.user)
+        return True
+    def 设置封包(self,名称):
+        try:
+            self.封包 = self.user.fuzhu.录制保存[名称]
+            self.server.服务器发送(self.server.基础功能.中心提示("设置成功,当前录制:%s!"%(名称)),self.user)
+            self.server.服务器发送(self.server.基础功能.左下角提示("设置成功,当前录制:%s!"%(名称),self.user))
+        except:
+            self.server.服务器发送(self.server.基础功能.中心提示("设置失败,录制不存在!"),self.user)
+            self.server.服务器发送(self.server.基础功能.左下角提示("#R设置失败,录制不存在!",self.user))
+    def 删除录制(self,名称):
+        try:
+            self.user.fuzhu.录制保存.pop(名称)
+        except:
+            pass

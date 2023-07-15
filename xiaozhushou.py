@@ -1,6 +1,7 @@
 from threading import Thread
 
 class XiaoZhuShou:
+    
     def __init__(self,server,user) -> None:
         self.server = server
         self.user = user
@@ -22,11 +23,12 @@ class XiaoZhuShou:
         elif 点击对话 == '裝備相關':
             对话 = '請選擇裝備功能:[一鍵鑒定/一鍵鑒定][裝備改造/裝備改造]'
             npcid = 3
-        elif 点击对话 == '錄制指令查詢':
-            对话 = '你好，以下是錄制相關指令：\n開始錄制：LZKS\n停止錄制：LZTZ\n開始發送：LZFSKS\n停止發送：LZFSTZ\n單次發送：LZFS\n設置發送延遲：SZLZYS 延時值'
-            npcid = 10
-        self.server.服务器发送(self.server.基础功能.NPC对话包(\
-                                    npcid,\
+        elif 点击对话 == '錄制相關':
+            对话 = '請選擇錄制功能：[保存錄制/保存錄制][刪除錄制/刪除錄制][查詢已保存錄制/查詢已保存錄制][錄制指令查詢/錄制指令查詢]'
+            npcid = 4
+        
+        self.server.服务器发送(self.server.基础功能.NPC对话包(
+                                    npcid,
                                     self.小助手id,对话,'逍遙小助手'),self.user)
     
     def 助手_自动战斗(self,点击对话):
@@ -123,7 +125,7 @@ class XiaoZhuShou:
 
     def 小助手(self):
         对话 = '您好，歡迎來到獨家逍遙更鑄輝煌，我是逍遙小助手，請問有什么\
-能幫到您：[自動戰斗/自動戰斗][裝備相關/裝備相關][錄制指令查詢/錄制指令查詢]'
+能幫到您：[自動戰斗/自動戰斗][裝備相關/裝備相關][錄制相關/錄制相關]'
         self.server.服务器发送(self.server.基础功能.NPC对话包(\
                                     10,\
                                     self.小助手id,对话,'逍遙小助手'),self.user)
@@ -167,3 +169,19 @@ class XiaoZhuShou:
                 buffer = self.server.基础功能.中心提示('#Y改造已停止!') + self.server.基础功能.左下角提示('#Y改造已停止!')
                 self.user.fuzhu.改造类型 = ''
             self.server.服务器发送(buffer,self.user)
+
+    def 录制相关(self,对话,填写内容 = ''):
+        if 对话 == "保存錄制":
+            self.server.服务器发送(self.server.基础功能.输入框(4,self.小助手id,'請輸入保存的名字:','逍遙小助手'),self.user)
+            return
+        elif 对话 == '!請輸入':
+            self.user.fuzhu.luzhi.保存录制(填写内容)
+            for bc in self.user.fuzhu.录制保存:
+                所有录制 = ''
+                所有录制 = bc + 所有录制 + "\n"
+            对话 = '錄制保存成功!當前存有錄制:\n#Y%s#n'%(所有录制)
+        elif 对话 == '錄制指令查詢':
+            对话 = '你好，以下是錄制相關指令：\n開始錄制：LZKS\n停止錄制：LZTZ\n開始發送：LZFSKS\n停止發送：LZFSTZ\n單次發送：LZFS\n設置發送延遲：SZLZYS 延時值'
+        
+        self.server.服务器发送(self.server.基础功能.NPC对话包(4,self.小助手id,对话,'逍遙小助手'),self.user)
+        
