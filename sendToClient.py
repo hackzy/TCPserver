@@ -295,7 +295,7 @@ class SendToClient:
         self.user.gamedata.当前坐标[0] = 读.读短整数型(True)
         self.user.gamedata.当前坐标[1] = 读.读短整数型(True)
         if 地图名 == '天墉城':
-            刷新假人 = threading.Thread(target=逍遥假人.地图假人刷新,args=(self.server,self.user,'坐标'))
+            刷新假人 = threading.Thread(target=self.server.假人.地图假人刷新,args=(self.server,self.user,'坐标'))
             刷新假人.daemon = True
             刷新假人.start()
         elif 地图名 == '幽雅小居' or 地图名 == '豪華居所' \
@@ -487,7 +487,7 @@ class SendToClient:
         if id == self.user.gamedata.角色id:
             self.user.gamedata.当前坐标 = [recBuffer.读短整数型(True),recBuffer.读短整数型(True)]
             if self.user.gamedata.当前地图[1] == '天墉城':
-                假人刷新 = threading.Thread(target=逍遥假人.地图假人刷新,args=(self.server,self.user,'坐标'))
+                假人刷新 = threading.Thread(target=self.server.假人.地图假人刷新,args=(self.server,self.user,'坐标'))
                 假人刷新.daemon = True
                 假人刷新.start()
 

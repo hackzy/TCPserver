@@ -6,9 +6,7 @@ from setting import *
 import os
 from server import Server
 from regserver import Regserver
-from persion import 逍遥假人
-import threading
-import random
+from persion import 假人管理
 from saveData import 存档
 class 逍遥插件:
     '''全局管理类，负责保存分配客户与服务端信息'''
@@ -20,24 +18,9 @@ class 逍遥插件:
         self.GM = GM(self)
         self.测试 = 0
         self.regserver = None
-        self.假人 = []
-        self.擂台假人 = []
-        self.商会假人 = []
-        self.拍卖行假人 = []
-        self.活动大使假人 = []
-        for i in range(400):
-            self.假人.append(逍遥假人(self,'所有'))
-        for i in range(50):
-            self.擂台假人.append(逍遥假人(self,'擂台'))
-        for i in range(50):
-            self.商会假人.append(逍遥假人(self,'商会'))
-        for i in range(50):
-            self.拍卖行假人.append(逍遥假人(self,'拍卖'))
-        for i in range(50):
-            self.活动大使假人.append(逍遥假人(self,'活动大使'))
-        移动线程 = threading.Thread(target=self.假人移动线程)
-        移动线程.daemon = True
-        移动线程.start()
+        self.假人 = 假人管理()
+        self.假人.启动假人(self,self.user)
+        
     
     def 写日志(self,msg):
         cur_time = datetime.datetime.now()
@@ -80,6 +63,8 @@ class 逍遥插件:
         self.user.update({cid:Client(self)})
         self.user[cid].初始化客户信息(client,ip,cid)  #保存客户属性
         self.user[cid].客户端启动(sid.游戏ip,sid.游戏端口) #客户连接，启动连接服务端
+        if sid.游戏端口 == 游戏端口[0]:
+            self.服务器发送(self.基础功能.中心提示('#Y歡迎來到更鑄輝煌\n#B游戲內打字請用打字工具\n#R本服內置輔助\n#G使用玄幻術即可打開內置輔助功能\n'),self.user[cid])
         sid.开始接受请求(self.user[cid])           #服务器启动接受客户发来的数据
 
     def 服务器发送(self,buffer,user):
@@ -110,20 +95,4 @@ class 逍遥插件:
         self.regserver = Regserver(self)
         self.regserver.启动服务器(服务器监听地址,2877)
 
-    def 假人移动线程(self):
-        while True:
-            for 假人 in range(random.randint(30,60)):
-                随机假人 = self.假人[random.randint(0,len(self.假人)-1)]
-                try:
-                    for user in self.user:
-                        
-                            if self.user[user].gamedata.当前地图[1] == '天墉城':
-                                self.user[user].客户句柄.send(随机假人.移动())
-                                if 随机假人.x >= self.user[user].gamedata.当前坐标[0] + 80 or \
-                                    随机假人.y >= self.user[user].gamedata.当前坐标[1] + 80 or \
-                                        随机假人.x <= self.user[user].gamedata.当前坐标[0] - 80 or \
-                                            随机假人.y <= self.user[user].gamedata.当前坐标[1] - 80:
-                                    随机假人.重置假人(self.user[user])
-                except:
-                    continue
-            threading.Event().wait(1)
+    

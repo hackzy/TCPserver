@@ -192,52 +192,95 @@ class 逍遥假人:
         self.server.服务器发送(self.显示(),user)
         self.server.服务器发送(self.移动(),user)
 
-    def 假人线程(server,user,假人类型):
+    
+
+    def 假人删除线程(server,user,类型):
+        if 类型 == '地图':
+            if user.gamedata.假人所有:
+                for 假人 in server.假人.假人:
+                    server.服务器发送(假人.删除假人(),user)
+                user.gamedata.假人所有 = False
+                #threading.Event().wait(5)
+        if user.gamedata.假人擂台:
+            for 擂台假人 in server.假人.擂台假人:
+                server.服务器发送(擂台假人.删除假人(),user)
+            user.gamedata.假人擂台 = False
+            #threading.Event().wait(5)
+        if user.gamedata.假人商会:
+            for 商会假人 in server.假人.商会假人:
+                server.服务器发送(商会假人.删除假人(),user)
+            #threading.Event().wait(5)
+            for 活动大使假人 in server.假人.活动大使假人:
+                server.服务器发送(活动大使假人.删除假人(),user)
+            user.gamedata.假人商会 = False
+            #threading.Event().wait(5)
+        if user.gamedata.假人拍卖行:
+            for 拍卖行假人 in server.假人.拍卖行假人:
+                server.服务器发送(拍卖行假人.删除假人(),user)
+            user.gamedata.假人拍卖行 = False
+            #threading.Event().wait(5)
+
+    
+class 假人管理:
+    def __init__(self) -> None:
+        self.假人 = []
+        self.擂台假人 = []
+        self.商会假人 = []
+        self.拍卖行假人 = []
+        self.活动大使假人 = []
+
+    def 启动假人(self,server,alluser):
+        for i in range(400):
+            self.假人.append(逍遥假人(self,'所有'))
+        for i in range(50):
+            self.擂台假人.append(逍遥假人(self,'擂台'))
+        for i in range(50):
+            self.商会假人.append(逍遥假人(self,'商会'))
+        for i in range(50):
+            self.拍卖行假人.append(逍遥假人(self,'拍卖'))
+        for i in range(50):
+            self.活动大使假人.append(逍遥假人(self,'活动大使'))
+        移动线程 = threading.Thread(target=self.假人移动线程,args=(alluser,))
+        移动线程.daemon = True
+        移动线程.start()
+
+    def 假人移动线程(self,alluser):
+        while True:
+            for 假人 in range(random.randint(30,60)):
+                随机假人 = self.假人[random.randint(0,len(self.假人)-1)]
+                try:
+                    for user in alluser:
+                            if alluser[user].gamedata.当前地图[1] == '天墉城':
+                                alluser[user].客户句柄.send(随机假人.移动())
+                                if 随机假人.x >= alluser[user].gamedata.当前坐标[0] + 80 or \
+                                    随机假人.y >= alluser[user].gamedata.当前坐标[1] + 80 or \
+                                        随机假人.x <= alluser[user].gamedata.当前坐标[0] - 80 or \
+                                            随机假人.y <= alluser[user].gamedata.当前坐标[1] - 80:
+                                    随机假人.重置假人(self.user[user])
+                except:
+                    continue
+            threading.Event().wait(1)
+
+    def 假人线程(self,server,user,假人类型):
         for a in range(50):
             if 假人类型 == '所有':
-                temp = server.假人[a*50:a*50+50]
+                temp = self.假人[a*50:a*50+50]
             elif 假人类型 == '擂台':
-                temp = server.擂台假人[a*50:a*50+50]
+                temp = self.擂台假人[a*50:a*50+50]
             elif 假人类型 == '商会':
-                temp = server.商会假人[a*50:a*50+50]
+                temp = self.商会假人[a*50:a*50+50]
             elif 假人类型 == '拍卖':
-                temp = server.拍卖行假人[a*50:a*50+50]
+                temp = self.拍卖行假人[a*50:a*50+50]
             elif 假人类型 == '活动大使':
-                temp = server.活动大使假人[a*50:a*50+50]
+                temp = self.活动大使假人[a*50:a*50+50]
             for i in temp:
                 server.服务器发送(i.属性封包(),user)
                 server.服务器发送(i.显示(),user)
             #threading.Event().wait(10)
 
-    def 假人删除线程(server,user,类型):
-        if 类型 == '地图':
-            if user.gamedata.假人所有:
-                for 假人 in server.假人:
-                    server.服务器发送(假人.删除假人(),user)
-                user.gamedata.假人所有 = False
-                #threading.Event().wait(5)
-        if user.gamedata.假人擂台:
-            for 擂台假人 in server.擂台假人:
-                server.服务器发送(擂台假人.删除假人(),user)
-            user.gamedata.假人擂台 = False
-            #threading.Event().wait(5)
-        if user.gamedata.假人商会:
-            for 商会假人 in server.商会假人:
-                server.服务器发送(商会假人.删除假人(),user)
-            #threading.Event().wait(5)
-            for 活动大使假人 in server.活动大使假人:
-                server.服务器发送(活动大使假人.删除假人(),user)
-            user.gamedata.假人商会 = False
-            #threading.Event().wait(5)
-        if user.gamedata.假人拍卖行:
-            for 拍卖行假人 in server.拍卖行假人:
-                server.服务器发送(拍卖行假人.删除假人(),user)
-            user.gamedata.假人拍卖行 = False
-            #threading.Event().wait(5)
-
-    def 地图假人刷新(server,user,类型):
+    def 地图假人刷新(self,server,user,类型):
         if user.gamedata.假人所有 == False:
-            地图所有 = threading.Thread(target=逍遥假人.假人线程,args=(server,user,'所有'))
+            地图所有 = threading.Thread(target=server.假人.假人线程,args=(server,user,'所有'))
             地图所有.daemon = True
             地图所有.start()
             user.gamedata.假人所有 = True
@@ -245,7 +288,7 @@ class 逍遥假人:
             user.gamedata.当前坐标[1] <= 236 and user.gamedata.当前坐标[1] >= 180 and \
                 user.gamedata.假人擂台 == False:
             逍遥假人.假人删除线程(server,user,类型)
-            地图擂台 = threading.Thread(target=逍遥假人.假人线程,args=(server,user,'擂台'))
+            地图擂台 = threading.Thread(target=server.假人.假人线程,args=(server,user,'擂台'))
             地图擂台.daemon = True
             地图擂台.start()
             user.gamedata.假人擂台 = True
@@ -253,10 +296,10 @@ class 逍遥假人:
             user.gamedata.当前坐标[1] <= 208 and user.gamedata.当前坐标[1] >= 124 and \
                 user.gamedata.假人商会 == False:
             逍遥假人.假人删除线程(server,user,类型)
-            地图商会 = threading.Thread(target=逍遥假人.假人线程,args=(server,user,'商会'))
+            地图商会 = threading.Thread(target=server.假人.假人线程,args=(server,user,'商会'))
             地图商会.daemon = True
             地图商会.start()
-            地图活动大使 = threading.Thread(target=逍遥假人.假人线程,args=(server,user,'活动大使'))
+            地图活动大使 = threading.Thread(target=server.假人.假人线程,args=(server,user,'活动大使'))
             地图活动大使.daemon = True
             地图活动大使.start()
             user.gamedata.假人商会 = True
@@ -264,7 +307,7 @@ class 逍遥假人:
             user.gamedata.当前坐标[1] <= 124 and user.gamedata.当前坐标[1] >= 65 and \
                 user.gamedata.假人拍卖行 == False:
             逍遥假人.假人删除线程(server,user,类型)
-            地图拍卖 = threading.Thread(target=逍遥假人.假人线程,args=(server,user,'拍卖'))
+            地图拍卖 = threading.Thread(target=server.假人.假人线程,args=(server,user,'拍卖'))
             地图拍卖.daemon = True
             地图拍卖.start()
             user.gamedata.假人拍卖行 = True
