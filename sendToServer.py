@@ -85,7 +85,6 @@ class 客户请求处理:
         读.置数据(buffer)
         读.跳过(12)
         self.user.账号 = 读.读文本型()
-        存档.读取存档信息(self.user)
         if self.user.账号 == GM账号:
             self.server.GM.GMUSER = self.user
             self.server.写日志('GM号已上线,现在可执行GM操作')

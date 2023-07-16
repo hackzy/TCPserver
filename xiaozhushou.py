@@ -24,7 +24,12 @@ class XiaoZhuShou:
             对话 = '請選擇裝備功能:[一鍵鑒定/一鍵鑒定][裝備改造/裝備改造]'
             npcid = 3
         elif 点击对话 == '錄制相關':
-            对话 = '請選擇錄制功能：[保存錄制/保存錄制][刪除錄制/刪除錄制][查詢已保存錄制/查詢已保存錄制][錄制指令查詢/錄制指令查詢]'
+            对话 = '當前未選擇任何已保存錄制，'
+            for key in self.user.fuzhu.录制保存:
+                if self.user.fuzhu.录制保存[key] == self.user.fuzhu.luzhi.封包:
+                    对话 = '當前選擇錄制：#G' + key + '\n'
+                    break
+            对话 = 对话 + '請選擇錄制功能：[保存錄制/保存錄制][選擇錄制/選擇錄制][刪除錄制/刪除錄制][查詢已保存錄制/查詢已保存錄制][錄制指令查詢/錄制指令查詢]'
             npcid = 4
         
         self.server.服务器发送(self.server.基础功能.NPC对话包(
@@ -170,18 +175,52 @@ class XiaoZhuShou:
                 self.user.fuzhu.改造类型 = ''
             self.server.服务器发送(buffer,self.user)
 
-    def 录制相关(self,对话,填写内容 = ''):
+    def 录制相关(self,对话:str,填写内容 = ''):
         if 对话 == "保存錄制":
-            self.server.服务器发送(self.server.基础功能.输入框(4,self.小助手id,'請輸入保存的名字:','逍遙小助手'),self.user)
-            return
+            if len(self.user.fuzhu.luzhi.封包) != 0:
+                self.server.服务器发送(self.server.基础功能.输入框(4,self.小助手id,'請輸入保存的名字:','逍遙小助手'),self.user)
+                return
+            对话 = '當前未錄制任何操作，請錄制后再保存!'
         elif 对话 == '!請輸入':
             self.user.fuzhu.luzhi.保存录制(填写内容)
+            所有录制 = ''
             for bc in self.user.fuzhu.录制保存:
-                所有录制 = ''
-                所有录制 = bc + 所有录制 + "\n"
-            对话 = '錄制保存成功!當前存有錄制:\n#Y%s#n'%(所有录制)
+                所有录制 = '#Y' + bc + "\n" + 所有录制
+            对话 = '錄制保存成功!當前存有錄制:\n%s'%(所有录制)
         elif 对话 == '錄制指令查詢':
-            对话 = '你好，以下是錄制相關指令：\n開始錄制：LZKS\n停止錄制：LZTZ\n開始發送：LZFSKS\n停止發送：LZFSTZ\n單次發送：LZFS\n設置發送延遲：SZLZYS 延時值'
+            对话 = '在當前頻道輸入下列指令即可開啟對應功能,錄制相關指令：\n開始錄制：LZKS\n停止錄制：LZTZ\n開始發送：LZFSKS\n停止發送：LZFSTZ\n單次發送：LZFS\n設置發送延遲：SZLZYS 延時值'
+        elif 对话 == '刪除錄制':
+            所有录制 = ''
+            for bc in self.user.fuzhu.录制保存:
+                所有录制 = '[' + bc + '/' + bc + 'sc]' + 所有录制
+            对话 = '要刪除哪個錄制：%s'%(所有录制)
+        elif 对话.find('sc') != -1:
+            if 对话[:-2] in self.user.fuzhu.录制保存:
+                self.user.fuzhu.录制保存.pop(对话[:-2])
+                所有录制 = ''
+                for bc in self.user.fuzhu.录制保存:
+                    所有录制 = '[' + bc + '/' + bc + ']' + 所有录制
+                if 所有录制 == '[/]':
+                    对话 = '刪除成功！當前無任何已保存錄制!'
+                else:
+                    对话 = '刪除成功！當前存有錄制：%s'%(所有录制)
+        elif 对话 == '查詢已保存錄制':
+            所有录制 = ''
+            for bc in self.user.fuzhu.录制保存:
+                所有录制 = '#G' + bc + '\n' + 所有录制
+            if 所有录制 == '':
+                对话 = '當前無任何已保存錄制!'
+            else:
+                对话 = '當前存有錄制：\n%s'%(所有录制)
+        elif 对话 == '選擇錄制':
+            所有录制 = ''
+            for bc in self.user.fuzhu.录制保存:
+                所有录制 = '[' + bc + '/' + bc + 'xz]' + 所有录制
+            对话 = '要使用哪個錄制：' + 所有录制
+        elif 对话.find('xz') != -1:
+            if 对话[:-2] in self.user.fuzhu.录制保存:
+                self.user.fuzhu.luzhi.设置封包(对话[:-2])
+                对话 = '設置成功當前選擇錄制：#G' + 对话[:-2]
         
         self.server.服务器发送(self.server.基础功能.NPC对话包(4,self.小助手id,对话,'逍遙小助手'),self.user)
         

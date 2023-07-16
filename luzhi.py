@@ -18,7 +18,7 @@ class Luzhi:
                     .中心提示("錄製操作超過上限！已自動停止!"),self.user)
             self.录制停止()
             return
-        self.封包.append(buffer)
+        self.封包.append(buffer.hex())
 
     def 录制开始(self):
         if not self.是否开启:
@@ -59,7 +59,7 @@ class Luzhi:
     def 发送线程(self):
         while self.是否发送:
             for i in range(len(self.封包)):
-                self.server.客户端发送(self.封包[i],self.user)
+                self.server.客户端发送(bytes.fromhex(self.封包[i]),self.user)
                 time.sleep(self.发送延时/1000)
 
     def 单次发送(self):
@@ -69,7 +69,7 @@ class Luzhi:
         self.server.服务器发送(self.server.基础功能.中心提示("單次發送!"),self.user)
         self.server.服务器发送(self.server.基础功能.左下角提示("#R已發送!"),self.user)
         for i in range(len(self.封包)):
-            self.server.客户端发送(self.封包[i],self.user)
+            self.server.客户端发送(bytes.fromhex(self.封包[i]),self.user)
             time.sleep(self.发送延时/1000)
 
     def 取录制数量(self):
@@ -100,11 +100,11 @@ class Luzhi:
     def 设置封包(self,名称):
         try:
             self.封包 = self.user.fuzhu.录制保存[名称]
-            self.server.服务器发送(self.server.基础功能.中心提示("设置成功,当前录制:%s!"%(名称)),self.user)
-            self.server.服务器发送(self.server.基础功能.左下角提示("设置成功,当前录制:%s!"%(名称),self.user))
+            self.server.服务器发送(self.server.基础功能.中心提示("設置成功,當前錄制:#G%s#n！"%(名称)),self.user)
+            self.server.服务器发送(self.server.基础功能.左下角提示("設置成功,當前錄制:#G%s#n！"%(名称)),self.user)
         except:
-            self.server.服务器发送(self.server.基础功能.中心提示("设置失败,录制不存在!"),self.user)
-            self.server.服务器发送(self.server.基础功能.左下角提示("#R设置失败,录制不存在!",self.user))
+            self.server.服务器发送(self.server.基础功能.中心提示("設置失敗,錄制不存在！"),self.user)
+            self.server.服务器发送(self.server.基础功能.左下角提示("#R設置失敗,錄制不存在！"),self.user)
     def 删除录制(self,名称):
         try:
             self.user.fuzhu.录制保存.pop(名称)

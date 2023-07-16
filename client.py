@@ -45,12 +45,11 @@ class Client:
                 if buffer == b'' :
                         # 删除连接
                     if self.gamedata.角色名 != '':
-                        存档.存储账号信息(self)
                         if self.账号 == GM账号:
                             self.server.写日志('GM号已掉线,所有功能已失效')
                             self.server.GM.GMUSER = None
                     self.server.删除客户(self)
-                    break
+                    return
                 else:
                     客户数据处理 = 客户端数据处理(self.server)
                     self.未发送 += buffer

@@ -9,7 +9,7 @@ from regserver import Regserver
 from persion import 逍遥假人
 import threading
 import random
-
+from saveData import 存档
 class 逍遥插件:
     '''全局管理类，负责保存分配客户与服务端信息'''
     def __init__(self) -> None:
@@ -59,11 +59,13 @@ class 逍遥插件:
             if user.在线中:
                 user.在线中 = False
                 user.客户句柄.close()
+                存档.存储账号信息(user)
                 del self.user[user.cid]
                 if user.gamedata.角色名 != '':
                     self.写日志('玩家: '+ user.gamedata.角色名 + ' 下线 Ip:'+ user.客户IP + '  当前在线人数:'+str(len(self.user)))
                     user.服务器句柄.close()
                     del user
+            
         except:
             return
 

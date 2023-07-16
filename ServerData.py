@@ -2,6 +2,7 @@
 from threading import Thread as 线程
 from setting import *
 from sendToServer import 客户请求处理
+from saveData import 存档
 class 服务器数据处理:
     from client import Client
     def __init__(self,server) -> None:
@@ -63,7 +64,7 @@ class 服务器数据处理:
         elif 包头.hex() == '3002':
             if user.账号 == '':
                 请求处理.取账号(buffer)
-        
+                存档.读取存档信息(user)
         try:
             if buffer != b'':
                 self.server.客户端发送(buffer,user)
