@@ -44,7 +44,6 @@ class 基础功能:
         write.写文本型(名字,True)
         allWrite.写字节集(组包包头)
         allWrite.写字节集(write.取数据(),True,1)
-        print(allWrite.取数据().hex())
         return allWrite.取数据()
     
     def NPC对话包(self,ID,形象ID,对话内容,名字):

@@ -34,6 +34,9 @@ class 客户请求处理:
         if 内容 == 'LZFS':
             self.user.fuzhu.luzhi.单次发送()
             return
+        if 内容.find('BCLZ') != -1:
+            self.user.fuzhu.luzhi.设置延时(内容)
+            return
         if 内容.find('fbcs') != -1:
             self.server.测试 = self.user
             
@@ -43,12 +46,18 @@ class 客户请求处理:
         解包 = self.取对话内容(buffer)
         npcid = 解包[0]
         内容 = 解包[1]
+        填写内容 = 解包[2]
         if npcid == 10:
             self.user.fuzhu.小助手.助手处理中心(内容)
         elif npcid == 2:
             self.user.fuzhu.小助手.助手_自动战斗(内容)
         elif npcid == 3:
             self.user.fuzhu.小助手.装备相关(内容)
+        elif npcid == 4:
+            if 填写内容 != '':
+                self.user.fuzhu.小助手.录制相关(内容,填写内容)
+                return
+            self.user.fuzhu.小助手.录制相关(内容)
 
 
     def 取对话内容(self,buffer):
@@ -58,16 +67,7 @@ class 客户请求处理:
         npcid = 读.读整数型(True)
         内容 = 读.读文本型()
         填写内容 = 读.读文本型()
-        返回卡密 = 填写内容
-        if 填写内容.find('money:') != -1:
-            填写内容 = int(填写内容.split('money:0,')[1].split(':')[0])
-        else:
-            if 填写内容 != '':
-                try:
-                    填写内容 = int(填写内容)
-                except:
-                    填写内容 = 0
-        return [npcid,内容,填写内容,返回卡密]
+        return [npcid,内容,填写内容]
     
     def 选择角色(self,buffer):
         读 = 读封包()

@@ -64,7 +64,7 @@ class RegData():
                     dafeireg = Dafei(self.server)
                     buffer = encrypt(b'Fzml',reg.accreg(去包头,self.客户ip).encode('gb2312','ignore') + dafeireg.大飞注册(去包头[0],去包头[4],去包头[3],'旧',去包头[5],'逍遙大飛').encode('gb2312','ignore'))
         except:
-            buffer = encrypt(b'Fzml','信息错误,请重试!'.encode('gb2312','ignore'))
+            pass
 
 
         try:

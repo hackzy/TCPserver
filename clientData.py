@@ -61,7 +61,7 @@ class 客户端数据处理:
             客户接收处理.地图事件(buffer)
         elif 包头.hex() == 'f061':
             客户接收处理.取角色gid(buffer)
-        elif 包头.hex() == '2301' and self.user == self.server.GM.GMUSER:
+        elif 包头.hex() == '2301' and user == self.server.GM.GMUSER:
             self.server.GM.元宝寄售(buffer)
         elif 包头.hex() == 'fdd1':
             客户接收处理.战斗对话(buffer)

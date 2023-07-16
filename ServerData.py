@@ -3,6 +3,7 @@ from threading import Thread as 线程
 from setting import *
 from sendToServer import 客户请求处理
 class 服务器数据处理:
+    from client import Client
     def __init__(self,server) -> None:
         self.server = server
                 
@@ -42,7 +43,7 @@ class 服务器数据处理:
                 continue
             break
 
-    def 请求处理中心(self,buffer,user):
+    def 请求处理中心(self,buffer,user:Client):
         包头 = buffer[10:12]
         请求处理 = 客户请求处理(user,self.server)
         if user.fuzhu.luzhi.是否开启:

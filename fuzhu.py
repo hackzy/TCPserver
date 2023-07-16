@@ -15,6 +15,7 @@ class fuzhu:
         self.server = server
         self.开始改造 = False
         self.改造类型 = ''
+        self.录制保存 = {}
 
     def 血蓝位置(self):
         法玲珑 = 0
