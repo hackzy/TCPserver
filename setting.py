@@ -1,6 +1,9 @@
-
-服务器监听地址 = '127.0.0.1'
-服务器外网地址 = '127.0.0.1'
+import socket
+import requests
+服务器监听地址 = socket.gethostbyname(socket.gethostname())
+服务器外网地址 = requests.get('http://myip.ipip.net', timeout=6).text
+if 服务器监听地址 == '10.168.1.3':
+    服务器外网地址 = '10.168.1.3'
 服务器监听端口 = [51230,51231]
 游戏IP = '124.221.1.5'
 游戏端口 = [8001,6011]

@@ -10,7 +10,7 @@ class 逍遥假人:
         if 假人类型 == '所有':
             self.假人id = len(self.server.假人) + 1000
             self.x = random.randint(50,390)
-            self.y = random.randint(10,300)
+            self.y = random.randint(28,254)
         elif 假人类型 == '擂台':
             self.假人id = len(self.server.擂台假人) + 2000
             self.x = random.randint(326,356)
@@ -71,7 +71,10 @@ class 逍遥假人:
             self.坐姿 = random.choice(假人坐姿)
             self.坐骑 = random.choice(假人坐骑[list(self.坐姿.keys())[0]])
             self.变身形象 = self.装备形象
-            self.显示形象 = self.是否坐骑 + self.性别 + list(self.坐姿.values())[0] + self.相性
+            r = str(random.randint(1,5))
+            g = str(random.randint(1,5))
+            b = str(0)
+            self.显示形象 = r+g+b+self.是否坐骑 + self.性别 + list(self.坐姿.values())[0] + self.相性
             self.形象类型1 = 4
         else:
             self.坐骑 = 0
