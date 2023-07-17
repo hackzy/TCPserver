@@ -139,6 +139,19 @@ class 基础功能:
         except:
             user.服务器句柄.send(bytes.fromhex('4D 5A 00 00 78 70 7B 99 00 14 00 D8 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 '.replace(' ',"")))
 
-
-
-        
+    def 喊话(self,id,名字,频道,内容):
+        write = 写封包()
+        allWrite = 写封包()
+        write.写字节集(bytes.fromhex('3fff'))
+        write.写短整数型(频道,True)
+        write.写整数型(id,True)
+        write.写文本型(名字,True)
+        write.写文本型('#dFFFFFF' + 内容,True,1,True)
+        write.写字节集(bytes.fromhex('0000000000'))
+        write.写文本型('更鑄輝煌一線',True,1,True)
+        write.写短整数型(3,True)
+        write.写整数型(len(内容),True)
+        write.写字节集(bytes.fromhex('000000000000000000008b'))
+        allWrite.写字节集(组包包头)
+        allWrite.写字节集(write.取数据(),True,1,True)
+        return allWrite.取数据()

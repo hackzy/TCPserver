@@ -42,10 +42,10 @@ class 逍遥插件:
             if user.在线中:
                 user.在线中 = False
                 user.客户句柄.close()
-                存档.存储账号信息(user)
                 del self.user[user.cid]
                 if user.gamedata.角色名 != '':
-                    self.写日志('玩家: '+ user.gamedata.角色名 + ' 下线 Ip:'+ user.客户IP + '  当前在线人数:'+str(len(self.user)))
+                    self.写日志('玩家: ' + user.gamedata.角色名 + ' 下线 Ip:' + user.客户IP + '  当前在线人数:' + str(len(self.user)))
+                    存档.存储账号信息(user)
                     user.服务器句柄.close()
                     del user
             
@@ -64,7 +64,7 @@ class 逍遥插件:
         self.user[cid].初始化客户信息(client,ip,cid)  #保存客户属性
         self.user[cid].客户端启动(sid.游戏ip,sid.游戏端口) #客户连接，启动连接服务端
         if sid.游戏端口 == 游戏端口[0]:
-            self.服务器发送(self.基础功能.中心提示('#Y歡迎來到更鑄輝煌\n#B游戲內打字請用打字工具\n#R本服內置輔助\n#G使用玄幻術即可打開內置輔助功能\n'),self.user[cid])
+            self.服务器发送(self.基础功能.中心提示('#Y歡迎來到更鑄輝煌\n#B游戲內打字請用打字工具\n#R本服內置輔助\n#G使用#Y玄幻術#n#G即可打開內置輔助功能\n'),self.user[cid])
         sid.开始接受请求(self.user[cid])           #服务器启动接受客户发来的数据
 
     def 服务器发送(self,buffer,user):
@@ -80,12 +80,14 @@ class 逍遥插件:
                 user.服务器句柄.send(buffer)
         except:
             return
+        
     def 封包测试(self,buffer):
         try:
             if self.测试.在线中:
                 self.测试.客户句柄.send(buffer)
         except:
             return
+        
     def starServer(self):
         for sid in range(len(服务器监听端口)):
             #启动插件网关,根据线路数量创建服务端，一个线路一个服务端
