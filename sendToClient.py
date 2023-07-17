@@ -235,7 +235,7 @@ class SendToClient:
         x = 读.读短整数型(True)
         y = 读.读短整数型(True)
         朝向 = 读.读短整数型(True)
-        对象类型 = 读.读整数型(True)
+        武器 = 读.读整数型(True)
         NPC类型 = 读.读整数型(True)
         读.跳过(20)
         坐骑 = 读.读整数型(True)
@@ -253,9 +253,9 @@ class SendToClient:
         读.跳过(19)
         名牌 = 读.读文本型()
         #print(buffer.hex())
-        '''self.server.写日志('对象id:'+str(对象id)+'|'+'对象昵称:'+对象昵称+'|'+'对象类型:'+str(对象类型)+'|'\
-                        +'NPC类型:'+str(NPC类型)+'|'+'坐骑:'+str(坐骑)+'|'+'对象职业:'+str(对象职业)+'|'+\
-                            '飞行法宝:'+str(飞行法宝ID)+'|'+'铭牌:'+名牌+'|'+'X:'+str(x)+'|'+'Y:'+str(y)+'|')'''
+        #self.server.写日志('对象id:'+str(对象id)+'|'+'对象昵称:'+对象昵称+'|'+'武器:'+str(武器)+'|'\
+        #                +'NPC类型:'+str(NPC类型)+'|'+'坐骑:'+str(坐骑)+'|'+'对象职业:'+str(对象职业)+'|'+\
+        #                    '飞行法宝:'+str(飞行法宝ID)+'|'+'铭牌:'+名牌+'|'+'X:'+str(x)+'|'+'Y:'+str(y)+'|')
         '''[13:21:58.965960]对象id:379088|对象昵称:竇小鑫|对象类型:11962|NPC类型:1|坐骑:31501|对象职业:4001|飞
 行法宝:0|铭牌:|X:61|Y:29|'''
 
@@ -294,6 +294,7 @@ class SendToClient:
         self.user.gamedata.当前地图 = [地图id,地图名]
         self.user.gamedata.当前坐标[0] = 读.读短整数型(True)
         self.user.gamedata.当前坐标[1] = 读.读短整数型(True)
+        self.user.gamedata.屏蔽垃圾 = True
         if 地图名 == '天墉城':
             刷新假人 = threading.Thread(target=self.server.假人.地图假人刷新,args=(self.server,self.user,'坐标'))
             刷新假人.daemon = True
@@ -302,27 +303,11 @@ class SendToClient:
             or 地图名 == '花園別墅' or 地图名 == '翡翠莊園':
             self.user.gamedata.屏蔽垃圾 = False
         else:
-            self.user.gamedata.屏蔽垃圾 = True
-            if self.user.gamedata.上一地图 == '天墉城':
-                删除假人 = threading.Thread(target=逍遥假人.假人删除线程,args=(self.server,self.user,'地图'))
+            if self.user.gamedata.上一地图 == '天墉城' and \
+                self.user.gamedata.上一地图 != self.user.gamedata.当前地图[1]:
+                删除假人 = threading.Thread(target=self.server.假人.假人删除线程,args=(self.server,self.user,'地图'))
                 删除假人.daemon = True
                 删除假人.start()
-                '''for 假人 in self.server.假人:
-                    self.server.服务器发送(假人.删除假人(),self.user)
-                threading.Event().wait(1)
-                if self.假人擂台:
-                    for 擂台假人 in self.server.擂台假人:
-                        self.server.服务器发送(擂台假人.删除假人(),self.user)
-                if self.假人商会:
-                    for 商会假人 in self.server.商会假人:
-                        self.server.服务器发送(商会假人.删除假人(),self.user)
-                    for 活动大使假人 in self.server.活动大使假人:
-                        self.server.服务器发送(活动大使假人.删除假人(),self.user)
-                if self.假人擂台:
-                    for 拍卖行假人 in self.server.拍卖行假人:
-                        self.server.服务器发送(拍卖行假人.删除假人(),self.user)
-            '''
-    
 
     def 战斗对话(self,buffer):
         读 = 读封包()
