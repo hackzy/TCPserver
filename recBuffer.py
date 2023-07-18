@@ -1,78 +1,59 @@
-class 读封包:
+class ReadBuffer:
 
     def __init__(self) -> None:
         self.data = b''
         self.leng = 0
-        self.当前位置 = 0
+        self.now = 0
 
-    def 检测(self,长度):
-        if self.当前位置 + 长度 > self.leng:
-            长度 = self.leng - self.当前位置 
-            return 长度
-        return 长度
-    def 置数据(self,buffer):
+    def check(self,length:int):
+        if self.now + length > self.leng:
+            length = self.leng - self.now 
+            return length
+        return length
+    def setBuffer(self,buffer:bytes):
         self.data = buffer
         self.leng = len(self.data)
-        self.当前位置 = 0
+        self.now = 0
         return
     
-    def 跳过(self,长度):
-        self.当前位置 = self.当前位置 + 长度
+    def skip(self,length):
+        self.now += length
         return
     
-    def 读字节集(self,长度):
-        长度 = self.检测(长度)
-        记录位置 = self.当前位置
-        self.当前位置 = self.当前位置 + 长度
-        return self.data[记录位置:记录位置+长度]
+    def byte(self,length):
+        length = self.check(length)
+        recLocation = self.now
+        self.now += length
+        return self.data[recLocation:recLocation+length]
     
-    def 读短整数型(self,反转 = False):
-        if self.检测(2) < 2:
+    def integer(self,length = 4,byteorder = 'big'):
+        if self.check(length) < length:
             return 0
-        记录位置 = self.当前位置
-        self.当前位置 = self.当前位置 + 2
-        if 反转:
-            return int.from_bytes(self.data[记录位置:记录位置+2],'big')
-        else:
-            return int.from_bytes(self.data[记录位置:记录位置+2],'little')
-        
-    def 读整数型(self,反转 = False):
-        if self.检测(4) < 4 :
-            return 0
-        记录位置 = self.当前位置
-        self.当前位置 = self.当前位置 + 4
-        if 反转:
-            return int.from_bytes(self.data[记录位置:记录位置+4],'big')
-        else:
-            return int.from_bytes(self.data[记录位置:记录位置+4],'little')
-        
-    def 读字节型(self):
-        if self.检测(1)<1:
-            return 0
-        记录位置 = self.当前位置
-        self.当前位置 = self.当前位置 + 1
-        return int.from_bytes(self.data[记录位置:记录位置+1])
+        recLocation = self.now
+        self.now += 2
+        return int.from_bytes(self.data[recLocation:recLocation + length],byteorder)
 
-    def 读文本型(self,有长度头=True,长度类型=0,反转长度=True):
+    def string(self,blen=True,lenType=0,byteorder=True):
         try:
-            if 有长度头:
-                if 长度类型 == 0:
-                    长度 = self.读字节型()
-                elif 长度类型 == 1:
-                    长度 = self.读短整数型(反转长度)
-                elif 长度类型 == 2:
-                    长度 = self.读整数型(反转长度)
-                记录位置 = self.当前位置
-                self.当前位置 += 长度
-                return self.data[记录位置:记录位置+长度].decode()
-            文本 = self.data[self.当前位置:].decode()
-            长度 = len(bytes(文本,'utf-8'))
-            self.当前位置 += 长度
-            return 文本
+            if blen:
+                if lenType == 0:
+                    length = self.byte()
+                elif lenType == 1:
+                    length = self.integer(2,byteorder)
+                elif lenType == 2:
+                    length = self.integer(4,byteorder)
+                recLocation = self.now
+                self.now += length
+                return self.data[recLocation:recLocation+length].decode()
+            string = self.data[self.now:].decode()
+            length = len(bytes(string,'utf-8'))
+            self.now += length
+            return string
         except:
             return ''
-    def 取剩余长度(self):
-        return self.leng - self.当前位置 + 1
     
-    def 剩余数据(self):
-        return self.读字节集(self.取剩余长度())
+    def getResidLen(self):
+        return self.leng - self.now + 1
+    
+    def residBuffer(self):
+        return self.byte(self.getResidLen())
