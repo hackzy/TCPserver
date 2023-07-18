@@ -1,7 +1,7 @@
 from luzhi import Luzhi
 from autoFired import 自动战斗
 from xiaozhushou import XiaoZhuShou
-from bufferWrit import 写封包
+from writebuffer import 写封包
 from setting import *
 from threading import Event,Thread
 import random

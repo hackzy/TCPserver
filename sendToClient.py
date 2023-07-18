@@ -1,5 +1,5 @@
 from recBuffer import 读封包
-from bufferWrit import 写封包
+from writebuffer import 写封包
 from itemData import 背包数据
 from setting import *
 import threading
@@ -191,7 +191,6 @@ class SendToClient:
                 except:
                     return
     def 技能读取(self,buffer):
-        
         读 = 读封包()
         读.置数据(buffer)
         读.跳过(12)

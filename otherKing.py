@@ -1,4 +1,4 @@
-from bufferWrit import 写封包
+from writebuffer import 写封包
 from recBuffer import 读封包
 from setting import *
 import threading 
