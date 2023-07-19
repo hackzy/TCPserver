@@ -1,4 +1,4 @@
-from writebuffer import 写封包
+from writebuffer import WriteBuff
 import random
 from setting import *
 import threading
@@ -99,71 +99,71 @@ class 逍遥假人:
             self.飞行法宝 = 0
     
     def 属性封包(self):
-        writ = 写封包()
-        allWrit = 写封包()
-        writ.写字节集(bytes.fromhex('fff9'))
-        writ.写整数型(self.假人id,True)
-        writ.写短整数型(self.x,True)
-        writ.写短整数型(self.y,True)
-        writ.写短整数型(random.randint(1,7),True) #面向方位
-        writ.写整数型(self.武器,True) #武器
-        writ.写整数型(1,True)
+        writ = WriteBuff()
+        allWrit = WriteBuff()
+        writ.byte(bytes.fromhex('fff9'))
+        writ.integer(self.假人id)
+        writ.integer(self.x,2)
+        writ.integer(self.y,2)
+        writ.integer(random.randint(1,7),2) #面向方位
+        writ.integer(self.武器) #武器
+        writ.integer(1)
         for a in range(3):# 8
-            writ.写整数型(0,True)
-        writ.写整数型(int(self.基础形象),True)
-        writ.写整数型(0,True)
-        writ.写整数型(self.坐骑,True)
-        writ.写整数型(0,True)
-        writ.写整数型(0,True)
-        writ.写文本型(self.名称,True)
-        writ.写整数型(0,True)
-        writ.写短整数型(self.等级,True)
-        writ.写文本型(self.称谓,True)
-        writ.写文本型('upgrade',True)
-        writ.写文本型(self.门派,True) #门派
-        writ.写字节集(bytes.fromhex('0000000000'))
-        writ.写短整数型(self.仙魔,True) #仙魔
-        writ.写整数型(0,True)
-        writ.写整数型(int(self.基础形象),True)
-        writ.写整数型(int(self.装备形象),True) #套装形象
-        writ.写整数型(int(self.变身形象),True) #显示形象
-        writ.写整数型(int(self.显示形象),True) #坐骑形象
-        writ.写短整数型(self.形象类型1,True)    #特效 套装底盘效果
-        writ.写短整数型(self.形象类型2,True)
-        writ.写字节型(self.飞行法宝.to_bytes()) #飞行法宝类型
-        writ.写整数型(0,True)
-        writ.写字节型(self.是否飞行.to_bytes())#是否飞行
-        writ.写字节集(bytes.fromhex('00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 '.replace(' ','')))
-        allWrit.写字节集(组包包头)
-        allWrit.写字节集(writ.取数据(),True,1)
-        return allWrit.取数据()
+            writ.integer(0)
+        writ.integer(int(self.基础形象))
+        writ.integer(0)
+        writ.integer(self.坐骑)
+        writ.integer(0)
+        writ.integer(0)
+        writ.string(self.名称,True)
+        writ.integer(0)
+        writ.integer(self.等级,2)
+        writ.string(self.称谓,True)
+        writ.string('upgrade',True)
+        writ.string(self.门派,True) #门派
+        writ.byte(bytes.fromhex('0000000000'))
+        writ.integer(self.仙魔,2) #仙魔
+        writ.integer(0)
+        writ.integer(int(self.基础形象))
+        writ.integer(int(self.装备形象)) #套装形象
+        writ.integer(int(self.变身形象)) #显示形象
+        writ.integer(int(self.显示形象)) #坐骑形象
+        writ.integer(self.形象类型1,2)    #特效 套装底盘效果
+        writ.integer(self.形象类型2,2)
+        writ.byte(self.飞行法宝.to_bytes()) #飞行法宝类型
+        writ.integer(0)
+        writ.byte(self.是否飞行.to_bytes())#是否飞行
+        writ.byte(bytes.fromhex('00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 '.replace(' ','')))
+        allWrit.byte(组包包头)
+        allWrit.byte(writ.getBuffer(),True,1)
+        return allWrit.getBuffer()
     
     def 显示(self):
-        writ = 写封包()
-        allWrit = 写封包()
-        writ.写字节集(bytes.fromhex('f0e7'))
-        writ.写整数型(self.假人id,True)
-        writ.写短整数型(1,True)
-        writ.写文本型('位列仙班',True)
-        allWrit.写字节集(组包包头)
-        allWrit.写字节集(writ.取数据(),True,1)
-        return allWrit.取数据() + self.帮派图标()
+        writ = WriteBuff()
+        allWrit = WriteBuff()
+        writ.byte(bytes.fromhex('f0e7'))
+        writ.integer(self.假人id)
+        writ.integer(1,2)
+        writ.string('位列仙班',True)
+        allWrit.byte(组包包头)
+        allWrit.byte(writ.getBuffer(),True,1)
+        return allWrit.getBuffer() + self.帮派图标()
     
     def 帮派图标(self):
-        writ = 写封包()
-        allWrit = 写封包()
-        writ.写字节集(bytes.fromhex('f0d4'))
-        writ.写整数型(self.假人id,True)
-        writ.写文本型(self.图标,True)
-        allWrit.写字节集(组包包头)
-        allWrit.写字节集(writ.取数据(),True,1)
-        return allWrit.取数据()
+        writ = WriteBuff()
+        allWrit = WriteBuff()
+        writ.byte(bytes.fromhex('f0d4'))
+        writ.integer(self.假人id)
+        writ.string(self.图标,True)
+        allWrit.byte(组包包头)
+        allWrit.byte(writ.getBuffer(),True,1)
+        return allWrit.getBuffer()
     
     def 移动(self):
-        writ = 写封包()
-        allWrit = 写封包()
-        writ.写字节集(bytes.fromhex('402f'))
-        writ.写整数型(self.假人id,True)
+        writ = WriteBuff()
+        allWrit = WriteBuff()
+        writ.byte(bytes.fromhex('402f'))
+        writ.integer(self.假人id)
         self.x += random.randint(-30,30)
         self.y += random.randint(-30,30)
         if self.x >= 410:
@@ -174,23 +174,23 @@ class 逍遥假人:
             self.y -= 40
         elif self.y < 6:
             self.y += 40
-        writ.写短整数型(self.x,True)
-        writ.写短整数型(self.y,True)
-        writ.写短整数型(1,True)
-        allWrit.写字节集(组包包头)
-        allWrit.写字节集(writ.取数据(),True,1)
-        return allWrit.取数据()
+        writ.integer(self.x,2)
+        writ.integer(self.y,2)
+        writ.integer(1,2)
+        allWrit.byte(组包包头)
+        allWrit.byte(writ.getBuffer(),True,1)
+        return allWrit.getBuffer()
     
     
     def 删除假人(self):
-        writ = 写封包()
-        allWrit = 写封包()
-        writ.写字节集(bytes.fromhex('2ffd'))
-        writ.写整数型(self.假人id,True)
-        writ.写短整数型(1,True)
-        allWrit.写字节集(组包包头)
-        allWrit.写字节集(writ.取数据(),True,1)
-        return allWrit.取数据()
+        writ = WriteBuff()
+        allWrit = WriteBuff()
+        writ.byte(bytes.fromhex('2ffd'))
+        writ.integer(self.假人id)
+        writ.integer(1,2)
+        allWrit.byte(组包包头)
+        allWrit.byte(writ.getBuffer(),True,1)
+        return allWrit.getBuffer()
 
     def 重置假人(self,user):
         self.__init__(self.server)

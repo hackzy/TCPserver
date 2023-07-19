@@ -2,7 +2,7 @@ class WriteBuff:
     def __init__(self) -> None:
         self.data = b''
 
-    def writeBytes(self,byte:bytes,bLen=False,lenType=0,byteorder='big'):
+    def byte(self,byte:bytes,bLen=False,lenType=0,byteorder='big'):
         if bLen == False:
             self.data += byte
             return
@@ -15,7 +15,7 @@ class WriteBuff:
         self.data = self.data + byte
         return
     
-    def writeStr(self,sstr:str,bLen=False,lenType=0,byteorder='big'):
+    def string(self,sstr:str,bLen=False,lenType=0,byteorder='big'):
         if bLen == False:
             self.data += bytes(sstr,'utf8')
             return
@@ -28,7 +28,7 @@ class WriteBuff:
         self.data += bytes(sstr,'utf-8')
         return
     
-    def writeInteger(self,iint:int,length = 4,byteorder='big'):
+    def integer(self,iint:int,length = 4,byteorder='big'):
         self.data += iint.to_bytes(length,byteorder)
         return
     

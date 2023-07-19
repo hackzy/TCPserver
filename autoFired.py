@@ -1,5 +1,5 @@
-from writebuffer import 写封包
-from recBuffer import 读封包
+from writebuffer import WriteBuff
+from readBuffer import ReadBuffer
 import psutil
 from setting import *
 class 自动战斗:
@@ -40,18 +40,18 @@ class 自动战斗:
             except:
                 self.server.基础功能.中心提示('自動戰斗配置錯誤，請重新配置！')
                 return b''
-        写包 = 写封包()
-        完整包 = 写封包()
-        写包.写字节集(bytes.fromhex("3202"))
-        写包.写整数型(id,True)
-        写包.写整数型(攻击id,True)
-        写包.写整数型(攻击类型,True)
-        写包.写整数型(技能id,True)
-        写包.写整数型(0,True)
-        完整包.写字节集(b'\x4d\x5a\x00\x00')
-        完整包.写整数型(int(psutil.boot_time()),True)
-        完整包.写字节集(写包.取数据(),True,1,True)
-        return 完整包.取数据()
+        write = WriteBuff()
+        allWrite = WriteBuff()
+        write.byte(bytes.fromhex("3202"))
+        write.integer(id)
+        write.integer(攻击id)
+        write.integer(攻击类型)
+        write.integer(技能id)
+        write.integer(0)
+        allWrite.byte(b'\x4d\x5a\x00\x00')
+        allWrite.integer(int(psutil.boot_time()))
+        allWrite.byte(write.getBuffer(),True,1)
+        return allWrite.getBuffer()
 
     def 开始战斗(self):
         
@@ -62,33 +62,33 @@ class 自动战斗:
                                          self.宠物使用技能,self.宠物攻击位置),self.user)
         
     def 置攻击位置id(self,buffer):
-        读 = 读封包()
+        read = ReadBuffer()
         self.攻击位置id = {}
-        读.置数据(buffer)
-        读.跳过(12)
-        数量 = 读.读字节型()
+        read.setBuffer(buffer)
+        read.skip(12)
+        数量 = int.from_bytes(read.byte(1))
         for a in range(数量):
-            id = 读.读整数型(True)
-            读.跳过(6)
-            位置 = 读.读短整数型(True)
+            id = read.integer()
+            read.skip(6)
+            位置 = read.integer(2)
             self.攻击位置id.update({位置:{'id':id}})
-            信息数量 = 读.读短整数型(True)
+            信息数量 = read.integer(2)
             for b in range(信息数量):
-                类型 = 读.读短整数型(True)
-                标识 = 读.读字节型()
+                类型 = read.integer(2)
+                标识 = int.to_bytes(read.byte(1))
                 if 标识 == 4:
-                    文本 = 读.读文本型(True)
+                    文本 = read.string()
                     if 类型 == 1:
                         self.攻击位置id.update({位置:{'名称':文本}})
                 if 标识 == 3:
-                    读.读整数型()
-            读.跳过(65)
+                    read.integer()
+            read.skip(65)
 
     def 删攻击id(self,buffer):
-        读 = 读封包()
-        读.置数据(buffer)
-        读.跳过(12)
-        删除id = 读.读整数型(True)
+        read = ReadBuffer()
+        read.setBuffer(buffer)
+        read.skip(12)
+        删除id = read.integer()
         for a in list(self.攻击位置id.keys()):
             try:
                 if self.攻击位置id[a]['id'] == 删除id:
@@ -96,15 +96,15 @@ class 自动战斗:
             except:
                 continue
     def 捕捉(self,名称):
-        写 = 写封包()
-        完整包 = 写封包()
+        write = WriteBuff()
+        allWrite = WriteBuff()
         for 位置 in self.攻击位置id:
             if self.攻击位置id[位置]['名称'] == 名称:
                 break
-        写.写字节集(bytes.fromhex('1208'))
-        写.写整数型(self.user.gamedata.角色id,True)
-        完整包.写字节集(写.取数据(),True,1)
-        return 完整包.取数据()
+        write.byte(bytes.fromhex('1208'))
+        write.integer(self.user.gamedata.角色id)
+        allWrite.byte(write.getBuffer(),True,1)
+        return allWrite.getBuffer()
     
     def 补充状态(self):
         血玲珑,法玲珑 = self.user.fuzhu.血蓝位置()

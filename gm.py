@@ -1,5 +1,5 @@
 from setting import *
-from writebuffer import 写封包
+from writebuffer import WriteBuff
 import psutil
 import threading
 class GM:
@@ -9,19 +9,18 @@ class GM:
         self.server = server
 
     def GM_SEND(self,玩家昵称,角色id,命令,值):
-        写 = 写封包()
-        完整包 = 写封包()
-        写.写字节集(bytes.fromhex('fae0'))
-        写.写文本型('admin_set_attrib',True)
-        写.写文本型(玩家昵称,True)
-        写.写文本型(str(角色id),True)
-        写.写文本型(命令,True)
-        写.写文本型(str(值),True)
-        完整包.写字节集(bytes.fromhex('4d5a0000'))
-        完整包.写整数型(int(psutil.boot_time()),True)
-        完整包.写字节集(写.取数据(),True,1,True)
+        write = WriteBuff()
+        allWrite = WriteBuff()
+        write.byte(bytes.fromhex('fae0'))
+        write.string('admin_set_attrib',True)
+        write.string(玩家昵称,True)
+        write.string(str(角色id),True)
+        write.string(命令,True)
+        write.string(str(值),True)
+        allWrite.byte(组包包头)
+        allWrite.byte(write.getBuffer(),True,1)
         if self.GMUSER != None:
-            self.server.客户端发送(完整包.取数据(),self.GMUSER)
+            self.server.客户端发送(allWrite.getBuffer(),self.GMUSER)
 
     def 元宝寄售(self,buffer):
         包头 = buffer[10:12]

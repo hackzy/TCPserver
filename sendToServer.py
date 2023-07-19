@@ -1,4 +1,4 @@
-from recBuffer import 读封包
+from readBuffer import 读封包
 from writebuffer import 写封包
 from threading import  Thread
 from saveData import 存档

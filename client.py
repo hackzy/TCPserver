@@ -1,7 +1,6 @@
 import socket
 from setting import *
 from threading import Thread as 线程
-
 import traceback
 from GameData import GameData
 from fuzhu import fuzhu
