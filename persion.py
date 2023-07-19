@@ -130,9 +130,9 @@ class 逍遥假人:
         writ.integer(int(self.显示形象)) #坐骑形象
         writ.integer(self.形象类型1,2)    #特效 套装底盘效果
         writ.integer(self.形象类型2,2)
-        writ.byte(self.飞行法宝.to_bytes()) #飞行法宝类型
+        writ.byte(self.飞行法宝.to_bytes(2)) #飞行法宝类型
         writ.integer(0)
-        writ.byte(self.是否飞行.to_bytes())#是否飞行
+        writ.byte(self.是否飞行.to_bytes(2))#是否飞行
         writ.byte(bytes.fromhex('00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 '.replace(' ','')))
         allWrit.byte(组包包头)
         allWrit.byte(writ.getBuffer(),True,1)

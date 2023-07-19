@@ -16,7 +16,7 @@ class ReadBuffer:
         self.now = 0
         return
     
-    def skip(self,length):
+    def skip(self,length = 1):
         self.now += length
         return
     
@@ -30,14 +30,14 @@ class ReadBuffer:
         if self.check(length) < length:
             return 0
         recLocation = self.now
-        self.now += 2
+        self.now += length
         return int.from_bytes(self.data[recLocation:recLocation + length],byteorder)
 
-    def string(self,blen=True,lenType=0,byteorder=True):
+    def string(self,blen=True,lenType=0,byteorder='big'):
         try:
             if blen:
                 if lenType == 0:
-                    length = self.byte()
+                    length = int.from_bytes(self.byte(1))
                 elif lenType == 1:
                     length = self.integer(2,byteorder)
                 elif lenType == 2:

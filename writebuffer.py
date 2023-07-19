@@ -9,22 +9,22 @@ class WriteBuff:
         if lenType == 0:
             self.data += len(byte).to_bytes()
         elif lenType == 1:
-                self.writeInteger(len(byte),2,byteorder)
+                self.integer(len(byte),2,byteorder)
         elif lenType == 2:
-                self.writeInteger(len(byte),byteorder=byteorder)
+                self.integer(len(byte),byteorder=byteorder)
         self.data = self.data + byte
         return
     
-    def string(self,sstr:str,bLen=False,lenType=0,byteorder='big'):
+    def string(self,sstr:str,bLen=True,lenType=0,byteorder='big'):
         if bLen == False:
             self.data += bytes(sstr,'utf8')
             return
         if lenType == 0:
             self.data += len(sstr.encode()).to_bytes()
         elif lenType == 1:
-            self.writeInteger(len(sstr.encode()),2,byteorder)
+            self.integer(len(sstr.encode()),2,byteorder)
         elif lenType == 2:
-            self.writeInteger(len(sstr.encode()),byteorder=byteorder)
+            self.integer(len(sstr.encode()),byteorder=byteorder)
         self.data += bytes(sstr,'utf-8')
         return
     

@@ -69,7 +69,7 @@ class SendToClient:
         物品总数 = read.integer(2)
         write.integer(物品总数,2)
         for i in range(物品总数):
-            物品位置id = read.byte(1)
+            物品位置id = int.from_bytes(read.byte(1))
             if 物品位置id == 32:
                 物品位置id = 55
             temp = {物品位置id:背包数据()}
@@ -89,12 +89,12 @@ class SendToClient:
                     saveBuff.integer(物品属性数量,2)
                 else:
                     for b in range(物品属性数量):
-                        属性标识 = read.byte(2)
-                        数据类型 = read.byte(1)
-                        saveBuff.byte(属性标识)
+                        属性标识 = int.from_bytes(read.byte(2))
+                        数据类型 = int.from_bytes(read.byte(1))
+                        saveBuff.byte(属性标识.to_bytes(2))
                         saveBuff.byte(数据类型.to_bytes())
                         if 数据类型 == 1:
-                            T_字节型 = read.byte(1)
+                            T_字节型 = int.from_bytes(read.byte(1))
                             if 属性标识 == b'\x01\x4f'  \
                             and T_字节型 == 1:
                                 是否封印 = True

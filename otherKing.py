@@ -153,5 +153,5 @@ class 基础功能:
         write.integer(len(内容))
         write.byte(bytes.fromhex('000000000000000000008b'))
         allWrite.byte(组包包头)
-        allWrite.byte(write.取数据(),True,1)
+        allWrite.byte(write.getBuffer(),True,1)
         return allWrite.getBuffer()
