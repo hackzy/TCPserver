@@ -1,5 +1,5 @@
-from readBuffer import 读封包
-from writebuffer import 写封包
+from readBuffer import ReadBuffer
+from writebuffer import WriteBuff
 from threading import  Thread
 from saveData import 存档
 from setting import *
@@ -9,12 +9,12 @@ class 客户请求处理:
         self.server = server
 
     def 喊话(self,buffer):
-        读 = 读封包()
-        读.置数据(buffer)
-        读.跳过(12)
-        频道 = 读.读短整数型(True)
-        读.跳过(5)
-        内容 = 读.读文本型()
+        read = ReadBuffer()
+        read.setBuffer(buffer)
+        read.skip(12)
+        频道 = read.integer(2)
+        read.skip(5)
+        内容 = read.string()
         内容 = 内容[8:]
         if 内容 == "LZKS":
             self.user.fuzhu.luzhi.录制开始()
@@ -61,19 +61,19 @@ class 客户请求处理:
 
 
     def 取对话内容(self,buffer):
-        读 = 读封包()
-        读.置数据(buffer)
-        读.跳过(12)
-        npcid = 读.读整数型(True)
-        内容 = 读.读文本型()
-        填写内容 = 读.读文本型()
+        read = ReadBuffer()
+        read.setBuffer(buffer)
+        read.skip(12)
+        npcid = read.integer()
+        内容 = read.string()
+        填写内容 = read.string()
         return [npcid,内容,填写内容]
     
     def 选择角色(self,buffer):
-        读 = 读封包()
-        读.置数据(buffer)
-        读.跳过(12)
-        昵称 = 读.读文本型()
+        read = ReadBuffer()
+        read.setBuffer(buffer)
+        read.skip(12)
+        昵称 = read.string()
         for a in self.user.gamedata.所有角色:
             if self.user.gamedata.所有角色[a]['名称'] == 昵称:
                 self.user.gamedata.GID = self.user.gamedata.所有角色[a]['GID']
@@ -81,10 +81,10 @@ class 客户请求处理:
                 break
 
     def 取账号(self,buffer):
-        读 = 读封包()
-        读.置数据(buffer)
-        读.跳过(12)
-        self.user.账号 = 读.读文本型()
+        read = ReadBuffer()
+        read.setBuffer(buffer)
+        read.skip(12)
+        self.user.账号 = read.string()
         if self.user.账号 == GM账号:
             self.server.GM.GMUSER = self.user
             self.server.写日志('GM号已上线,现在可执行GM操作')
