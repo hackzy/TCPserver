@@ -89,9 +89,9 @@ class SendToClient:
                     saveBuff.integer(物品属性数量,2)
                 else:
                     for b in range(物品属性数量):
-                        属性标识 = int.from_bytes(read.byte(2))
+                        属性标识 = read.byte(2)
                         数据类型 = int.from_bytes(read.byte(1))
-                        saveBuff.byte(属性标识.to_bytes(2))
+                        saveBuff.byte(属性标识)
                         saveBuff.byte(数据类型.to_bytes())
                         if 数据类型 == 1:
                             T_字节型 = int.from_bytes(read.byte(1))
@@ -115,7 +115,7 @@ class SendToClient:
                             if 属性标识 == b'\x00\x01':
                                 temp[物品位置id].名称 = T_文本型
                         elif 数据类型 == 6:
-                            T_字节型 = read.byte(1)
+                            T_字节型 = int.from_bytes(read.byte(1))
                             if 属性标识 == b'\x00\xca':
                                 temp[物品位置id].类型 = T_字节型
                         elif 数据类型 == 7:
@@ -133,7 +133,7 @@ class SendToClient:
         数量 = read.integer(2)
         for a in range(数量):
             数据头 = read.byte(2).hex()
-            标识 = read.byte(1)
+            标识 = int.from_bytes(read.byte(1))
             if 标识 == 1:
                 read.byte(1)
             elif 标识 == 2:
@@ -248,7 +248,7 @@ class SendToClient:
         read.skip(10)
         对象职业 = read.integer()
         read.skip(12)
-        飞行法宝ID = read.byte(1)
+        飞行法宝ID = int.from_bytes(read.byte(1))
         read.skip(19)
         名牌 = read.string()
         #print(buffer.hex())
@@ -267,7 +267,7 @@ class SendToClient:
             数据数量 = read.integer(2)
             for b in range(数据数量):
                 数据头 = read.byte(2)
-                标识 = read.byte(1)
+                标识 = int.from_bytes(read.byte(1))
                 if 标识 == 1:
                     read.byte(1)
                 elif 标识 == 2:
@@ -349,8 +349,8 @@ class SendToClient:
             read.integer(2)
             数据数量 = read.integer(2)
             for b in range(数据数量):
-                数据头 = read.integer()
-                标识 = read.byte(1)
+                数据头 = read.integer(2)
+                标识 = int.from_bytes(read.byte(1))
                 if 标识 == 4:
                     文本 = read.string()
                     if 数据头 == 1:
@@ -363,7 +363,7 @@ class SendToClient:
                     read.byte(1)
             道具id = read.string()
             read.skip(6)
-            元宝类型 = read.byte(1)
+            元宝类型 = int.from_bytes(read.byte(1))
             if 元宝类型 == 1 or 元宝类型 == 3:
                 self.user.gamedata.商城数据.update({道具名称:[道具id,'gold_coin']})
             else:
@@ -398,7 +398,7 @@ class SendToClient:
         read = ReadBuffer()
         read.setBuffer(buffer)
         read.skip(14)
-        位置id = read.byte(1)
+        位置id = int.from_bytes(read.byte(1))
         id = read.integer()
         self.user.gamedata.pet.update({id:petdata()})
         self.user.gamedata.pet[id].位置 = 位置id
@@ -408,9 +408,9 @@ class SendToClient:
             属性数量 = read.integer(2)
             for b in range(属性数量):
                 数据头 = read.byte(2)
-                标识 = read.byte(1)
+                标识 = int.from_bytes(read.byte(1))
                 if 标识 == 1:
-                    T_字节型 = read.byte(1)
+                    T_字节型 = int.from_bytes(read.byte(1))
                 elif 标识 == 2:
                     T_短整数型 = read.integer(2)
                 elif 标识 == 3:
@@ -439,13 +439,15 @@ class SendToClient:
         read = ReadBuffer()
         read.setBuffer(buffer)
         read.skip(14)
-        位置 = read.byte(1)
+        位置 = int.from_bytes(read.byte(1))
         id = read.integer()
         read.integer(2)
         read.integer(2)
         read.integer(2)
         数据头 = read.byte(2)
-        标识 = read.byte(1)
+        标识 = int.from_bytes(read.byte(1))
+        if id not in self.user.gamedata.pet:
+            return
         if 标识 == 1:
             read.byte(1)
         elif 标识 == 2:

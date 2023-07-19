@@ -14,6 +14,7 @@ class 自动战斗:
         self.user = user
 
     def 战斗封包(self,id,技能,攻击位置):
+        print(id,技能,攻击位置)
         if 攻击位置 not in self.攻击位置id:
             for b in self.攻击位置id.keys():
                 攻击位置 = b
@@ -31,15 +32,15 @@ class 自动战斗:
             技能id = 0
             攻击类型 = 2
         else:
-            try:
+            #try:
                 攻击id = self.攻击位置id[攻击位置]['id']
                 技能id = self.user.gamedata.技能[id][技能]
                 攻击类型 = 3
                 if 辅助技能.find(技能) != -1:
                     攻击id = id
-            except:
-                self.server.基础功能.中心提示('自動戰斗配置錯誤，請重新配置！')
-                return b''
+            #except:
+                #self.server.基础功能.中心提示('自動戰斗配置錯誤，請重新配置！')
+                #return b''
         write = WriteBuff()
         allWrite = WriteBuff()
         write.byte(bytes.fromhex("3202"))
@@ -48,9 +49,10 @@ class 自动战斗:
         write.integer(攻击类型)
         write.integer(技能id)
         write.integer(0)
-        allWrite.byte(b'\x4d\x5a\x00\x00')
-        allWrite.integer(int(psutil.boot_time()))
+        allWrite.byte(组包包头)
+        #allWrite.integer(int(psutil.boot_time()))
         allWrite.byte(write.getBuffer(),True,1)
+        print(allWrite.getBuffer().hex())
         return allWrite.getBuffer()
 
     def 开始战斗(self):
@@ -70,12 +72,12 @@ class 自动战斗:
         for a in range(数量):
             id = read.integer()
             read.skip(6)
-            位置 = read.integer(2)
+            位置 = read.integer()
             self.攻击位置id.update({位置:{'id':id}})
             信息数量 = read.integer(2)
             for b in range(信息数量):
                 类型 = read.integer(2)
-                标识 = int.to_bytes(read.byte(1))
+                标识 = int.from_bytes(read.byte(1))
                 if 标识 == 4:
                     文本 = read.string()
                     if 类型 == 1:
