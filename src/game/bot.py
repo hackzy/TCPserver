@@ -1,4 +1,4 @@
-from writebuffer import WriteBuff
+from src.basebuffer.writebuffer import WriteBuff
 import random
 from setting import *
 import threading

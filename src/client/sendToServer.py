@@ -1,7 +1,7 @@
-from readBuffer import ReadBuffer
-from writebuffer import WriteBuff
+from src.basebuffer.readBuffer import ReadBuffer
+from src.basebuffer.writebuffer import WriteBuff
 from threading import  Thread
-from saveData import 存档
+from src.plug.saveData import 存档
 from setting import *
 class 客户请求处理:
     def __init__(self,user,server) -> None:

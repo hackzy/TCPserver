@@ -1,9 +1,9 @@
-from readBuffer import ReadBuffer
-from writebuffer import WriteBuff
-from itemData import 背包数据
+from basebuffer.readBuffer import ReadBuffer
+from basebuffer.writebuffer import WriteBuff
+from game.itemData import 背包数据
 from setting import *
 import threading
-from petData import petdata
+from game.petData import petdata
 class SendToClient:
     def __init__(self,user,server) -> None:
         self.user = user

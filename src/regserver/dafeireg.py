@@ -1,7 +1,7 @@
-from reg import Reg
+from src.regserver.reg import Reg
 import pymysql
 from setting import *
-import askCheckSum
+import src.module.askCheckSum as askCheckSum
 import random
 class Dafei(Reg):
     def __init__(self, server) -> None:

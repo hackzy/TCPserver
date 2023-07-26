@@ -1,13 +1,13 @@
 import datetime
 import logging
-from otherKing import 基础功能
-from gm import GM
+from src.plug.basefuncs import 基础功能
+from src.game.gm import GM
 from setting import *
 import os
-from server import Server
-from regserver import Regserver
-from persion import 假人管理
-from saveData import 存档
+from src.server.server import Server
+from src.regserver.regserver import Regserver
+from src.game.bot import 假人管理
+from src.plug.saveData import 存档
 class 逍遥插件:
     '''全局管理类，负责保存分配客户与服务端信息'''
     def __init__(self) -> None:
@@ -58,7 +58,7 @@ class 逍遥插件:
                 return a
 
     def 客户连接(self,client,ip,sid):
-        from client import Client
+        from client.client import Client
         cid = self.分配空闲客户()
         self.user.update({cid:Client(self)})
         self.user[cid].初始化客户信息(client,ip,cid)  #保存客户属性

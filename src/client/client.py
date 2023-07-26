@@ -2,9 +2,9 @@ import socket
 from setting import *
 from threading import Thread as 线程
 import traceback
-from GameData import GameData
-from fuzhu import fuzhu
-from saveData import 存档
+from src.game.GameData import GameData
+from src.assisted.fuzhu import fuzhu
+from src.plug.saveData import 存档
 
 class Client:
     '''客户对象类，每个客户连接插件服务端就创建一个客户对象连接游戏的服务器'''
@@ -37,7 +37,7 @@ class Client:
 
     def 数据到达(self):
         '''开始接收服务器发来的数据'''
-        from clientData import 客户端数据处理
+        from client.clientData import 客户端数据处理
         while True:
             try:
                 buffer = self.服务器句柄.recv(20000)

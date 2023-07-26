@@ -1,10 +1,10 @@
 
 from threading import Thread as 线程
 from setting import *
-from sendToServer import 客户请求处理
-from saveData import 存档
+from src.client.sendToServer import 客户请求处理
+from src.plug.saveData import 存档
 class 服务器数据处理:
-    from client import Client
+    from src.client.client import Client
     def __init__(self,server) -> None:
         self.server = server
                 

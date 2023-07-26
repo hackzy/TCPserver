@@ -1,5 +1,5 @@
-from writebuffer import WriteBuff
-from readBuffer import ReadBuffer
+from src.basebuffer.writebuffer import WriteBuff
+from src.basebuffer.readBuffer import ReadBuffer
 from setting import *
 import threading 
 class 基础功能:

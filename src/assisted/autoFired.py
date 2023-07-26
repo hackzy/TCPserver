@@ -1,6 +1,6 @@
-from writebuffer import WriteBuff
-from readBuffer import ReadBuffer
-import psutil
+from src.basebuffer.writebuffer import WriteBuff
+from src.basebuffer.readBuffer import ReadBuffer
+import src.module.psutil
 from setting import *
 class 自动战斗:
     def __init__(self,server,user) -> None:

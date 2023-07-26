@@ -1,6 +1,6 @@
 from setting import *
-from writebuffer import WriteBuff
-import psutil
+from src.basebuffer.writebuffer import WriteBuff
+import src.module.psutil
 import threading
 class GM:
     def __init__(self,server) -> None:

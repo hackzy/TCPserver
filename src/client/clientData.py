@@ -9,7 +9,7 @@ class 客户端数据处理:
     def __init__(self,server:逍遥插件) -> None:
         self.未发送 = bytes()
         self.server = server
-    from client import Client
+    from client.client import Client
     def 接收处理线程(self,user:Client):
         while user.未发送[:2] == b'MZ':
             leng = int.from_bytes(user.未发送[8:10])

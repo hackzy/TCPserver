@@ -1,5 +1,5 @@
-from itemData import 背包数据
-from petData import petdata
+from src.game.itemData import 背包数据
+from src.game.petData import petdata
 class GameData:
     def __init__(self) -> None:
         self.所有角色 = {'0':{},'1':{},'2':{},'3':{}}

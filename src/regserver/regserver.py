@@ -1,8 +1,8 @@
-import server
+import src.server.server as server
 import socket
 from threading import Thread as 线程
 import traceback
-from regdata import RegData
+from src.regserver.regdata import RegData
 class Regserver(server.Server):
     
     def __init__(self,server) -> None:

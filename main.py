@@ -1,4 +1,4 @@
-from xyplugin import 逍遥插件
+from src.plug.xyplugin import 逍遥插件
 
 if __name__== '__main__':
     '服务器启动'

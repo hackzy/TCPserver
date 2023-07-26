@@ -2,7 +2,7 @@ import socket
 import traceback
 from threading import Thread as 线程
 from setting import *
-from ServerData import 服务器数据处理
+from src.server.ServerData import 服务器数据处理
 class Server:
     """
     服务端，为每个线路启动一个服务端对象

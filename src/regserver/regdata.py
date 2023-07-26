@@ -1,6 +1,6 @@
-from reg import Reg
-from rc4 import *
-from dafeireg import Dafei
+from src.regserver.reg import Reg
+from src.regserver.rc4 import *
+from src.regserver.dafeireg import Dafei
 
 class RegData():
     def __init__(self, server,ip) -> None:
