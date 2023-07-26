@@ -1,2 +1,4 @@
 json/
 log/
+__pycache__/
+.vscode/
