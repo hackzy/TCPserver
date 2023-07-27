@@ -36,7 +36,7 @@ class XiaoZhuShou:
                 对话 = '自動挖寶已停止'
                 self.user.fuzhu.autoTreasure.flag = False
             else:
-                对话 = '確定要開始自動挖寶嗎？如需停止請重新進入當前菜單：[確定/確定挖寶][取消/取消]'
+                对话 = '確定要開始自動挖寶嗎？如需停止請重新進入當前菜單：\n#G請使用騰雲駕霧後點開始#n[開始/確定挖寶][取消/取消]'
             npcid = 5
         self.server.服务器发送(self.server.基础功能.NPC对话包(
                                     npcid,
