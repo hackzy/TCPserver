@@ -1,5 +1,5 @@
 
-class 背包数据:
+class itemAttrib:
     def __init__(self) -> None:
         self.名称 = ''
         self.id = 0

@@ -1,7 +1,7 @@
 import socket
 import requests
 服务器监听地址 = socket.gethostbyname(socket.gethostname())
-服务器外网地址 = requests.get('http://myip.ipip.net', timeout=6).text
+服务器外网地址 = requests.get('http://myip.ipip.net', timeout=60).text
 if 服务器监听地址 == '10.168.1.3':
     服务器外网地址 = '10.168.1.3'
 服务器监听端口 = [51230,51231]

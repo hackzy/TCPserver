@@ -12,7 +12,6 @@ class 基础功能:
         write.integer(0)
         allWrite.byte(组包包头)
         allWrite.byte(write.getBuffer(),True,1)
-
         return allWrite.getBuffer()
 
     def 左下角提示(self,内容):
@@ -103,20 +102,32 @@ class 基础功能:
         allWrite.byte(write.getBuffer(),True,1)
         return allWrite.getBuffer()
 
-    def 取背包物品id(self,物品名称,user):
-        for item in user.gamedata.物品数据:
-            if user.gamedata.物品数据[item].名称 == 物品名称:
-                return user.gamedata.物品数据[item].id
+    def getItemPot(self,user,item:str,vague = True):
+        for key in user.gamedata.物品数据:
+            if vague:
+                if user.gamedata.物品数据[key].名称.find(item) != -1:
+                    return key
+            else:
+                if user.gamedata.物品数据[key].名称 == item:
+                    return key
+        return 0
             
-    def T8飞NPC(self,NPC,user):
+    def T8飞NPC(self,NPC,user,bTask = False):
         write = WriteBuff()
         allWrite = WriteBuff()
-        物品id = self.取背包物品id('特級八卦陰陽令',user)
-        if 物品id == 0:
-            self.商城购买道具(user,'特級八卦陰陽令')
+        if bTask:
+            物品id = 4294967295
+            flytype = '10'
+        else:
+            物品id = self.取背包物品id('特級八卦陰陽令',user)
+            if 物品id == 0:
+                self.商城购买道具(user,'特級八卦陰陽令')
+                物品id = self.取背包物品id('特級八卦陰陽令',user)
+            flytype = '02'
         write.byte(bytes.fromhex('40ce'))
         write.integer(物品id)
-        write.byte(bytes.fromhex('02000001'))
+        write.byte(bytes.fromhex(flytype))
+        write.byte(bytes.fromhex('000001'))
         write.string(NPC,True)
         allWrite.byte(组包包头)
         allWrite.byte(write.getBuffer(),True,1)
@@ -152,6 +163,17 @@ class 基础功能:
         write.integer(3,2)
         write.integer(len(内容))
         write.byte(bytes.fromhex('000000000000000000008b'))
+        allWrite.byte(组包包头)
+        allWrite.byte(write.getBuffer(),True,1)
+        return allWrite.getBuffer()
+    
+    def 对话点击(self,id,对话):
+        write = WriteBuff()
+        allWrite = WriteBuff()
+        write.byte(bytes.fromhex('3038'))
+        write.integer(id)
+        write.string(对话)
+        write.byte(bytes.fromhex('00'))
         allWrite.byte(组包包头)
         allWrite.byte(write.getBuffer(),True,1)
         return allWrite.getBuffer()

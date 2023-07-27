@@ -1,5 +1,5 @@
-from src.game.itemData import 背包数据
-from src.game.petData import petdata
+
+
 class GameData:
     def __init__(self) -> None:
         self.所有角色 = {'0':{},'1':{},'2':{},'3':{}}
@@ -13,7 +13,7 @@ class GameData:
         self.技能 = {}
         self.形象id = 0
         self.等级 = 0
-        self.物品数据 = {}
+        self.物品数据 = {} #{pot:itemAttrib}
         self.银元宝 = 0
         self.金元宝 = 0
         self.金币 = 0
@@ -38,7 +38,8 @@ class GameData:
         self.假人擂台 = False
         self.假人商会 = False
         self.假人拍卖行 = False
-
+        self.是否飞行 = 0
+        self.任务 = {}
 
 
 

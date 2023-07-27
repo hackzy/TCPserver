@@ -8,6 +8,7 @@ from src.server.server import Server
 from src.regserver.regserver import Regserver
 from src.game.bot import 假人管理
 from src.plug.saveData import 存档
+from src.client.client import Client
 class 逍遥插件:
     '''全局管理类，负责保存分配客户与服务端信息'''
     def __init__(self) -> None:
@@ -58,7 +59,6 @@ class 逍遥插件:
                 return a
 
     def 客户连接(self,client,ip,sid):
-        from client.client import Client
         cid = self.分配空闲客户()
         self.user.update({cid:Client(self)})
         self.user[cid].初始化客户信息(client,ip,cid)  #保存客户属性

@@ -58,6 +58,8 @@ class 客户请求处理:
                 self.user.fuzhu.小助手.录制相关(内容,填写内容)
                 return
             self.user.fuzhu.小助手.录制相关(内容)
+        elif npcid == 5:
+            self.user.fuzhu.小助手.自动挖宝(内容)
 
 
     def 取对话内容(self,buffer):

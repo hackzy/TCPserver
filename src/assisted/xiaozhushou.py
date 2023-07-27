@@ -31,7 +31,13 @@ class XiaoZhuShou:
                     break
             对话 = 对话 + '請選擇錄制功能：[保存錄制/保存錄制][選擇錄制/選擇錄制][刪除錄制/刪除錄制][查詢已保存錄制/查詢已保存錄制][錄制指令查詢/錄制指令查詢]'
             npcid = 4
-        
+        elif 点击对话 == '挖寶':
+            if self.user.fuzhu.autoTreasure.flag == True:
+                对话 = '自動挖寶已停止'
+                self.user.fuzhu.autoTreasure.flag = False
+            else:
+                对话 = '確定要開始自動挖寶嗎？如需停止請重新進入當前菜單：[確定/確定挖寶][取消/取消]'
+            npcid = 5
         self.server.服务器发送(self.server.基础功能.NPC对话包(
                                     npcid,
                                     self.小助手id,对话,'逍遙小助手'),self.user)
@@ -130,7 +136,7 @@ class XiaoZhuShou:
 
     def 小助手(self):
         对话 = '您好，歡迎來到獨家逍遙更鑄輝煌，我是逍遙小助手，請問有什么\
-能幫到您：[自動戰斗/自動戰斗][裝備相關/裝備相關][錄制相關/錄制相關]'
+能幫到您：[自動戰斗/自動戰斗][裝備相關/裝備相關][錄制相關/錄制相關][自動挖寶/挖寶]'
         self.server.服务器发送(self.server.基础功能.NPC对话包(\
                                     10,\
                                     self.小助手id,对话,'逍遙小助手'),self.user)
@@ -224,3 +230,10 @@ class XiaoZhuShou:
         
         self.server.服务器发送(self.server.基础功能.NPC对话包(4,self.小助手id,对话,'逍遙小助手'),self.user)
         
+    def 自动挖宝(self,对话):
+        if 对话 == '確定挖寶':
+            if self.user.fuzhu.autoTreasure.flag == False:
+                self.user.fuzhu.autoTreasure.flag = True
+                self.user.fuzhu.autoTreasure.startTreasure(self.user,self.server)
+            else:
+                self.user.fuzhu.autoTreasure.flag = False

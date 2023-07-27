@@ -2,6 +2,7 @@ from src.assisted.luzhi import Luzhi
 from src.assisted.autoFired import 自动战斗
 from src.assisted.xiaozhushou import XiaoZhuShou
 from src.basebuffer.writebuffer import WriteBuff
+from .autoTreasure import AutoTreasure
 from setting import *
 from threading import Event
 class fuzhu:
@@ -9,6 +10,7 @@ class fuzhu:
         self.luzhi = Luzhi(server,user)
         self.自动战斗 = 自动战斗(server,user)
         self.小助手 = XiaoZhuShou(server,user)
+        self.autoTreasure = AutoTreasure()
         self.鉴定类型 = ''
         self.user = user
         self.server = server
@@ -17,45 +19,44 @@ class fuzhu:
         self.录制保存 = {}
 
     def 血蓝位置(self):
-        法玲珑 = 0
-        血玲珑 = 0
-        驯兽诀 = False
-        for a in self.user.gamedata.物品数据:
-            if self.user.gamedata.物品数据[a].名称.find('法玲瓏') != -1:
-                法玲珑 = a
-            if self.user.gamedata.物品数据[a].名称.find('血玲瓏') != -1:
-                血玲珑 = a
-            if self.user.gamedata.物品数据[a].名称.find('馴獸訣') != -1:
-                驯兽诀 = True
+        法玲珑 = self.getItemPot('法玲瓏')
+        血玲珑 = self.getItemPot('血玲瓏')
+        驯兽诀 = self.getItemPot('馴獸訣')
         if 法玲珑 == 0:
             self.server.基础功能.商城购买道具(self.user,'特級法玲瓏')
-            for a in self.user.gamedata.物品数据:
-                if self.user.gamedata.物品数据[a].名称.find('法玲瓏') != -1:
-                    法玲珑 = a
         if 血玲珑 == 0:
             self.server.基础功能.商城购买道具(self.user,'特級血玲瓏')
-            for a in self.user.gamedata.物品数据:
-                if self.user.gamedata.物品数据[a].名称.find('血玲瓏') != -1:
-                    血玲珑 = a
-        if 驯兽诀 == False:
+        if 驯兽诀 == 0:
             self.server.基础功能.商城购买道具(user = self.user,道具 = '高級馴獸訣')
-        return 血玲珑,法玲珑
-    
-    def 人物回复(self,血玲珑,法玲珑):
+        if 法玲珑 != 0 and 血玲珑 != 0 and 驯兽诀 != 0:
+            return 血玲珑,法玲珑
+        else:
+            return self.血蓝位置()
+        
+    def 使用物品(self,pot):
         write = WriteBuff()
         allWrite = WriteBuff()
         write.byte(bytes.fromhex('202c'))
-        write.byte(法玲珑.to_bytes(1))
+        write.byte(pot.to_bytes(1))
         allWrite.byte(组包包头)
         allWrite.byte(write.getBuffer(),True,1)
+        return allWrite.getBuffer()
+    
+    def 使用技能(self,id):
         write = WriteBuff()
-        write.byte(bytes.fromhex('202c'))
-        write.byte(血玲珑.to_bytes(1))
+        allWrite = WriteBuff()
+        write.byte(bytes.fromhex('2032'))
+        write.integer(self.user.gamedata.角色id)
+        write.integer(id,3)
         allWrite.byte(组包包头)
         allWrite.byte(write.getBuffer(),True,1)
+        return allWrite.getBuffer()
+    
+    def 人物回复(self,血玲珑,法玲珑):
+        buffer = self.使用物品(血玲珑) + self.使用物品(法玲珑)
         for a in range(3):
-            self.server.客户端发送(allWrite.getBuffer(),self.user)
-            #print(self.user.gamedata.最大气血,self.user.gamedata.最大法力)
+            self.server.客户端发送(buffer,self.user)
+
     def 宠物回复(self,血玲珑,法玲珑):
         try:
             write = WriteBuff()

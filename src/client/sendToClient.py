@@ -1,9 +1,9 @@
-from basebuffer.readBuffer import ReadBuffer
-from basebuffer.writebuffer import WriteBuff
-from game.itemData import 背包数据
+from src.basebuffer.readBuffer import ReadBuffer
+from src.basebuffer.writebuffer import WriteBuff
+from src.game.itemData import itemAttrib
 from setting import *
 import threading
-from game.petData import petdata
+from src.game.petData import petdata
 class SendToClient:
     def __init__(self,user,server) -> None:
         self.user = user
@@ -72,7 +72,7 @@ class SendToClient:
             物品位置id = int.from_bytes(read.byte(1))
             if 物品位置id == 32:
                 物品位置id = 55
-            temp = {物品位置id:背包数据()}
+            temp = {物品位置id:itemAttrib()}
             write.byte(物品位置id.to_bytes(1))
             物品数据总数 = read.integer(2)
             if 物品数据总数 == 0:
@@ -477,3 +477,52 @@ class SendToClient:
                 假人刷新.daemon = True
                 假人刷新.start()
 
+    def 读自身显示属性(self,buffer:bytes):
+        read = ReadBuffer()
+        read.setBuffer(buffer)
+        read.skip(12)
+        read.integer()#人物id
+        read.integer(2)#人物x坐标
+        read.integer(2)#人物y坐标
+        read.integer(2)#人物朝向
+        read.integer()#人物武器
+        read.integer()
+        for a in range(3):# 8
+            read.integer()
+        read.integer()#基础形象
+        read.integer()
+        read.integer()#坐骑
+        read.integer()
+        read.integer()
+        read.string()#名字
+        read.integer()
+        read.integer(2)#等级
+        read.string()#称谓
+        read.string()#称谓类型
+        read.string() #门派
+        read.string()#帮派
+        read.integer()
+        read.integer(2) #仙魔
+        read.integer()
+        read.integer()#基础形象
+        read.integer() #套装形象
+        read.integer() #显示形象
+        read.integer() #坐骑形象
+        read.integer(2)    #特效 套装底盘效果
+        read.integer(2) #形象类型
+        read.integer(2) #飞行法宝类型
+        read.integer()
+        self.user.gamedata.是否飞行 = read.integer(2)#是否飞行
+
+    def 任务读取(self,buffer):
+        read = ReadBuffer()
+        read.setBuffer(buffer)
+        read.skip(14)
+        任务名称 = read.string()
+        read.string(lenType=1) #任务介绍
+        任务内容 = read.string(lenType=1)
+        read.skip(8)
+        read.string()#建议人数
+        read.string()#建议等级r
+        read.string(lenType=1)#任务奖励
+        self.user.gamedata.任务.update({任务名称:任务内容})
