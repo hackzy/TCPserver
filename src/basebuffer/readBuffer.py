@@ -44,9 +44,9 @@ class ReadBuffer:
                     length = self.integer(4,byteorder)
                 recLocation = self.now
                 self.now += length
-                return self.data[recLocation:recLocation+length].decode()
+                return self.data[recLocation:recLocation+length].decode('gbk')
             string = self.data[self.now:].decode()
-            length = len(bytes(string,'utf-8'))
+            length = len(bytes(string,'gbk'))
             self.now += length
             return string
         except:

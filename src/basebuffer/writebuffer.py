@@ -17,15 +17,15 @@ class WriteBuff:
     
     def string(self,sstr:str,bLen=True,lenType=0,byteorder='big'):
         if bLen == False:
-            self.data += bytes(sstr,'utf8')
+            self.data += bytes(sstr,'gbk')
             return
         if lenType == 0:
-            self.data += len(sstr.encode()).to_bytes()
+            self.data += len(sstr.encode('gbk')).to_bytes()
         elif lenType == 1:
-            self.integer(len(sstr.encode()),2,byteorder)
+            self.integer(len(sstr.encode('gbk','utf8')),2,byteorder)
         elif lenType == 2:
-            self.integer(len(sstr.encode()),byteorder=byteorder)
-        self.data += bytes(sstr,'utf-8')
+            self.integer(len(sstr.encode('gbk')),byteorder=byteorder)
+        self.data += bytes(sstr,'gbk')
         return
     
     def integer(self,iint:int,length = 4,byteorder='big'):

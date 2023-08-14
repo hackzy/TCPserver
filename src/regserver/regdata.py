@@ -1,6 +1,7 @@
 from src.regserver.reg import Reg
 from src.regserver.rc4 import *
 from src.regserver.dafeireg import Dafei
+from setting import *
 
 class RegData():
     def __init__(self, server,ip) -> None:
@@ -35,7 +36,7 @@ class RegData():
         try:
             解密后的数据 = decrypt(b'Kzml',buffer).decode('gb2312','ignore')
             包头 = 解密后的数据[:2]
-            if 包头 == 'lz':
+            if 包头 == 'lz' and 普通注册:
                 语句 = 'SELECT * FROM linxz WHERE ip=\'%s\'' % (self.客户ip)
                 cur = reg.mysql.cursor()
                 if cur.execute(语句) >= 5:
@@ -46,13 +47,14 @@ class RegData():
                     去包头 = 解密后的数据[2:].split('#o_o')
                     buffer = encrypt(b'Fzml',reg.accreg(去包头,self.客户ip).encode('gb2312','ignore'))
                     cur.close()
-
+            else:
+                buffer = encrypt(b'Fzml','注册未开放'.encode('gb2312','ignore')) 
             if 包头 == 'lg':
                 去包头 = 解密后的数据[2:]
                 buffer = encrypt(b'Fzml',reg.passwdchange(去包头).encode('gb2312','ignore'))
 
             
-            if 包头 == 'ld':
+            if 包头 == 'ld' and 大飞注册:
                 语句 = 'SELECT * FROM linxz WHERE ip=\'%s\'' % (self.客户ip)
                 cur = reg.mysql.cursor()
                 if cur.execute(语句) >= 5:
@@ -63,6 +65,8 @@ class RegData():
                     去包头 = 解密后的数据[2:].split('#o_o')
                     dafeireg = Dafei(self.server)
                     buffer = encrypt(b'Fzml',reg.accreg(去包头,self.客户ip).encode('gb2312','ignore') + dafeireg.大飞注册(去包头[0],去包头[4],去包头[3],'旧',去包头[5],'逍遙大飛').encode('gb2312','ignore'))
+            else:
+                buffer = encrypt(b'Fzml','大飞注册未开放'.encode('gb2312','ignore')) 
         except:
             pass
 

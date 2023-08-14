@@ -27,16 +27,21 @@ class SendToClient:
         return allWrite.getBuffer()
     
     def 显示线路(self,buffer):
+        print(buffer.hex())
         #4D 5A 00 00 00 00 00 00 00 23 43 55 00 01 06 E6 9B B4 E9 91 84 E8 BC 9D E7 85 8C E4 B8 80 E7 B7 9A 09 31 32 37 2E 30 2E 30 2E 31 00 02 
         write = WriteBuff()
         read = ReadBuffer()
         allWrite = WriteBuff()
         read.setBuffer(buffer)
         read.skip(10)
-        write.byte(read.byte(4))
-        write.string(read.string(),True)
-        write.string(服务器外网地址,True)
-        write.integer(2,2)
+        write.byte(read.byte(2))
+        number = read.integer(2)
+        write.integer(number,2)
+        for n in range(number):
+            write.string(read.string(),True)
+            read.string()
+            write.string(服务器外网地址,True)
+        write.byte(read.residBuffer())
         allWrite.byte(组包包头)
         allWrite.byte(write.getBuffer(),True,1)
         return allWrite.getBuffer()

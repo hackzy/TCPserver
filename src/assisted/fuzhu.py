@@ -19,9 +19,9 @@ class fuzhu:
         self.录制保存 = {}
 
     def 血蓝位置(self):
-        法玲珑 = self.getItemPot('法玲瓏')
-        血玲珑 = self.getItemPot('血玲瓏')
-        驯兽诀 = self.getItemPot('馴獸訣')
+        法玲珑 = self.server.基础功能.getItemPot('法玲瓏')
+        血玲珑 = self.server.基础功能.getItemPot('血玲瓏')
+        驯兽诀 = self.server.基础功能.getItemPot('馴獸訣')
         if 法玲珑 == 0:
             self.server.基础功能.商城购买道具(self.user,'特級法玲瓏')
         if 血玲珑 == 0:
@@ -86,14 +86,17 @@ class fuzhu:
     def 一键鉴定(self):
         if len(self.user.gamedata.物品数据) == 0:
             return
-        for back in self.user.gamedata.物品数据:
-            if back > 100:
-                write = WriteBuff()
-                write.byte(组包包头)
-                write.byte(bytes.fromhex('0006301c'))
-                write.integer(back)
-                self.user.服务器句柄.send(write.getBuffer())
-                Event().wait(timeout=0.2)
+        try:
+            for back in self.user.gamedata.物品数据:
+                if back > 100:
+                    write = WriteBuff()
+                    write.byte(组包包头)
+                    write.byte(bytes.fromhex('0006301c'))
+                    write.integer(back)
+                    self.user.服务器句柄.send(write.getBuffer())
+                    Event().wait(timeout=0.2)
+        except:
+            pass
         self.鉴定类型 = ''
 
     def 鉴定二级对话(self,NPCID,对话内容):

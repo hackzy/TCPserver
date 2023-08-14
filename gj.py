@@ -1,40 +1,14 @@
-import random
-import socket
-from threading import Thread
-c = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-c.connect(('124.222.131.130',2164))
-i=1
-a = ['a','b','c','d','e','f','g','h','i','j','k','l','m','n',\
-            'o','p','q','r','s','t','u','v','w','x','y','z','y','x',\
-            'a','b','a','b','a','b','a','b','s','b','a','b','a','b',\
-                'w','u','v','g','h','j','k','l','m','p','q','e','r','t']
+import asyncio
+import websockets
 
+# WebSocket服务器的处理函数
+async def echo(websocket, path):
+    async for message in websocket:
+        await websocket.send("收到消息：" + message)
+        print("收到消息：" + message)
 
-def xc():
-    while True:
-        账号 = random.choice(a) + random.choice(a) + random.choice(a) + str(random.randint(10000000000000000000000000,90000000000000000000000000)) + random.choice(a) + random.choice(a) + random.choice(a) 
-        #密码 = random.choice(a) + random.choice(a) + random.choice(a) + str(random.randint(10000000000000000000000000,90000000000000000000000000)) + random.choice(a) + random.choice(a) + random.choice(a) 
-        总 = bytes('ZC|' + 账号 + '|' + 账号,'gb2312')
-        buffer = len(总).to_bytes(4,'little') + 总
-        try:
-            b = c.send(buffer)
-            if b != len(buffer):
-                c.connect(('124.222.131.130',2164))
-                print('发送失败重新连接')
-            else:
-                
-                print(b+1)
-        except:
-            c = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            c.connect(('124.222.131.130',2164))
-def th():
-    t1 = Thread(target=xc)
-    t1.start()
-    t2 = Thread(target=xc)
-    t2.start()
-    t3 = Thread(target=xc)
-    t3.start()
-    t4 = Thread(target=xc)
-    t4.start()
-
-th()
+# 启动WebSocket服务器
+start_server = websockets.serve(echo, "localhost", 8765)
+# 运行事件循环
+asyncio.get_event_loop().run_until_complete(start_server)
+asyncio.get_event_loop().run_forever()
