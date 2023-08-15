@@ -36,37 +36,37 @@ class RegData():
         try:
             解密后的数据 = decrypt(b'Kzml',buffer).decode('gb2312','ignore')
             包头 = 解密后的数据[:2]
-            if 包头 == 'lz' and 普通注册:
-                语句 = 'SELECT * FROM linxz WHERE ip=\'%s\'' % (self.客户ip)
-                cur = reg.mysql.cursor()
-                if cur.execute(语句) >= 5:
-                    buffer = encrypt(b'Fzml','你已被限制注册'.encode('gb2312','ignore')) 
-                    cur.close()
-                    return
+            if 包头 == 'lz':
+                if 普通注册:
+                    语句 = 'SELECT * FROM linxz WHERE ip=\'%s\'' % (self.客户ip)
+                    cur = reg.mysql.cursor()
+                    if cur.execute(语句) >= 5:
+                        buffer = encrypt(b'Fzml','你已被限制注册'.encode('gb2312','ignore')) 
+                        cur.close()
+                        return
+                    else:
+                        去包头 = 解密后的数据[2:].split('#o_o')
+                        buffer = encrypt(b'Fzml',reg.accreg(去包头,self.客户ip).encode('gb2312','ignore'))
+                        cur.close()
                 else:
-                    去包头 = 解密后的数据[2:].split('#o_o')
-                    buffer = encrypt(b'Fzml',reg.accreg(去包头,self.客户ip).encode('gb2312','ignore'))
-                    cur.close()
-            else:
-                buffer = encrypt(b'Fzml','注册未开放'.encode('gb2312','ignore')) 
-            if 包头 == 'lg':
+                    buffer = encrypt(b'Fzml','注册未开放'.encode('gb2312','ignore')) 
+            elif 包头 == 'lg':
                 去包头 = 解密后的数据[2:]
                 buffer = encrypt(b'Fzml',reg.passwdchange(去包头).encode('gb2312','ignore'))
-
-            
-            if 包头 == 'ld' and 大飞注册:
-                语句 = 'SELECT * FROM linxz WHERE ip=\'%s\'' % (self.客户ip)
-                cur = reg.mysql.cursor()
-                if cur.execute(语句) >= 5:
-                    buffer = encrypt(b'Fzml','你已被限制注册'.encode('gb2312','ignore'))
-                    cur.close()
-                    return
+            elif 包头 == 'ld':
+                if 大飞注册:
+                    语句 = 'SELECT * FROM linxz WHERE ip=\'%s\'' % (self.客户ip)
+                    cur = reg.mysql.cursor()
+                    if cur.execute(语句) >= 5:
+                        buffer = encrypt(b'Fzml','你已被限制注册'.encode('gb2312','ignore'))
+                        cur.close()
+                        return
+                    else:
+                        去包头 = 解密后的数据[2:].split('#o_o')
+                        dafeireg = Dafei(self.server)
+                        buffer = encrypt(b'Fzml',reg.accreg(去包头,self.客户ip).encode('gb2312','ignore') + dafeireg.大飞注册(去包头[0],去包头[4],去包头[3],'旧',去包头[5],'逍遙大飛').encode('gb2312','ignore'))
                 else:
-                    去包头 = 解密后的数据[2:].split('#o_o')
-                    dafeireg = Dafei(self.server)
-                    buffer = encrypt(b'Fzml',reg.accreg(去包头,self.客户ip).encode('gb2312','ignore') + dafeireg.大飞注册(去包头[0],去包头[4],去包头[3],'旧',去包头[5],'逍遙大飛').encode('gb2312','ignore'))
-            else:
-                buffer = encrypt(b'Fzml','大飞注册未开放'.encode('gb2312','ignore')) 
+                    buffer = encrypt(b'Fzml','大飞注册未开放'.encode('gb2312','ignore')) 
         except:
             pass
 
