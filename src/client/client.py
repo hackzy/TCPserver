@@ -74,19 +74,19 @@ class Client:
             buffer = 客户接收处理.登录线路(buffer)
         elif 包头.hex() == "4355":
             buffer = 客户接收处理.显示线路(buffer)
-        elif 包头.hex() == '20d7':
+        elif 包头.hex() == '5009':
             buffer = 客户接收处理.切换角色(buffer)
-        elif 包头.hex() == 'fff5':
+        elif 包头.hex() == '5103':
             客户接收处理.背包读取(buffer)
-        elif 包头.hex() == 'fff7':
+        elif 包头.hex() == 'f9d3':
             客户接收处理.人物属性读取(buffer)
-        elif 包头.hex() == '7feb':
+        elif 包头.hex() == '2821':
             客户接收处理.技能读取(buffer)
-        elif 包头.hex() == 'fff1':
+        elif 包头.hex() == '7103':
             #屏蔽垃圾
             if self.gamedata.屏蔽垃圾:
                 buffer = b''
-        elif 包头.hex() == 'fff9':
+        elif 包头.hex() == 'f05d':
                 客户接收处理.周围对象读取(buffer)
         elif 包头.hex() == '1043':
                 self.gamedata.参战宠物id = int.from_bytes(buffer[12:16])
@@ -102,21 +102,21 @@ class Client:
         elif 包头.hex() == '1df5':
             if self.fuzhu.自动战斗.开关:
                 self.fuzhu.自动战斗.删攻击id(buffer)
-        elif 包头.hex() == 'ffe1':
+        elif 包头.hex() == '1155':
             客户接收处理.地图事件(buffer)
         elif 包头.hex() == 'f061':
             客户接收处理.取角色gid(buffer)
         elif 包头.hex() == '2301' and self == self.server.GM.GMUSER:
             self.server.GM.元宝寄售(buffer)
-        elif 包头.hex() == 'fdd1':
+        elif 包头.hex() == '1a29':
             客户接收处理.战斗对话(buffer)
         elif 包头.hex() == 'ffdb':
             客户接收处理.商城读取(buffer)
         elif 包头.hex() == '2037':
             buffer = 客户接收处理.NPC对话(buffer)
-        elif 包头.hex() == '10ec':
+        elif 包头.hex() == 'f0b3':
             客户接收处理.宠物数据更新(buffer)
-        elif 包头.hex() == 'ffe3':
+        elif 包头.hex() == '20cf':
             客户接收处理.宠物读取(buffer)
         elif 包头.hex() == '0dfd':
             if self.fuzhu.自动战斗.开关:
