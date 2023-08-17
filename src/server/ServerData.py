@@ -65,6 +65,8 @@ class 服务器数据处理:
             if user.账号 == '':
                 请求处理.取账号(buffer)
                 存档.读取存档信息(user)
+        elif 包头.hex() == '2162':
+            self.server.写日志('心法',buffer.hex())
         try:
             if buffer != b'':
                 self.server.客户端发送(buffer,user)
