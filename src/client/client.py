@@ -17,6 +17,7 @@ class Client:
         self.账号 = ''
         self.在线中 = False
         self.未发送 = b''
+        self.time = 0
     def 客户端启动(self,ip,端口):
         '''启动连接服务器'''
         try:
@@ -78,7 +79,7 @@ class Client:
             buffer = 客户接收处理.切换角色(buffer)
         elif 包头.hex() == '5103':
             客户接收处理.背包读取(buffer)
-        elif 包头.hex() == 'f9d3':
+        elif 包头.hex() == '203d' or 包头.hex() == '39f1':
             客户接收处理.人物属性读取(buffer)
         elif 包头.hex() == '2821':
             客户接收处理.技能读取(buffer)

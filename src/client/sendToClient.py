@@ -27,7 +27,6 @@ class SendToClient:
         return allWrite.getBuffer()
     
     def 显示线路(self,buffer):
-        print(buffer.hex())
         #4D 5A 00 00 00 00 00 00 00 23 43 55 00 01 06 E6 9B B4 E9 91 84 E8 BC 9D E7 85 8C E4 B8 80 E7 B7 9A 09 31 32 37 2E 30 2E 30 2E 31 00 02 
         write = WriteBuff()
         read = ReadBuffer()

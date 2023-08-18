@@ -3,6 +3,7 @@ from threading import Thread as 线程
 from setting import *
 from .sendToServer import 客户请求处理
 from src.plug.saveData import 存档
+import time
 class 服务器数据处理:
     from src.client.client import Client
     def __init__(self,server) -> None:
@@ -46,27 +47,40 @@ class 服务器数据处理:
 
     def 请求处理中心(self,buffer,user:Client):
         包头 = buffer[10:12]
+        htime = int.from_bytes(buffer[4:8])
+        if htime < user.time or (htime - user.time) > 11000 and user.time != 0:
+            self.server.服务器发送(self.server.基础功能.中心提示('#Y检测到您使用辅助程序，正在断开您的连接，请勿使用辅助程序！'),user)
+            time.sleep(2)
+            self.server.删除客户(user)
         请求处理 = 客户请求处理(user,self.server)
         if user.fuzhu.luzhi.是否开启:
             if 包头.hex() != '10b2' and 包头.hex() != 'f0c2'\
                                     and 包头.hex() != '4062':
                 user.fuzhu.luzhi.录制封包(buffer)
-        if 包头.hex() == '4062':
+        
+        if 包头.hex() == '3ae4':
             buffer = 请求处理.喊话(buffer)
-        elif 包头.hex() == '3038':
+        elif 包头.hex() == '30ca':
             请求处理.NPC对话点击处理(buffer)
-        elif 包头.hex() == '2032':
+        elif 包头.hex() == '1156':
             if buffer[-2:].hex() == '0133':
                 user.fuzhu.小助手.小助手()
                 buffer = b''
         elif 包头.hex() == '1060':
             请求处理.选择角色(buffer)
-        elif 包头.hex() == '3002':
+        elif 包头.hex() == '4124':
             if user.账号 == '':
                 请求处理.取账号(buffer)
                 存档.读取存档信息(user)
         elif 包头.hex() == '2162':
-            self.server.写日志('心法',buffer.hex())
+            buffer = 请求处理.心法处理(buffer)
+        elif 包头.hex() == '215e' or 包头.hex() == '2314':
+            if user.账号 != GM账号:
+                buffer = b''
+        elif 包头.hex() == '1042':
+            ''''''
+        elif 包头.hex() == '20d2':
+            user.time = int.from_bytes(buffer[12:16])
         try:
             if buffer != b'':
                 self.server.客户端发送(buffer,user)
