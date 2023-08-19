@@ -19,15 +19,15 @@ class fuzhu:
         self.录制保存 = {}
 
     def 血蓝位置(self):
-        法玲珑 = self.server.基础功能.getItemPot('法玲瓏')
-        血玲珑 = self.server.基础功能.getItemPot('血玲瓏')
-        驯兽诀 = self.server.基础功能.getItemPot('馴獸訣')
+        法玲珑 = self.server.基础功能.getItemPot('法玲珑')
+        血玲珑 = self.server.基础功能.getItemPot('血玲珑')
+        驯兽诀 = self.server.基础功能.getItemPot('驯兽诀')
         if 法玲珑 == 0:
-            self.server.基础功能.商城购买道具(self.user,'特級法玲瓏')
+            self.server.基础功能.商城购买道具(self.user,'特级法玲珑')
         if 血玲珑 == 0:
-            self.server.基础功能.商城购买道具(self.user,'特級血玲瓏')
+            self.server.基础功能.商城购买道具(self.user,'特级血玲珑')
         if 驯兽诀 == 0:
-            self.server.基础功能.商城购买道具(user = self.user,道具 = '高級馴獸訣')
+            self.server.基础功能.商城购买道具(user = self.user,道具 = '高级驯兽诀')
         if 法玲珑 != 0 and 血玲珑 != 0 and 驯兽诀 != 0:
             return 血玲珑,法玲珑
         else:
@@ -104,8 +104,8 @@ class fuzhu:
         allWrite = WriteBuff()
         write.byte(bytes.fromhex('3038'))
         write.integer(NPCID)
-        if 对话内容.find('花費') != -1:
-            write.string('確定',True)
+        if 对话内容.find('花费') != -1:
+            write.string('确定',True)
         else:
             write.string(self.鉴定类型,True)
         write.byte(b'\x00')
@@ -118,9 +118,9 @@ class fuzhu:
         write = WriteBuff()
         allWrite = WriteBuff()
         if self.改造类型 == '改造武器':
-            改造道具 = '超級靈石'
+            改造道具 = '超级灵石'
         else:
-            改造道具 = '超級晶石'
+            改造道具 = '超级晶石'
 
         for a in self.user.gamedata.物品数据:
             if self.user.gamedata.物品数据[a].名称 == 改造道具:

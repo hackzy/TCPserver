@@ -26,7 +26,7 @@ class 自动战斗:
             攻击id = id
             技能id = 0
             攻击类型 = 1
-        elif 技能 == "普通攻擊":
+        elif 技能 == "普通攻击":
             攻击id = self.攻击位置id[攻击位置]['id']
             技能id = 0
             攻击类型 = 2
@@ -38,7 +38,7 @@ class 自动战斗:
                 if 辅助技能.find(技能) != -1:
                     攻击id = id
             except:
-                self.server.基础功能.中心提示('自動戰斗配置錯誤，請重新配置！')
+                self.server.基础功能.中心提示('自动战斗配置错误，请重新配置！')
                 return b''
         write = WriteBuff()
         allWrite = WriteBuff()

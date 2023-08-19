@@ -259,7 +259,7 @@ class SendToClient:
         #self.server.写日志('对象id:'+str(对象id)+'|'+'对象昵称:'+对象昵称+'|'+'武器:'+str(武器)+'|'\
         #                +'NPC类型:'+str(NPC类型)+'|'+'坐骑:'+str(坐骑)+'|'+'对象职业:'+str(对象职业)+'|'+\
         #                    '飞行法宝:'+str(飞行法宝ID)+'|'+'铭牌:'+名牌+'|'+'X:'+str(x)+'|'+'Y:'+str(y)+'|')
-        '''[13:21:58.965960]对象id:379088|对象昵称:竇小鑫|对象类型:11962|NPC类型:1|坐骑:31501|对象职业:4001|飞
+        '''[13:21:58.965960]对象id:379088|对象昵称:窦小鑫|对象类型:11962|NPC类型:1|坐骑:31501|对象职业:4001|飞
 行法宝:0|铭牌:|X:61|Y:29|'''
 
     def 取角色gid(self,buffer):
@@ -302,8 +302,8 @@ class SendToClient:
             刷新假人 = threading.Thread(target=self.server.假人.地图假人刷新,args=(self.server,self.user,'坐标'))
             刷新假人.daemon = True
             刷新假人.start()
-        elif 地图名 == '幽雅小居' or 地图名 == '豪華居所' \
-            or 地图名 == '花園別墅' or 地图名 == '翡翠莊園':
+        elif 地图名 == '幽雅小居' or 地图名 == '豪华居所' \
+            or 地图名 == '花园别墅' or 地图名 == '翡翠庄园':
             self.user.gamedata.屏蔽垃圾 = False
         else:
             if self.user.gamedata.上一地图 == '天墉城' and \
@@ -321,7 +321,7 @@ class SendToClient:
         NPC = read.string()
         read.skip(7)
         内容 = read.string()
-        if NPC == '財神' and 内容 == '感謝你們幫我的忙，這些是給你們的獎勵！':
+        if NPC == '财神' and 内容 == '感谢你们帮我的忙，这些是给你们的奖励！':
             evn = threading.Event()
             evn.wait(2)
             self.财神奖励(self.user)
@@ -332,13 +332,13 @@ class SendToClient:
         #GM_SEND(self,玩家昵称,角色id,命令,值):
         现金 = user.gamedata.金币 + 20000000
         if 现金 > 2000000000:
-            self.server.基础功能.中心提示('你的金錢已滿，無法繼續獲得金錢。')
+            self.server.基础功能.中心提示('你的金钱已满，无法继续获得金钱。')
             self.server.GM.GM_SEND(user.gamedata.角色名,user.gamedata.角色id,'cash',2000000000)
         else:
             self.server.GM.GM_SEND(user.gamedata.角色名,user.gamedata.角色id,'cash',现金)
             bf = self.server.基础功能.奖励_上升提示(20000000,'cash') + \
-            self.server.基础功能.中心提示('你得到了#Y20,000,000#n文錢。') + \
-            self.server.基础功能.左下角提示('你得到了#Y20,000,000#n文錢。')
+            self.server.基础功能.中心提示('你得到了#Y20,000,000#n文钱。') + \
+            self.server.基础功能.左下角提示('你得到了#Y20,000,000#n文钱。')
             self.server.服务器发送(bf,user)
 
     def 商城读取(self,buffer):
@@ -387,7 +387,7 @@ class SendToClient:
         write.byte(read.byte(2))
         对话内容 = read.string(lenType=1)
         if self.user.fuzhu.鉴定类型 != '':
-            if 对话内容.find('鑒定符') != -1:
+            if 对话内容.find('鉴定符') != -1:
                 self.user.fuzhu.鉴定二级对话(NPCid,对话内容)
                 return b''
         write.string(对话内容,True,1)

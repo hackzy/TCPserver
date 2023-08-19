@@ -39,7 +39,7 @@ class GM:
 
     def 检查元宝(self):
         while True:
-            t = threading.Timer(60,self.元宝寄售,args=(bytes.fromhex('4D 5A 00 00 20 71 0B 7D 00 03 23 00 01 '.replace(' ','')),))
+            t = threading.Timer(60,self.元宝寄售,args=(bytes.fromhex('4D 5A 00 00 08 32 C0 74 00 03 28 0A 01 '.replace(' ','')),))
             t.start()
             t.join()
             if self.GMUSER == None:

@@ -2,6 +2,7 @@ from src.basebuffer.writebuffer import WriteBuff
 from src.basebuffer.readBuffer import ReadBuffer
 from setting import *
 import threading 
+from datetime import datetime
 class 基础功能:
 
     def 中心提示(self,内容):
@@ -37,7 +38,7 @@ class 基础功能:
         write.integer(ID)
         write.integer(形象ID)
         write.integer(1,2)
-        内容 = '[@請輸入/!請輸入#prompt:' + 内容 + ']'
+        内容 = '[@请输入/!请输入#prompt:' + 内容 + ']'
         write.string(内容,True,1)
         write.integer(0)
         write.string(名字)
@@ -91,10 +92,10 @@ class 基础功能:
         write.string(内容,True)
         write.integer(1687423220)
         write.integer(0,2)
-        write.string('更鑄輝煌一線',True)
+        write.string('更铸辉煌一线',True)
         write.integer(3,2)
         write.integer(363)
-        write.string('奧斯卡賭神',True)
+        write.string('奥斯卡赌神',True)
         write.integer(0)
         write.integer(0)
         write.integer(0,2)
@@ -119,10 +120,10 @@ class 基础功能:
             物品id = 4294967295
             flytype = '10'
         else:
-            物品id = self.取背包物品id('特級八卦陰陽令',user)
+            物品id = self.取背包物品id('特级八卦阴阳令',user)
             if 物品id == 0:
-                self.商城购买道具(user,'特級八卦陰陽令')
-                物品id = self.取背包物品id('特級八卦陰陽令',user)
+                self.商城购买道具(user,'特级八卦阴阳令')
+                物品id = self.取背包物品id('特级八卦阴阳令',user)
             flytype = '02'
         write.byte(bytes.fromhex('40ce'))
         write.integer(物品id)
@@ -136,11 +137,11 @@ class 基础功能:
     def 商城购买道具(self,user,道具,数量 = 1):
         try:
             if user.gamedata.商城数据 == {}:
-                user.服务器句柄.send(bytes.fromhex('4D 5A 00 00 78 70 7B 99 00 14 00 D8 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 '.replace(' ',"")))
+                user.服务器句柄.send(bytes.fromhex('4D 5A 00 00 08 2E 63 83 00 07 FD 64 00 62 01 34 00 '.replace(' ',"")))
             threading.Event().wait(2)
             write = WriteBuff()
             allWrite = WriteBuff()
-            write.byte(bytes.fromhex('20da'))
+            write.byte(bytes.fromhex('1166'))
             write.string(user.gamedata.商城数据[道具][0],True)
             write.integer(数量,2)
             write.string(user.gamedata.商城数据[道具][1],True,1)
@@ -148,7 +149,7 @@ class 基础功能:
             allWrite.byte(write.getBuffer(),True,1)
             user.服务器句柄.send(allWrite.getBuffer()) 
         except:
-            user.服务器句柄.send(bytes.fromhex('4D 5A 00 00 78 70 7B 99 00 14 00 D8 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 '.replace(' ',"")))
+            user.服务器句柄.send(bytes.fromhex('4D 5A 00 00 08 2E 63 83 00 07 FD 64 00 62 01 34 00 '.replace(' ',"")))
 
     def 喊话(self,id,名字,频道,内容):
         write = WriteBuff()
@@ -158,11 +159,13 @@ class 基础功能:
         write.integer(id)
         write.string(名字,True)
         write.string('#dFFFFFF' + 内容,True,1)
-        write.byte(bytes.fromhex('0000000000'))
-        write.string('更鑄輝煌一線',True,1)
-        write.integer(3,2)
+        current_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        write.string(current_time)
+        write.byte(bytes.fromhex('0000'))
+        write.string('一线',True)
+        write.integer(3,2) #大表情模式
         write.integer(len(内容))
-        write.byte(bytes.fromhex('000000000000000000008b'))
+        write.byte(bytes.fromhex('00000000000000000000A0000100010000000000'))
         allWrite.byte(组包包头)
         allWrite.byte(write.getBuffer(),True,1)
         return allWrite.getBuffer()
@@ -170,7 +173,7 @@ class 基础功能:
     def 对话点击(self,id,对话):
         write = WriteBuff()
         allWrite = WriteBuff()
-        write.byte(bytes.fromhex('3038'))
+        write.byte(bytes.fromhex('30ca'))
         write.integer(id)
         write.string(对话)
         write.byte(bytes.fromhex('00'))

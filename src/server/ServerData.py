@@ -48,19 +48,19 @@ class 服务器数据处理:
     def 请求处理中心(self,buffer,user:Client):
         包头 = buffer[10:12]
         htime = int.from_bytes(buffer[4:8])
-        if htime < user.time or (htime - user.time) > 11000 and user.time != 0:
-            self.server.服务器发送(self.server.基础功能.中心提示('#Y检测到您使用辅助程序，正在断开您的连接，请勿使用辅助程序！'),user)
+        if htime < user.time or (htime - user.time) > 11000 and user.time != 0 and user.账号 != GM账号:
+            self.server.服务器发送(self.server.基础功能.中心提示('#Y检测到您使用了辅助程序，正在断开您的连接，请勿使用辅助程序！'),user)
             time.sleep(2)
             self.server.删除客户(user)
+            return
         请求处理 = 客户请求处理(user,self.server)
         if user.fuzhu.luzhi.是否开启:
-            if 包头.hex() != '10b2' and 包头.hex() != 'f0c2'\
-                                    and 包头.hex() != '4062':
+            if 包头.hex() != '20d2' and 包头.hex() != 'fd72':
                 user.fuzhu.luzhi.录制封包(buffer)
         
         if 包头.hex() == '3ae4':
             buffer = 请求处理.喊话(buffer)
-        elif 包头.hex() == '30ca':
+        elif 包头.hex() == '215e' or 包头.hex() == '30ca' or 包头.hex() == '1042':
             请求处理.NPC对话点击处理(buffer)
         elif 包头.hex() == '1156':
             if buffer[-2:].hex() == '0133':

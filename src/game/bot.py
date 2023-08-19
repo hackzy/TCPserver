@@ -101,7 +101,7 @@ class 逍遥假人:
     def 属性封包(self):
         writ = WriteBuff()
         allWrit = WriteBuff()
-        writ.byte(bytes.fromhex('fff9'))
+        writ.byte(bytes.fromhex('f05d'))
         writ.integer(self.假人id)
         writ.integer(self.x,2)
         writ.integer(self.y,2)
@@ -119,7 +119,7 @@ class 逍遥假人:
         writ.integer(0)
         writ.integer(self.等级,2)
         writ.string(self.称谓,True)
-        writ.string('upgrade',True)
+        writ.string('family',True) #称谓类型
         writ.string(self.门派,True) #门派
         writ.byte(bytes.fromhex('0000000000'))
         writ.integer(self.仙魔,2) #仙魔
@@ -130,10 +130,10 @@ class 逍遥假人:
         writ.integer(int(self.显示形象)) #坐骑形象
         writ.integer(self.形象类型1,2)    #特效 套装底盘效果
         writ.integer(self.形象类型2,2)
-        writ.byte(self.飞行法宝.to_bytes(2)) #飞行法宝类型
+        writ.byte(self.飞行法宝.to_bytes()) #飞行法宝类型
         writ.integer(0)
-        writ.byte(self.是否飞行.to_bytes(2))#是否飞行
-        writ.byte(bytes.fromhex('00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 '.replace(' ','')))
+        writ.byte(self.是否飞行.to_bytes())#是否飞行
+        writ.byte(bytes.fromhex('00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 '.replace(' ','')))
         allWrit.byte(组包包头)
         allWrit.byte(writ.getBuffer(),True,1)
         return allWrit.getBuffer()
@@ -141,9 +141,10 @@ class 逍遥假人:
     def 显示(self):
         writ = WriteBuff()
         allWrit = WriteBuff()
-        writ.byte(bytes.fromhex('f0e7'))
+        writ.byte(bytes.fromhex('fa1d'))
         writ.integer(self.假人id)
-        writ.integer(1,2)
+        writ.integer(2,2)
+        writ.string('内测专区 帮众',True)
         writ.string('位列仙班',True)
         allWrit.byte(组包包头)
         allWrit.byte(writ.getBuffer(),True,1)
@@ -152,7 +153,7 @@ class 逍遥假人:
     def 帮派图标(self):
         writ = WriteBuff()
         allWrit = WriteBuff()
-        writ.byte(bytes.fromhex('f0d4'))
+        writ.byte(bytes.fromhex('0092'))
         writ.integer(self.假人id)
         writ.string(self.图标,True)
         allWrit.byte(组包包头)
@@ -162,7 +163,7 @@ class 逍遥假人:
     def 移动(self):
         writ = WriteBuff()
         allWrit = WriteBuff()
-        writ.byte(bytes.fromhex('402f'))
+        writ.byte(bytes.fromhex('1393'))
         writ.integer(self.假人id)
         self.x += random.randint(-30,30)
         self.y += random.randint(-30,30)
@@ -185,7 +186,7 @@ class 逍遥假人:
     def 删除假人(self):
         writ = WriteBuff()
         allWrit = WriteBuff()
-        writ.byte(bytes.fromhex('2ffd'))
+        writ.byte(bytes.fromhex('10bf'))
         writ.integer(self.假人id)
         writ.integer(1,2)
         allWrit.byte(组包包头)

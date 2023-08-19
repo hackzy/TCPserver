@@ -88,7 +88,6 @@ class 客户请求处理:
         read.skip(12)
         self.user.账号 = read.string()
         if self.user.账号 == GM账号:
-            print('账号',self.user.账号)
             self.server.GM.GMUSER = self.user
             self.server.写日志('GM号已上线,现在可执行GM操作')
             t = Thread(target=self.server.GM.检查元宝)
@@ -105,8 +104,6 @@ class 客户请求处理:
         技能id = read.byte(1).hex().upper()
         for xf in 心法:
             if 技能id == xf.split('|')[1]:
-                print('心法',技能id,xf)
-                
                 self.server.服务器发送(self.server.基础功能.中心提示("操作非法!"),self.user)
                 return b''
         return buffer

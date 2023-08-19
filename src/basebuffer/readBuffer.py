@@ -45,7 +45,7 @@ class ReadBuffer:
                 recLocation = self.now
                 self.now += length
                 return self.data[recLocation:recLocation+length].decode('gbk')
-            string = self.data[self.now:].decode()
+            string = self.data[self.now:].decode(encoding='gbk')
             length = len(bytes(string,'gbk'))
             self.now += length
             return string

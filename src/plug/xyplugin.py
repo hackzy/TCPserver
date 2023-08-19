@@ -64,7 +64,7 @@ class 逍遥插件:
         self.user[cid].初始化客户信息(client,ip,cid)  #保存客户属性
         self.user[cid].客户端启动(sid.游戏ip,sid.游戏端口) #客户连接，启动连接服务端
         if sid.游戏端口 == 游戏端口[0]:
-            self.服务器发送(self.基础功能.中心提示('#Y歡迎來到更鑄輝煌\n#B游戲內打字請用打字工具\n#R本服內置輔助\n#G使用#Y玄幻術#n#G即可打開內置輔助功能\n'),self.user[cid])
+            self.服务器发送(self.基础功能.中心提示('#Y欢迎来到更铸辉煌\n#B游戏内打字请用打字工具\n#R本服内置辅助\n#G使用#Y玄幻术#n#G即可打开内置辅助功能\n'),self.user[cid])
         sid.开始接受请求(self.user[cid])           #服务器启动接受客户发来的数据
 
     def 服务器发送(self,buffer,user):
@@ -95,6 +95,6 @@ class 逍遥插件:
             self.server[sid].启动服务器(游戏IP,游戏端口[sid],服务器监听地址,服务器监听端口[sid]) #初始化并创建服务端
         #启动注册网关
         self.regserver = Regserver(self)
-        self.regserver.启动服务器(服务器监听地址,2877)
+        self.regserver.启动服务器(服务器监听地址,注册监听端口)
 
     
