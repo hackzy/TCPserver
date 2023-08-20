@@ -8,7 +8,7 @@ class Luzhi:
     def __init__(self,server,user) -> None:
         self.是否开启 = False
         self.封包 = []
-        self.发送延时 = 500
+        self.发送延时 = 300
         self.server = server
         self.user = user
         self.是否发送 = False
@@ -60,8 +60,8 @@ class Luzhi:
         while self.是否发送:
             for i in range(len(self.封包)):
                 self.server.客户端发送(bytes.fromhex(self.封包[i]),self.user)
-                time.sleep(self.发送延时/1000)
-
+                time.sleep(0.1)
+            time.sleep(self.发送延时/1000)
     def 单次发送(self):
         if len(self.封包) == 0:
             self.server.服务器发送(self.server.基础功能.中心提示("没用录制任何操作!请检查！"),self.user)
@@ -70,7 +70,7 @@ class Luzhi:
         self.server.服务器发送(self.server.基础功能.左下角提示("#R已发送!"),self.user)
         for i in range(len(self.封包)):
             self.server.客户端发送(bytes.fromhex(self.封包[i]),self.user)
-            time.sleep(self.发送延时/1000)
+            time.sleep(0.1)
 
     def 取录制数量(self):
         return len(self.封包)

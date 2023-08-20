@@ -361,9 +361,9 @@ class SendToClient:
                         道具名称 = 文本
                 elif 标识 == 3:
                     read.integer()
-                elif 标识 == 2:
+                elif 标识 == 2 or 标识 == 7:
                     read.integer(2)
-                elif 标识 == 1:
+                elif 标识 == 1 or 标识 == 6:
                     read.byte(1)
             道具id = read.string()
             read.skip(6)
@@ -372,8 +372,7 @@ class SendToClient:
                 self.user.gamedata.商城数据.update({道具名称:[道具id,'gold_coin']})
             else:
                 self.user.gamedata.商城数据.update({道具名称:[道具id,'silver_coin']})
-            read.skip(14)
-
+            read.skip(6)
     def NPC对话(self,buffer):
         read = ReadBuffer()
         write = WriteBuff()

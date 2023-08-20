@@ -18,15 +18,15 @@ class 基础功能:
     def 左下角提示(self,内容):
         write = WriteBuff()
         allWrite = WriteBuff()
-        write.byte(bytes.fromhex('2fff'))
+        write.byte(bytes.fromhex('0b0d'))
         write.integer(0)
-        write.integer(0)
-        write.string(内容,True)
-        write.byte(bytes.fromhex('00 00 00\
-                     00 00 00 12 E6 9B B4 E9\
-                     91 84 E8 BC 9D E7 85 8C \
-                    E4 B8 80 E7 B7 9A 00 01'\
-                             .replace(" ","")))
+        write.integer(0,2)
+        write.string(内容,True,1)
+        current_time = datetime.now().strftime('%Y-%m-%d %H:%M:%S')
+        write.string(current_time)
+        write.byte(bytes.fromhex('0000'))
+        write.string('一线')
+        write.integer(3,2)
         allWrite.byte(组包包头)
         allWrite.byte(write.getBuffer(),True,1)
         return allWrite.getBuffer()
@@ -38,10 +38,12 @@ class 基础功能:
         write.integer(ID)
         write.integer(形象ID)
         write.integer(1,2)
-        内容 = '[@请输入/!请输入#prompt:' + 内容 + ']'
+        内容 = '[@请输入/!^请输入#prompt:' + 内容 + ']'
         write.string(内容,True,1)
         write.integer(0)
         write.string(名字)
+        write.integer(80)
+        write.byte(b'00')
         allWrite.byte(组包包头)
         allWrite.byte(write.getBuffer(),True,1)
         return allWrite.getBuffer()
@@ -137,7 +139,7 @@ class 基础功能:
     def 商城购买道具(self,user,道具,数量 = 1):
         try:
             if user.gamedata.商城数据 == {}:
-                user.服务器句柄.send(bytes.fromhex('4D 5A 00 00 08 2E 63 83 00 07 FD 64 00 62 01 34 00 '.replace(' ',"")))
+                user.服务器句柄.send(bytes.fromhex('4D 5A 00 00 0E 19 7A 8C 00 2C 3E 24 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 '.replace(' ',"")))
             threading.Event().wait(2)
             write = WriteBuff()
             allWrite = WriteBuff()
@@ -145,11 +147,12 @@ class 基础功能:
             write.string(user.gamedata.商城数据[道具][0],True)
             write.integer(数量,2)
             write.string(user.gamedata.商城数据[道具][1],True,1)
+            write.byte(bytes.fromhex('00'))
             allWrite.byte(组包包头)
             allWrite.byte(write.getBuffer(),True,1)
             user.服务器句柄.send(allWrite.getBuffer()) 
         except:
-            user.服务器句柄.send(bytes.fromhex('4D 5A 00 00 08 2E 63 83 00 07 FD 64 00 62 01 34 00 '.replace(' ',"")))
+            user.服务器句柄.send(bytes.fromhex('4D 5A 00 00 0E 19 7A 8C 00 2C 3E 24 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 '.replace(' ',"")))
 
     def 喊话(self,id,名字,频道,内容):
         write = WriteBuff()

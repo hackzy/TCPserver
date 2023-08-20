@@ -121,7 +121,6 @@ class fuzhu:
             改造道具 = '超级灵石'
         else:
             改造道具 = '超级晶石'
-
         for a in self.user.gamedata.物品数据:
             if self.user.gamedata.物品数据[a].名称 == 改造道具:
                 item.append(a)
@@ -134,10 +133,10 @@ class fuzhu:
                     item.append(a)
         if len(item) < 6:
             return
-        write.byte(bytes.fromhex('508A'))
-        write.integer(self.user.gamedata.角色id)
-        write.integer(1,2)
-        write.integer(7,2)
+        write.byte(bytes.fromhex('003c'))
+        write.integer(3)
+        write.integer(68,2)
+        write.integer(7,1)
         write.integer(101)
         for b in range(6):
             write.integer(item[b])

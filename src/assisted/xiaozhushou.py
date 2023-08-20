@@ -187,7 +187,7 @@ class XiaoZhuShou:
                 self.server.服务器发送(self.server.基础功能.输入框(4,self.小助手id,'请输入保存的名字:','逍遥小助手'),self.user)
                 return
             对话 = '当前未录制任何操作，请录制后再保存!'
-        elif 对话 == '!请输入':
+        elif 对话 == '!^请输入':
             self.user.fuzhu.luzhi.保存录制(填写内容)
             所有录制 = ''
             for bc in self.user.fuzhu.录制保存:
