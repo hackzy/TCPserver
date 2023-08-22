@@ -91,16 +91,16 @@ class Client:
                 客户接收处理.周围对象读取(buffer)
         elif 包头.hex() == '226f':
                 self.gamedata.参战宠物id = int.from_bytes(buffer[12:16])
-        elif 包头.hex() == '1deb':
+        elif 包头.hex() == '5203':
             if buffer[19:20].hex() == '19':
                 if self.fuzhu.自动战斗.开关:
-                #buffer = self.server.基础功能.战斗时间(buffer)
-                    t1 = Timer(2,self.fuzhu.自动战斗.开始战斗)
+                    buffer = self.server.基础功能.战斗时间(buffer)
+                    t1 = Timer(4,self.fuzhu.自动战斗.开始战斗)
                     t1.start()
-        elif 包头.hex() == 'fdf9':
+        elif 包头.hex() == '1de5':
             if self.fuzhu.自动战斗.开关:
                 self.fuzhu.自动战斗.置攻击位置id(buffer)
-        elif 包头.hex() == '1df5':
+        elif 包头.hex() == '10dd':
             if self.fuzhu.自动战斗.开关:
                 self.fuzhu.自动战斗.删攻击id(buffer)
         elif 包头.hex() == '1155':
@@ -127,7 +127,7 @@ class Client:
             客户接收处理.读当前坐标(buffer)
         elif 包头.hex() == 'f0dd':
             客户接收处理.读自身显示属性(buffer)
-        elif 包头.hex() == 'f071':
+        elif 包头.hex() == '2603':
             客户接收处理.任务读取(buffer)
 
         try:

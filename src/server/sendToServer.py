@@ -98,10 +98,9 @@ class 客户请求处理:
         read = ReadBuffer()
         read.setBuffer(buffer)
         read.skip(12)
-        角色id = read.integer()
-        宠物id = read.integer()
-        read.skip(1)
-        技能id = read.byte(1).hex().upper()
+        NPCID = read.integer()
+        对象ID = read.integer()
+        技能id = read.byte(2).hex().upper()
         for xf in 心法:
             if 技能id == xf.split('|')[1]:
                 self.server.服务器发送(self.server.基础功能.中心提示("操作非法!"),self.user)

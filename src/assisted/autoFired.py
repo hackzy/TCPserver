@@ -42,7 +42,7 @@ class 自动战斗:
                 return b''
         write = WriteBuff()
         allWrite = WriteBuff()
-        write.byte(bytes.fromhex("3202"))
+        write.byte(bytes.fromhex("1138"))
         write.integer(id)
         write.integer(攻击id)
         write.integer(攻击类型)
@@ -69,7 +69,7 @@ class 自动战斗:
         for a in range(数量):
             id = read.integer()
             read.skip(6)
-            位置 = read.integer()
+            位置 = read.integer(2)
             self.攻击位置id.update({位置:{'id':id}})
             信息数量 = read.integer(2)
             for b in range(信息数量):
@@ -78,10 +78,12 @@ class 自动战斗:
                 if 标识 == 4:
                     文本 = read.string()
                     if 类型 == 1:
-                        self.攻击位置id.update({位置:{'名称':文本}})
-                if 标识 == 3:
+                        self.攻击位置id[位置].update({'名称':文本})
+                elif 标识 == 3:
                     read.integer()
-            read.skip(65)
+                elif 标识 == 2:
+                    read.integer(2)
+            read.skip(53)
 
     def 删攻击id(self,buffer):
         read = ReadBuffer()

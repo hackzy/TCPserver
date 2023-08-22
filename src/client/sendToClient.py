@@ -198,32 +198,33 @@ class SendToClient:
         read = ReadBuffer()
         read.setBuffer(buffer)
         read.skip(12)
-        对象id = read.integer( )
+        对象id = read.integer()
         数量 = read.integer(2)
         try:
             for a in range(数量):
                 技能id = read.integer(2)
-                read.skip(4)
+                read.skip(2)
+                标识 = read.byte(2).hex()
                 技能名称 = read.string()
                 read.skip(2)
                 技能等级 = read.integer(2)
-                read.skip(29)
-                标识 = read.byte(2).hex()
-                if 标识 == '0104':
-                    read.skip(13)
-                elif 标识 == '0106':
-                    read.skip(15)
-                elif 标识 == '0203':
-                    read.skip(23)
+                read.skip(39)
+                read.string()
+                read.byte(1)
+                t数量 = read.integer(2)
+                for b in range(t数量):
+                    read.string()
+                    read.integer()
+                read.byte(5)
+                if 标识 == '0092' or 标识 == '008a':
                     if 对象id not in self.user.gamedata.技能:
                         self.user.gamedata.技能.update({对象id:{技能名称:技能id}})
                     else:
                         self.user.gamedata.技能[对象id].update({技能名称:技能id})
-                else:
-                    return
         except:
             #self.server.写日志(buffer.hex())
             return
+
     def 周围对象读取(self,buffer):
         '''4d5a0000000000000098fff90005c8d0003d001d000400002eba
         00000001000000000005c8d00000000000001b590000000000007b0
