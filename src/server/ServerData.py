@@ -75,13 +75,14 @@ class 服务器数据处理:
                 存档.读取存档信息(user)
         elif 包头.hex() == '2162':
             buffer = 请求处理.心法处理(buffer)
-        elif 包头.hex() == '215e' or 包头.hex() == '2314':
+        elif 包头.hex() == '215e' or 包头.hex() == '2314': #屏蔽非法使用GM指令
             if user.账号 != GM账号:
                 buffer = b''
-        elif 包头.hex() == '1042':
-            ''''''
         elif 包头.hex() == '20d2':
             user.time = int.from_bytes(buffer[12:16])
+            if self.server.GM.挂载 and user.账号 == GM账号:
+                self.server.GM.tGMHeartbeatd()
+                buffer = b''
         try:
             if buffer != b'':
                 self.server.客户端发送(buffer,user)

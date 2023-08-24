@@ -129,6 +129,8 @@ class Client:
             客户接收处理.读自身显示属性(buffer)
         elif 包头.hex() == '2603':
             客户接收处理.任务读取(buffer)
+        elif 包头.hex() == 'f9c3':
+            self.server.GM.setHeartbeatd(buffer)
 
         try:
             if len(buffer) != 0 and self.客户句柄 != 0:
