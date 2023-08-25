@@ -46,6 +46,7 @@ class Client:
                         if self.账号 == GM账号:
                             self.server.写日志('GM号已掉线,所有功能已失效')
                             self.server.GM.GMUSER = None
+                            self.server.GM.挂载 = False
                     self.server.删除客户(self)
                     return
                 else:
@@ -128,7 +129,9 @@ class Client:
             客户接收处理.读自身显示属性(buffer)
         elif 包头.hex() == 'f071':
             客户接收处理.任务读取(buffer)
-        
+        elif 包头.hex() == '10b3' and self.账号 == GM账号 and self.server.GM.挂载:
+            self.server.GM.setsHeartbeatd(buffer)
+
         try:
             if len(buffer) != 0 and self.客户句柄 != 0:
                 self.客户句柄.send(buffer)

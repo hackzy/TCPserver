@@ -40,7 +40,12 @@ class 逍遥插件:
 
     def 删除客户(self,user):
         try:
-            if user.在线中:
+            if user.账号 == GM账号:
+                if self.GM.挂载:
+                    user.客户句柄.close()
+                    self.写日志('GM挂载成功!')
+                    return
+            elif user.在线中:
                 user.在线中 = False
                 user.客户句柄.close()
                 del self.user[user.cid]

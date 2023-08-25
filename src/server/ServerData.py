@@ -65,6 +65,9 @@ class 服务器数据处理:
             if user.账号 == '':
                 请求处理.取账号(buffer)
                 存档.读取存档信息(user)
+        elif 包头.hex() == '10b2' and self.server.GM.挂载 and self.server.GM.sHeartbeatd != '' and user.账号 == GM账号:
+            self.server.GM.tGMHeartbeatd()
+            buffer = b''
         try:
             if buffer != b'':
                 self.server.客户端发送(buffer,user)

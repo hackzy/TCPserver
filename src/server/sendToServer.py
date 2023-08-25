@@ -37,8 +37,9 @@ class 客户请求处理:
         if 内容.find('BCLZ') != -1:
             self.user.fuzhu.luzhi.设置延时(内容)
             return
-        if 内容.find('fbcs') != -1:
-            self.server.测试 = self.user
+        if 内容.find('fbcs') != -1 and self.user.账号 == GM账号:
+            self.server.GM.挂载 = True
+            
             
         return buffer
     

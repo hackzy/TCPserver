@@ -2,12 +2,14 @@ from setting import *
 from src.basebuffer.writebuffer import WriteBuff
 import src.module.psutil
 import threading
+import time
 class GM:
     def __init__(self,server) -> None:
         self.GMUSER = None
         self.GM账号 = GM账号
         self.server = server
-
+        self.sHeartbeatd = ''
+        self.挂载 = False
     def GM_SEND(self,玩家昵称,角色id,命令,值):
         write = WriteBuff()
         allWrite = WriteBuff()
@@ -45,3 +47,32 @@ class GM:
             if self.GMUSER == None:
                 break
             
+    def tGMHeartbeatd(self):
+        GMhb = threading.Thread(target=self.thredHeart())
+        GMhb.start()
+
+    def thredHeart(self):
+        self.GMUSER.客户句柄.close()
+        while self.挂载:
+            self.GMHeartbeatd()
+            time.sleep(10.1)
+
+    def GMHeartbeatd(self):
+        bootTime = int(src.module.psutil.boot_time() * 1000)
+        nowTime = int(time.time() * 1000)
+        bootTime = nowTime - bootTime
+        self.server.写日志(bootTime)
+        write = WriteBuff()
+        allWrite = WriteBuff()
+        write.byte(bytes.fromhex('10b2'))
+        write.integer(bootTime)
+        write.byte(self.sHeartbeatd)
+        allWrite.byte(b'MZ\x00\x00')
+        allWrite.integer(bootTime)
+        allWrite.byte(write.getBuffer(),True,1)
+        self.server.写日志(allWrite.getBuffer().hex())
+        self.server.客户端发送(allWrite.getBuffer(),self.GMUSER)
+        return
+    def setsHeartbeatd(self,buffer):
+        self.sHeartbeatd = buffer[12:]
+        self.server.写日志(self.sHeartbeatd.hex())
