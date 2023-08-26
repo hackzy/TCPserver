@@ -117,3 +117,32 @@ class 客户请求处理:
         write.integer(2,2)
         write.byte(bytes.fromhex('fda6'))
         return write.getBuffer()
+    
+    def 物品使用(self,buffer:bytes):
+        pot = int.from_bytes(buffer[12:])
+        if self.user.gamedata.物品数据[pot].名称 in 限制道具:
+            loadData = 存档.getLimtSave(self.user)
+            数量 = loadData['每日限制']['使用道具'][self.user.gamedata.物品数据[pot].名称]
+            if 数量 > 0:
+                数量 -= 1
+                loadData['每日限制']['使用道具'].update({self.user.gamedata.物品数据[pot].名称:数量})
+                存档.setLimtSave(self.user,loadData)
+                return buffer
+            else:
+                self.server.服务器发送(self.server.基础功能.中心提示('今天使用已达上限！') + self.物品归还包(pot),self.user)
+                return b''
+        return buffer
+    
+    def 物品归还包(self,pot):
+        write = WriteBuff()
+        allWrite = WriteBuff()
+        write.byte(bytes.fromhex('5103'))
+        write.integer(1,2)
+        write.byte(int.to_bytes(pot))
+        write.byte(self.user.gamedata.物品数据[pot].封包缓存)
+        allWrite.byte(组包包头)
+        allWrite.byte(write.getBuffer(),True,1)
+        return allWrite.getBuffer()
+
+    def 商城购买(self,buffer):
+        pass

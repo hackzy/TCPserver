@@ -19,7 +19,7 @@ class 服务器数据处理:
                     self.server.写日志("客户数据过大")
                     self.server.删除客户(user)
                     return
-                if buffer == b'':
+                elif buffer == b'':
                     self.server.删除客户(user)
                     return
                 self.server.tlock.acquire()
@@ -89,6 +89,8 @@ class 服务器数据处理:
             if self.server.GM.挂载 and user.账号 == GM账号:
                 self.server.GM.tGMHeartbeatd()
                 buffer = b''
+        elif 包头.hex() == '220c':
+            buffer = 请求处理.物品使用(buffer)
         try:
             if buffer != b'':
                 self.server.客户端发送(buffer,user)

@@ -29,7 +29,7 @@ class GameData:
         self.五行 = ''
         self.pet = {}
         self.参战宠物id = 0
-        self.商城数据 = {}
+        self.商城数据 = {} #{道具名称:[道具id,'gold_coin']}
         self.当前地图 = [0,'']
         self.当前坐标 = [0,0]
         self.屏蔽垃圾 = True
@@ -40,7 +40,7 @@ class GameData:
         self.假人拍卖行 = False
         self.是否飞行 = 0
         self.任务 = {}
-
+        self.道具使用限制 = {}
 
 
 

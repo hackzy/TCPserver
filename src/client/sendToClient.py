@@ -95,6 +95,7 @@ class SendToClient:
                     saveBuff.byte(bytes.fromhex('038e0101'))
                     saveBuff.integer(物品属性数量,2)
                 else:
+                    saveBuff.integer(物品属性数量,2)
                     for b in range(物品属性数量):
                         属性标识 = read.byte(2)
                         数据类型 = int.from_bytes(read.byte(1))
@@ -102,13 +103,15 @@ class SendToClient:
                         saveBuff.byte(数据类型.to_bytes())
                         if 数据类型 == 1:
                             T_字节型 = int.from_bytes(read.byte(1))
-                            if 属性标识 == b'\x01\x4f'  \
+                            if 属性标识 == b'\x01\x4f'\
                             and T_字节型 == 1:
                                 是否封印 = True
                             saveBuff.byte(T_字节型.to_bytes())
                         elif 数据类型 == 2:
                             T_短整数型 = read.integer(2)
-                            write.integer(T_短整数型,2)
+                            if 属性标识 == bytes.fromhex('00cb'):
+                                 temp[物品位置id].数量 = T_短整数型
+                            saveBuff.integer(T_短整数型,2)
                         elif 数据类型 == 3:
                             T_整数型 = read.integer()
                             saveBuff.integer(T_整数型)
@@ -123,6 +126,7 @@ class SendToClient:
                                 temp[物品位置id].名称 = T_文本型
                         elif 数据类型 == 6:
                             T_字节型 = int.from_bytes(read.byte(1))
+                            saveBuff.integer(T_字节型,1)
                             if 属性标识 == b'\x00\xca':
                                 temp[物品位置id].类型 = T_字节型
                         elif 数据类型 == 7:
@@ -130,6 +134,9 @@ class SendToClient:
                             saveBuff.integer(T_短整数型,2)
                     temp[物品位置id].封包缓存 = saveBuff.getBuffer()
             self.user.gamedata.物品数据.update(temp)
+        saveBuff.byte(read.residBuffer())
+
+    
 
     def 人物属性读取(self,buffer):
         read = ReadBuffer()
@@ -533,3 +540,4 @@ class SendToClient:
         read.string()#建议等级r
         read.string(lenType=1)#任务奖励
         self.user.gamedata.任务.update({任务名称:任务内容})
+

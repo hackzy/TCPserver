@@ -1,5 +1,6 @@
 import datetime
 import logging
+import time
 from src.plug.basefuncs import 基础功能
 from src.game.gm import GM
 from setting import *
@@ -11,6 +12,7 @@ from src.plug.saveData import 存档
 from src.client.client import Client
 import threading
 import concurrent.futures
+from .saveData import 存档
 class 逍遥插件:
     '''全局管理类，负责保存分配客户与服务端信息'''
     def __init__(self) -> None:
@@ -26,6 +28,7 @@ class 逍遥插件:
         self.regserver = None
         self.假人 = 假人管理()
         self.假人.启动假人(self,self.user)
+        threading.Thread(target=self.everDayTask,name='时钟任务').start()
         
     def 写日志(self,msg):
         cur_time = datetime.datetime.now()
@@ -47,13 +50,16 @@ class 逍遥插件:
             if user.在线中:
                 user.在线中 = False
                 user.客户句柄.close()
-                del self.user[user.cid]
                 if user.gamedata.角色名 != '':
-                    self.写日志('玩家: ' + user.gamedata.角色名 + ' 下线 Ip:' + user.客户IP + '  当前在线人数:' + str(len(self.user)))
                     存档.存储账号信息(user)
+                    del self.user[user.cid]
+                    self.写日志('玩家: ' + user.gamedata.角色名 + ' 下线 Ip:' + user.客户IP + '  当前在线人数:' + str(len(self.user)))
                     user.服务器句柄.close()
                     del user
-            
+                else:
+                    del self.user[user.cid]
+                    user.服务器句柄.close()
+                    del user
         except:
             return
 
@@ -92,6 +98,14 @@ class 逍遥插件:
         except:
             return
         
+    def everDayTask(self):
+        while True:
+            if datetime.datetime.today().hour == 0:
+                存档.每日数据刷新()
+            存档.saveAllData(self.user)
+            self.写日志('所有玩家数据已保存')
+            time.sleep(300)
+
     def starServer(self):
         for sid in range(len(服务器监听端口)):
             #启动插件网关,根据线路数量创建服务端，一个线路一个服务端

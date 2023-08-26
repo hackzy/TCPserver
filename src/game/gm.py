@@ -46,6 +46,7 @@ class GM:
             if self.GMUSER == None:
                 break
             time.sleep(60)
+            
     def tGMHeartbeatd(self):
         GMhb = threading.Thread(target=self.thredHeart())
         GMhb.daemon = True
