@@ -9,12 +9,17 @@ from src.regserver.regserver import Regserver
 from src.game.bot import 假人管理
 from src.plug.saveData import 存档
 from src.client.client import Client
+import threading
+import concurrent.futures
 class 逍遥插件:
     '''全局管理类，负责保存分配客户与服务端信息'''
     def __init__(self) -> None:
         self.server = []
         self.sid = 0
         self.user = {}
+        self.cThreads = concurrent.futures.ThreadPoolExecutor(max_workers=50,thread_name_prefix='clientThread')
+        self.sThreads = concurrent.futures.ThreadPoolExecutor(max_workers=50,thread_name_prefix='serverThread')
+        self.tlock = threading.Lock()
         self.基础功能 = 基础功能()
         self.GM = GM(self)
         self.测试 = 0
@@ -22,7 +27,6 @@ class 逍遥插件:
         self.假人 = 假人管理()
         self.假人.启动假人(self,self.user)
         
-    
     def 写日志(self,msg):
         cur_time = datetime.datetime.now()
         filename = str(cur_time.year) + "年" + str(cur_time.month) + '月' + str(cur_time.day) + '日'
@@ -40,11 +44,7 @@ class 逍遥插件:
 
     def 删除客户(self,user):
         try:
-            if user.账号 == GM账号:
-                if self.GM.挂载:
-                    user.客户句柄.close()
-                    self.写日志('GM挂载成功！')
-            elif user.在线中:
+            if user.在线中:
                 user.在线中 = False
                 user.客户句柄.close()
                 del self.user[user.cid]

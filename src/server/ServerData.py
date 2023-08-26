@@ -22,10 +22,17 @@ class 服务器数据处理:
                 if buffer == b'':
                     self.server.删除客户(user)
                     return
+                self.server.tlock.acquire()
                 user.未请求 += buffer
+                self.server.tlock.release()
                 self.处理数据(user)
                 
         except:
+            if user.账号 == GM账号:
+                if self.server.GM.挂载:
+                    user.客户句柄.close()
+                    self.server.写日志('GM挂载成功！')
+                    return
             self.server.删除客户(user)
             #del self.server.user[user.cid]
             return
@@ -34,17 +41,16 @@ class 服务器数据处理:
         """
         处理准备发给服务器的数据
         """
+        self.server.tlock.acquire()
         while user.未请求[:2] == b'MZ':
             leng = int.from_bytes(user.未请求[8:10])
             if len(user.未请求) - 10 >= leng:
                 buffer = user.未请求[:leng+10]
                 user.未请求 = user.未请求[leng + 10:]
-                请求处理线程 = 线程(target=self.请求处理中心,args=(buffer,user))
-                请求处理线程.daemon = True
-                请求处理线程.start()
+                self.server.sThreads.submit(self.请求处理中心,buffer,user)
                 continue
             break
-
+        self.server.tlock.release()
     def 请求处理中心(self,buffer,user:Client):
         包头 = buffer[10:12]
         htime = int.from_bytes(buffer[4:8])

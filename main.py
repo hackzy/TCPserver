@@ -1,5 +1,4 @@
 from src.plug.xyplugin import 逍遥插件
-
 if __name__== '__main__':
     '服务器启动'
     server = 逍遥插件() #创建全局对象

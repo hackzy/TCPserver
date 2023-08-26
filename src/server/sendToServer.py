@@ -108,3 +108,12 @@ class 客户请求处理:
                 self.server.服务器发送(self.server.基础功能.中心提示("操作非法!"),self.user)
                 return b''
         return buffer
+    
+    def 切换加点(self):
+        #4D 5A 00 00 0F 33 3B 55 00 02 FD A6 
+        write = WriteBuff()
+        write.byte(b'MZ\x00\x00')
+        write.integer(self.server.基础功能.getBootTime())
+        write.integer(2,2)
+        write.byte(bytes.fromhex('fda6'))
+        return write.getBuffer()

@@ -17,10 +17,13 @@ class SendToClient:
         read.setBuffer(buffer)
         read.skip(10)
         write.byte(read.byte(8))
-        write.string(服务器外网地址,True)
-        write.integer(服务器监听端口[1],2)
         read.string()
-        read.byte(2)
+        port = read.integer(2)
+        for p in range(len(游戏端口)):
+            if 游戏端口[p] == port:
+                监听端口 = 服务器监听端口[p]
+        write.string(服务器外网地址,True)
+        write.integer(监听端口,2)
         write.byte(read.residBuffer())
         allWrite.byte(组包包头)
         allWrite.byte(write.getBuffer(),True,1)

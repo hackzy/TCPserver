@@ -3,6 +3,8 @@ from src.basebuffer.readBuffer import ReadBuffer
 from setting import *
 import threading 
 from datetime import datetime
+import src.module.psutil as psutil
+import time
 class 基础功能:
 
     def 中心提示(self,内容):
@@ -183,3 +185,8 @@ class 基础功能:
         allWrite.byte(组包包头)
         allWrite.byte(write.getBuffer(),True,1)
         return allWrite.getBuffer()
+    
+    def getBootTime(self):
+        boot_time = psutil.boot_time() * 1000
+        now = time.time() * 1000
+        return int(now - boot_time)

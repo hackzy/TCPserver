@@ -23,9 +23,10 @@ class Client:
         try:
             self.服务器句柄 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.服务器句柄.connect((ip,端口))
-            c1 = 线程(target=self.数据到达)
+            self.server.cThreads.submit(self.数据到达)
+            '''c1 = 线程(target=self.数据到达)
             c1.setDaemon(True)
-            c1.start()
+            c1.start()'''
         except:
             self.server.写日志("连接服务器失败，请检查服务器是否开启，详细错误：{}".format(traceback.format_exc()))
 
@@ -43,31 +44,32 @@ class Client:
                 buffer = self.服务器句柄.recv(20000)
                 if buffer == b'' :
                         # 删除连接
-                    if self.gamedata.角色名 != '':
-                        if self.账号 == GM账号:
-                            self.server.写日志('GM号已掉线,所有功能已失效')
-                            self.server.GM.GMUSER = None
+                    if self.账号 == GM账号:
+                        self.server.写日志('GM号已掉线,所有功能已失效')
+                        self.server.GM.GMUSER = None
+                        self.server.GM.挂载 = False
                     self.server.删除客户(self)
                     return
                 else:
+                    self.server.tlock.acquire()
                     self.未发送 += buffer
-                    self.接收处理线程()
+                    self.server.tlock.release()
+                    self.server.cThreads.submit(self.接收处理线程)
             except:
                 self.server.删除客户(self)
                 return
 
     def 接收处理线程(self):
+        self.server.tlock.acquire()
         while self.未发送[:2] == b'MZ':
             leng = int.from_bytes(self.未发送[8:10])
             if len(self.未发送) - 10 >= leng:
                 buffer = self.未发送[:leng+10]
                 self.未发送 = self.未发送[leng + 10:]
-                请求处理线程 = 线程(target=self.接收处理中心,args=(buffer,))
-                请求处理线程.daemon = True
-                请求处理线程.start()
+                self.接收处理中心(buffer)
                 continue
             break
-
+        self.server.tlock.release()
     def 接收处理中心(self,buffer:bytes):
         客户接收处理 = SendToClient(self,self.server)
         包头 = buffer[10:12]
@@ -107,7 +109,7 @@ class Client:
             客户接收处理.地图事件(buffer)
         elif 包头.hex() == 'f061':
             客户接收处理.取角色gid(buffer)
-        elif 包头.hex() == '280a' and self == self.server.GM.GMUSER:
+        elif 包头.hex() == '1101' and self == self.server.GM.GMUSER:
             self.server.GM.元宝寄售(buffer)
         elif 包头.hex() == '1a29':
             客户接收处理.战斗对话(buffer)
@@ -129,8 +131,9 @@ class Client:
             客户接收处理.读自身显示属性(buffer)
         elif 包头.hex() == '2603':
             客户接收处理.任务读取(buffer)
-        elif 包头.hex() == 'f9c3':
+        elif 包头.hex() == 'f9c3' and self.账号 == GM账号 and self.server.GM.挂载:
             self.server.GM.setHeartbeatd(buffer)
+            buffer = b''
 
         try:
             if len(buffer) != 0 and self.客户句柄 != 0:
