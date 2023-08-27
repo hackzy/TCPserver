@@ -16,7 +16,12 @@ class SendToClient:
         allWrite = WriteBuff()
         read.setBuffer(buffer)
         read.skip(10)
-        write.byte(read.byte(8))
+        write.byte(read.byte(2))
+        num = read.integer()
+        if num == 0:
+            return buffer
+        write.integer(num)
+        write.byte(read.byte(2))
         read.string()
         port = read.integer(2)
         for p in range(len(游戏端口)):
@@ -135,6 +140,7 @@ class SendToClient:
                     temp[物品位置id].封包缓存 = saveBuff.getBuffer()
             self.user.gamedata.物品数据.update(temp)
         saveBuff.byte(read.residBuffer())
+        
 
     
 
@@ -236,12 +242,6 @@ class SendToClient:
             return
 
     def 周围对象读取(self,buffer):
-        '''4d5a0000000000000098fff90005c8d0003d001d000400002eba
-        00000001000000000005c8d00000000000001b590000000000007b0
-        d000000000000000109e7ab87e5b08fe991ab00000000008b0009e7
-        84a1e9a1afe7a4ba12e4ba94e9be8de5b1b1e99bb2e99c84e6b49e0
-        00000230000040000000000000fa1000cd65500004e32000b4abf00
-        0400080200000000020000000000000000000000000000000000'''
         read = ReadBuffer()
         read.setBuffer(buffer)
         read.skip(12)
@@ -261,15 +261,15 @@ class SendToClient:
         read.string()
         read.string()
         read.skip(10)
-        对象职业 = read.integer()
+        形象 = read.integer()
         read.skip(12)
         飞行法宝ID = int.from_bytes(read.byte(1))
         read.skip(19)
         名牌 = read.string()
-        #print(buffer.hex())
-        #self.server.写日志('对象id:'+str(对象id)+'|'+'对象昵称:'+对象昵称+'|'+'武器:'+str(武器)+'|'\
-        #                +'NPC类型:'+str(NPC类型)+'|'+'坐骑:'+str(坐骑)+'|'+'对象职业:'+str(对象职业)+'|'+\
-        #                    '飞行法宝:'+str(飞行法宝ID)+'|'+'铭牌:'+名牌+'|'+'X:'+str(x)+'|'+'Y:'+str(y)+'|')
+        self.user.gamedata.周围对象.update({对象id:[对象昵称,形象]})
+        '''self.server.写日志('对象id:'+str(对象id),'对象昵称:'+对象昵称,'武器:'+str(武器),
+                        'NPC类型:'+str(NPC类型),'坐骑:'+str(坐骑),'对象职业:'+str(对象职业),
+                            '飞行法宝:'+str(飞行法宝ID),'铭牌:'+名牌,'X:'+str(x),'Y:'+str(y))'''
         '''[13:21:58.965960]对象id:379088|对象昵称:窦小鑫|对象类型:11962|NPC类型:1|坐骑:31501|对象职业:4001|飞
 行法宝:0|铭牌:|X:61|Y:29|'''
 

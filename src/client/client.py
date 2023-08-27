@@ -90,9 +90,9 @@ class Client:
             if self.gamedata.屏蔽垃圾:
                 buffer = b''
         elif 包头.hex() == 'f05d':
-                客户接收处理.周围对象读取(buffer)
+            客户接收处理.周围对象读取(buffer)
         elif 包头.hex() == '226f':
-                self.gamedata.参战宠物id = int.from_bytes(buffer[12:16])
+            self.gamedata.参战宠物id = int.from_bytes(buffer[12:16])
         elif 包头.hex() == '5203':
             if buffer[19:20].hex() == '19':
                 if self.fuzhu.自动战斗.开关:

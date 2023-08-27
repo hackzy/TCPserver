@@ -41,6 +41,6 @@ class GameData:
         self.是否飞行 = 0
         self.任务 = {}
         self.道具使用限制 = {}
-
+        self.周围对象 = {}
 
 

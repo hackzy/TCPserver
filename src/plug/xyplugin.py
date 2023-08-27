@@ -30,10 +30,11 @@ class 逍遥插件:
         self.假人.启动假人(self,self.user)
         threading.Thread(target=self.everDayTask,name='时钟任务').start()
         
-    def 写日志(self,msg):
+    def 写日志(self,*msg):
         cur_time = datetime.datetime.now()
         filename = str(cur_time.year) + "年" + str(cur_time.month) + '月' + str(cur_time.day) + '日'
-        s = "[" + cur_time.strftime('%H:%M:%S') + "]" + str(msg)
+        m = '^|'.join(msg)
+        s = "[" + cur_time.strftime('%H:%M:%S') + "]" + str(m)
         logger = logging.getLogger(__name__)
         logger.setLevel(level = logging.INFO)
         handler = logging.FileHandler('./log/' + filename + '.log',encoding='utf-8')   #log.txt是文件的名字，可以任意修改
@@ -98,13 +99,19 @@ class 逍遥插件:
         except:
             return
         
+    def getTime(self):
+        nowtime = datetime.datetime.now()
+        now = datetime.timedelta(hours=nowtime.hour,minutes=nowtime.minute,seconds=nowtime.second,microseconds=nowtime.microsecond)
+        rangeSecond = datetime.timedelta(hours=24,minutes=00,seconds=00) - now
+        return rangeSecond.total_seconds()
+        
     def everDayTask(self):
         while True:
+            time.sleep(self.getTime())
             if datetime.datetime.today().hour == 0:
                 存档.每日数据刷新()
-            存档.saveAllData(self.user)
-            self.写日志('所有玩家数据已保存')
-            time.sleep(300)
+            self.写日志('每日数据刷新')
+
 
     def starServer(self):
         for sid in range(len(服务器监听端口)):
