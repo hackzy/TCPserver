@@ -107,8 +107,7 @@ class 逍遥插件:
     def everDayTask(self):
         while True:
             time.sleep(self.getTime())
-            if datetime.datetime.today().hour == 0:
-                存档.每日数据刷新()
+            存档.每日数据刷新()
             self.写日志('每日数据刷新')
 
 
@@ -120,5 +119,3 @@ class 逍遥插件:
         #启动注册网关
         self.regserver = Regserver(self)
         self.regserver.启动服务器(服务器监听地址,注册监听端口)
-
-    

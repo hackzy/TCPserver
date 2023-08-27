@@ -97,8 +97,6 @@ class 服务器数据处理:
                 if 请求处理.任务领取('神石抽奖'):
                     self.server.服务器发送(self.server.基础功能.中心提示('每日只有一次抽奖机会！'),user)
                     buffer = b""
-        elif 包头.hex() == '3356':
-            print(buffer.hex())
         try:
             if buffer != b'':
                 self.server.客户端发送(buffer,user)
