@@ -48,7 +48,7 @@ class 客户请求处理:
         解包 = self.取对话内容(buffer)
         npcid = 解包[0]
         内容 = 解包[1]
-        填写内容 = 解包[2]
+        填写内容 = 解包[2].split(',')
         if npcid == 10:
             self.user.fuzhu.小助手.助手处理中心(内容)
         elif npcid == 2:
@@ -56,13 +56,46 @@ class 客户请求处理:
         elif npcid == 3:
             self.user.fuzhu.小助手.装备相关(内容)
         elif npcid == 4:
-            if 填写内容 != '':
+            if 填写内容[0] != '':
                 self.user.fuzhu.小助手.录制相关(内容,填写内容)
                 return
             self.user.fuzhu.小助手.录制相关(内容)
         elif npcid == 5:
             self.user.fuzhu.小助手.自动挖宝(内容)
+        elif npcid == self.user.gamedata.角色id:
+            if 内容 == '!^增加抽奖次数':
+                    self.server.服务器发送(self.server.基础功能.中心提示('每日只可进行一次抽奖，请直接点击手动抽奖！'),self.user)
+                    return b''
+        elif self.user.gamedata.周围对象.get(npcid)[0] == '北斗星使':
+            if 内容 == '确认进塔':
+                if self.任务领取('通天塔'):
+                    self.server.服务器发送(self.NPC对话(npcid,'修心悟道切莫操之过急，还请养精蓄锐，明日再来吧！'),self.user)
+                    return b''
+        elif self.user.gamedata.周围对象.get(npcid)[0] == '玉真子':
+            if 内容 == '$提交诱饵':
+                pot = int(填写内容[1].split(':')[0])
+                if self.user.gamedata.物品数据[pot].名称 in 精怪诱饵:
+                    if self.任务领取('抓坐骑'):
+                        self.server.服务器发送(self.NPC对话(npcid,'今日提交的诱饵已经足够，请明日再来吧！') + self.物品归还包(pot),self.user)
+                        return b''
 
+        return buffer
+    
+    def NPC对话(self,NPCID,对话):
+        write = WriteBuff()
+        allWrite = WriteBuff()
+        write.byte(bytes.fromhex('2037'))
+        write.integer(NPCID)
+        write.integer(self.user.gamedata.周围对象.get(NPCID)[1])
+        write.integer(1,2)
+        write.string(对话,lenType=1)
+        write.integer(0)
+        write.string(self.user.gamedata.周围对象.get(NPCID)[0])
+        write.integer(4)
+        write.byte(b'\x00')
+        allWrite.byte(组包包头)
+        allWrite.byte(write.getBuffer(),True,1)
+        return allWrite.getBuffer()
 
     def 取对话内容(self,buffer):
         read = ReadBuffer()
@@ -132,6 +165,16 @@ class 客户请求处理:
                 self.server.服务器发送(self.server.基础功能.中心提示('今天使用已达上限！') + self.物品归还包(pot),self.user)
                 return b''
         return buffer
+    
+    def 任务领取(self,类型):
+        loadData = 存档.getLimtSave(self.user)
+        数量 = loadData['每日限制']['任务'][类型]
+        if 数量 > 0:
+            数量 -= 1
+            loadData['每日限制']['任务'].update({类型:数量})
+            存档.setLimtSave(self.user,loadData)
+            return False
+        return True
     
     def 物品归还包(self,pot):
         write = WriteBuff()

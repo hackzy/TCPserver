@@ -68,7 +68,7 @@ class 服务器数据处理:
         if 包头.hex() == '3ae4':
             buffer = 请求处理.喊话(buffer)
         elif 包头.hex() == '215e' or 包头.hex() == '30ca' or 包头.hex() == '1042':
-            请求处理.NPC对话点击处理(buffer)
+            buffer = 请求处理.NPC对话点击处理(buffer)
         elif 包头.hex() == '1156':
             if buffer[-2:].hex() == '0133':
                 user.fuzhu.小助手.小助手()
@@ -91,6 +91,11 @@ class 服务器数据处理:
                 buffer = b''
         elif 包头.hex() == '220c':
             buffer = 请求处理.物品使用(buffer)
+        elif 包头.hex() == 'fd64':
+            if int.from_bytes(buffer[12:14]) == 37:
+                if 请求处理.任务领取('神石抽奖'):
+                    self.server.服务器发送(self.server.基础功能.中心提示('每日只有一次抽奖机会！'),user)
+                    buffer = b""
         try:
             if buffer != b'':
                 self.server.客户端发送(buffer,user)
