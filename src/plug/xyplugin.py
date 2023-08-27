@@ -8,7 +8,6 @@ import os
 from src.server.server import Server
 from src.regserver.regserver import Regserver
 from src.game.bot import 假人管理
-from src.plug.saveData import 存档
 from src.client.client import Client
 import threading
 import concurrent.futures

@@ -10,7 +10,7 @@ class SendToClient:
         self.server = server
 
     def 登录线路(self,buffer):
-        #4d5a000000000000003433570000000103e80f3131312e3137332e3131362e313333177bebf42c6315e58581e8a8b1e8a9b2e5b8b3e8999fe799bbe585a5
+        #4d5a000000000000002933570000000103e80b31302e3136382e312e31301fe1049cc9f20ed4cad0edb8c3d5cabac5b5c7c2bc
         write = WriteBuff()
         read = ReadBuffer()
         allWrite = WriteBuff()
@@ -25,7 +25,7 @@ class SendToClient:
         read.string()
         port = read.integer(2)
         for p in range(len(游戏端口)):
-            if 游戏端口[p] == port:
+            if 原游戏端口[p] == port:
                 监听端口 = 服务器监听端口[p]
         write.string(服务器外网地址,True)
         write.integer(监听端口,2)
