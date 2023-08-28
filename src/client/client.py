@@ -77,6 +77,10 @@ class Client:
             buffer = 客户接收处理.登录线路(buffer)
         elif 包头.hex() == "4355":
             buffer = 客户接收处理.显示线路(buffer)
+        elif 包头.hex() == 'f0df':
+            buffer = 客户接收处理.换线(buffer)
+        elif 包头.hex() == '20d5':
+            buffer = 客户接收处理.换线2(buffer)
         elif 包头.hex() == '5009':
             buffer = 客户接收处理.切换角色(buffer)
         elif 包头.hex() == '5103':

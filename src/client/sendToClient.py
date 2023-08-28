@@ -24,18 +24,15 @@ class SendToClient:
         write.byte(read.byte(2))
         read.string()
         port = read.integer(2)
-        for p in range(len(游戏端口)):
-            if 原游戏端口[p] == port:
-                监听端口 = 服务器监听端口[p]
         write.string(服务器外网地址,True)
-        write.integer(监听端口,2)
+        write.integer(服务器监听端口[原游戏端口.index(port)],2)
         write.byte(read.residBuffer())
         allWrite.byte(组包包头)
         allWrite.byte(write.getBuffer(),True,1)
         return allWrite.getBuffer()
     
     def 显示线路(self,buffer):
-        #4D 5A 00 00 00 00 00 00 00 23 43 55 00 01 06 E6 9B B4 E9 91 84 E8 BC 9D E7 85 8C E4 B8 80 E7 B7 9A 09 31 32 37 2E 30 2E 30 2E 31 00 02 
+        #4d5a000000000000003d4355000304d2bbcfdf0b31302e3136382e312e313004b6fecfdf0b31302e3136382e312e313004c8fdcfdf0b31302e3136382e312e3130000100010001
         write = WriteBuff()
         read = ReadBuffer()
         allWrite = WriteBuff()
@@ -48,11 +45,53 @@ class SendToClient:
             write.string(read.string(),True)
             read.string()
             write.string(服务器外网地址,True)
-        write.byte(read.residBuffer())
+        for m in range(number):
+            write.integer(4,2)
+        #write.byte(read.residBuffer())
         allWrite.byte(组包包头)
         allWrite.byte(write.getBuffer(),True,1)
         return allWrite.getBuffer()
     
+    def 换线(self,buffer):
+        #4D 5A 00 00 00 00 00 00 00 3D F0 DF 00 03 0B 31 30 2E 31 36 38 2E 31 2E 31 30 04 D2 BB CF DF 00 02 0B 31 30 2E 31 36 38 2E 31 2E 31 30 04 B6 FE CF DF 00 02 0B 31 30 2E 31 36 38 2E 31 2E 31 30 04 C8 FD CF DF 00 01 
+        write = WriteBuff()
+        read = ReadBuffer()
+        allWrite = WriteBuff()
+        read.setBuffer(buffer)
+        read.skip(10)
+        write.byte(read.byte(2))
+        num = read.integer(2)
+        write.integer(num,2)
+        for n in range(num):
+            write.string(服务器外网地址)
+            read.string()
+            write.string(read.string())
+            read.integer(2)
+            write.integer(4,2)
+        allWrite.byte(组包包头)
+        allWrite.byte(write.getBuffer(),True,1)
+        return allWrite.getBuffer()
+
+    def 换线2(self,buffer):
+        write = WriteBuff()
+        read = ReadBuffer()
+        allWrite = WriteBuff()
+        read.setBuffer(buffer)
+        read.skip(10)
+        write.byte(read.byte(2))
+        num = read.integer(2)
+        write.integer(num,2)
+        for n in range(num):
+            string = read.string()
+            lis = string.split(' ')
+            lis[0] = 服务器外网地址
+            lis[1] = str(服务器监听端口[游戏端口.index(int(lis[1]))])
+            write.string(' '.join(lis))
+        allWrite.byte(组包包头)
+        allWrite.byte(write.getBuffer(),True,1)
+        return allWrite.getBuffer()
+
+
     def 切换角色(self,buffer):
         read = ReadBuffer()
         write = WriteBuff()
