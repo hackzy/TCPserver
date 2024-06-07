@@ -29,7 +29,12 @@ class WriteBuff:
         return
     
     def integer(self,iint:int,length = 4,byteorder='big'):
-        self.data += iint.to_bytes(length,byteorder)
+        tempLength = (iint.bit_length()+7)// 8
+        if tempLength > 4:
+                iint = iint.to_bytes(tempLength,byteorder)[-length:]
+        else:
+                iint = iint.to_bytes(length,byteorder)
+        self.data += iint
         return
     
     def getLen(self):

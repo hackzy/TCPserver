@@ -61,7 +61,6 @@ class GM:
         bootTime = int(src.module.psutil.boot_time() * 1000)
         nowTime = int(time.time() * 1000)
         bootTime = nowTime - bootTime
-        self.server.写日志(bootTime)
         write = WriteBuff()
         allWrite = WriteBuff()
         write.byte(bytes.fromhex('10b2'))
@@ -70,9 +69,7 @@ class GM:
         allWrite.byte(b'MZ\x00\x00')
         allWrite.integer(bootTime)
         allWrite.byte(write.getBuffer(),True,1)
-        self.server.写日志(allWrite.getBuffer().hex())
         self.server.客户端发送(allWrite.getBuffer(),self.GMUSER)
         return
     def setsHeartbeatd(self,buffer):
         self.sHeartbeatd = buffer[12:]
-        self.server.写日志(self.sHeartbeatd.hex())

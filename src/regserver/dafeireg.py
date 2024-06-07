@@ -7,7 +7,7 @@ class Dafei(Reg):
     def __init__(self, server) -> None:
         super().__init__(server)
         try:
-            self.dfmysql = pymysql.connect(host=数据库ip,password=数据库密码,user=数据库用户,database='ddb',charset='utf8')
+            self.dfmysql = pymysql.connect(host=数据库ip,port=sqlport,password=数据库密码,user=数据库用户,database='ddb',charset='utf8')
         except:
             self.server.写日志('数据库连接失败')
         self.server = server

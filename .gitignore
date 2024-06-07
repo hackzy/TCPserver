@@ -2,3 +2,4 @@ json/
 log/
 __pycache__/
 .vscode/
+setting.py

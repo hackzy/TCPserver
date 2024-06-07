@@ -6,7 +6,7 @@ class Reg:
     def __init__(self,server) -> None:
         self.server = server
         try:
-            self.mysql = pymysql.connect(host=数据库ip,password=数据库密码,user=数据库用户,charset='utf8',database='adb')
+            self.mysql = pymysql.connect(host=数据库ip,port=sqlport,password=数据库密码,user=数据库用户,charset='utf8',database='adb')
         except:
             self.server.写日志('数据库连接失败')
             return
