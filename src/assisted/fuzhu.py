@@ -19,9 +19,9 @@ class fuzhu:
         self.录制保存 = {}
 
     def 血蓝位置(self):
-        法玲珑 = self.server.基础功能.getItemPot('法玲瓏')
-        血玲珑 = self.server.基础功能.getItemPot('血玲瓏')
-        驯兽诀 = self.server.基础功能.getItemPot('馴獸訣')
+        法玲珑 = self.server.基础功能.getItemPot(self.user,'法玲瓏')
+        血玲珑 = self.server.基础功能.getItemPot(self.user,'血玲瓏')
+        驯兽诀 = self.server.基础功能.getItemPot(self.user,'馴獸訣')
         if 法玲珑 == 0:
             self.server.基础功能.商城购买道具(self.user,'特級法玲瓏')
         if 血玲珑 == 0:
