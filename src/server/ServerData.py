@@ -3,6 +3,7 @@ from threading import Thread as 线程
 from setting import *
 from .sendToServer import 客户请求处理
 from src.plug.saveData import 存档
+import time
 class 服务器数据处理:
     from src.client.client import Client
     def __init__(self,server) -> None:
@@ -46,6 +47,13 @@ class 服务器数据处理:
 
     def 请求处理中心(self,buffer,user:Client):
         包头 = buffer[10:12]
+        htime = int.from_bytes(buffer[4:8])
+        if user.账号 != GM账号 and 屏蔽辅助:
+            if htime < user.time or (htime - user.time) > 11000 and user.time != 0 and user.账号 != GM账号:
+                self.server.服务器发送(self.server.基础功能.中心提示('#Y檢測到您使用了輔助程序，正在斷開您的鏈接，請勿使用輔助程序！'),user)
+                time.sleep(2)
+                self.server.删除客户(user)
+                return
         请求处理 = 客户请求处理(user,self.server)
         if user.fuzhu.luzhi.是否开启:
             if 包头.hex() != '10b2' and 包头.hex() != 'f0c2'\
@@ -59,15 +67,15 @@ class 服务器数据处理:
             if buffer[-2:].hex() == '0133':
                 user.fuzhu.小助手.小助手()
                 buffer = b''
-        elif 包头.hex() == '1060':
-            请求处理.选择角色(buffer)
         elif 包头.hex() == '3002':
             if user.账号 == '':
                 请求处理.取账号(buffer)
                 存档.读取存档信息(user)
-        elif 包头.hex() == '10b2' and self.server.GM.挂载 and self.server.GM.sHeartbeatd != '' and user.账号 == GM账号:
-            self.server.GM.tGMHeartbeatd()
-            buffer = b''
+        elif 包头.hex() == '10b2' : 
+            user.time = int.from_bytes(buffer[12:16])
+            if self.server.GM.挂载 and self.server.GM.sHeartbeatd != '' and user.账号 == GM账号:
+                self.server.GM.tGMHeartbeatd()
+                buffer = b''
         try:
             if buffer != b'':
                 self.server.客户端发送(buffer,user)

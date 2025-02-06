@@ -16,7 +16,7 @@ class 逍遥插件:
         self.sid = 0
         self.user = {}
         self.基础功能 = 基础功能()
-        self.GM = GM(self)
+        self.GM = GM(self,Client)
         self.测试 = 0
         self.regserver = None
         self.假人 = 假人管理()
@@ -49,11 +49,11 @@ class 逍遥插件:
                 user.在线中 = False
                 self.ips.remove(user.客户IP)
                 user.客户句柄.close()
+                user.服务器句柄.close()
                 del self.user[user.cid]
                 if user.gamedata.角色名 != '':
                     self.写日志('玩家: ' + user.gamedata.角色名 + ' 下线 Ip:' + user.客户IP + '  当前在线人数:' + str(len(self.user)))
                     存档.存储账号信息(user)
-                    user.服务器句柄.close()
                     del user
             
         except:

@@ -72,16 +72,7 @@ class 客户请求处理:
         填写内容 = read.string()
         return [npcid,内容,填写内容]
     
-    def 选择角色(self,buffer):
-        read = ReadBuffer()
-        read.setBuffer(buffer)
-        read.skip(12)
-        昵称 = read.string()
-        for a in self.user.gamedata.所有角色:
-            if self.user.gamedata.所有角色[a]['名称'] == 昵称:
-                self.user.gamedata.GID = self.user.gamedata.所有角色[a]['GID']
-                self.server.写日志('玩家：'+ 昵称 + ' 上线 ip:'+self.user.客户IP+'  当前在线人数:'+str(len(self.server.user)))
-                break
+
 
     def 取账号(self,buffer):
         read = ReadBuffer()

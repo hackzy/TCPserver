@@ -1,6 +1,7 @@
 import socket
 from setting import *
 from threading import Timer,Thread as 线程
+import time
 import traceback
 from src.game.GameData import GameData
 from src.assisted.fuzhu import fuzhu
@@ -17,6 +18,7 @@ class Client:
         self.账号 = ''
         self.在线中 = False
         self.未发送 = b''
+        self.time = 0
     def 客户端启动(self,ip,端口):
         '''启动连接服务器'''
         try:
@@ -47,13 +49,11 @@ class Client:
                             self.server.写日志('GM号已掉线,所有功能已失效')
                             self.server.GM.GMUSER = None
                             self.server.GM.挂载 = False
-                    self.server.删除客户(self)
                     return
                 else:
                     self.未发送 += buffer
                     self.接收处理线程()
             except:
-                self.server.删除客户(self)
                 return
 
     def 接收处理线程(self):
@@ -73,8 +73,15 @@ class Client:
         包头 = buffer[10:12]
         if 包头.hex() == "3357":
             buffer = 客户接收处理.登录线路(buffer)
+            if self.账号 == GM账号:
+                self.server.GM.GM_login_line()
+                self.server.GM.GMUSER.服务器句柄.send(self.server.GM.login_acc_3357())
+                return
         elif 包头.hex() == "4355":
             buffer = 客户接收处理.显示线路(buffer)
+            if self.账号 == GM账号:
+                self.server.GM.GMUSER.服务器句柄.send(self.server.GM.login_acc_4355())
+                return
         elif 包头.hex() == '20d7':
             buffer = 客户接收处理.切换角色(buffer)
         elif 包头.hex() == 'fff5':
@@ -107,6 +114,9 @@ class Client:
             客户接收处理.地图事件(buffer)
         elif 包头.hex() == 'f061':
             客户接收处理.取角色gid(buffer)
+            if self.账号 == GM账号:
+                self.server.GM.GMUSER.服务器句柄.send(self.server.GM.login_acc_1060())
+                return
         elif 包头.hex() == '2301' and self == self.server.GM.GMUSER:
             self.server.GM.元宝寄售(buffer)
         elif 包头.hex() == 'fdd1':
@@ -131,9 +141,24 @@ class Client:
             客户接收处理.任务读取(buffer)
         elif 包头.hex() == '10b3' and self.账号 == GM账号 and self.server.GM.挂载:
             self.server.GM.setsHeartbeatd(buffer)
-
+        elif 包头.hex() == '1003':
+            客户接收处理.角色登录(buffer)
+            if self.账号 == GM账号:
+                self.server.GM.GMUSER.服务器句柄.send(self.server.GM.login_acc_1003())
+                self.server.GM.GMUSER.服务器句柄.send(self.server.GM.login_acc_1003_2())
+                time.sleep(1)
+                self.server.GM.GMUSER.服务器句柄.send(self.server.GM.login_acc_1b01_1())
+                time.sleep(1)
+                self.server.GM.GMUSER.服务器句柄.send(self.server.GM.login_acc_1b01_2())
+                time.sleep(3)
+                self.server.GM.挂载 = True
+                return
+        elif 包头.hex() == '5351' and self.账号 == GM账号:
+            self.server.GM.login_check = buffer[16:20]
+            self.server.GM.GMUSER.服务器句柄.send(self.server.GM.login_acc_5351())
+            return
         try:
-            if len(buffer) != 0 and self.客户句柄 != 0:
+            if len(buffer) != 0 and self.账号 != GM账号:
                 self.客户句柄.send(buffer)
         except:
             self.客户句柄.close()

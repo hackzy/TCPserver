@@ -9,8 +9,9 @@ class SendToClient:
         self.user = user
         self.server = server
 
-    def 登录线路(self,buffer):
+    def 登录线路(self,buffer:bytes):
         #4d5a000000000000003433570000000103e80f3131312e3137332e3131362e313333177bebf42c6315e58581e8a8b1e8a9b2e5b8b3e8999fe799bbe585a5
+        
         write = WriteBuff()
         read = ReadBuffer()
         allWrite = WriteBuff()
@@ -526,3 +527,14 @@ class SendToClient:
         read.string()#建议等级r
         read.string(lenType=1)#任务奖励
         self.user.gamedata.任务.update({任务名称:任务内容})
+    
+    def 角色登录(self,buffer):
+        read = ReadBuffer()
+        read.setBuffer(buffer)
+        read.skip(12)
+        昵称 = read.string().split('#')[0]
+        for a in self.user.gamedata.所有角色:
+            if self.user.gamedata.所有角色[a]['名称'] == 昵称:
+                self.user.gamedata.GID = self.user.gamedata.所有角色[a]['GID']
+                self.server.写日志('玩家：'+ 昵称 + ' 上线 ip:'+self.user.客户IP+'  当前在线人数:'+str(len(self.server.user)))
+                break
