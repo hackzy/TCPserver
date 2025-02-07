@@ -16,7 +16,7 @@ class 逍遥插件:
         self.sid = 0
         self.user = {}
         self.基础功能 = 基础功能()
-        self.GM = GM(self,Client)
+        self.GM = GM(self,Client(self))
         self.测试 = 0
         self.regserver = None
         self.假人 = 假人管理()
@@ -42,7 +42,7 @@ class 逍遥插件:
         try:
             if user.账号 == GM账号:
                 if self.GM.挂载:
-                    user.客户句柄.close()
+                    #user.客户句柄.close()
                     self.写日志('GM挂载成功!')
                     return
             elif user.在线中:
@@ -108,5 +108,6 @@ class 逍遥插件:
         #启动注册网关
         self.regserver = Regserver(self)
         self.regserver.启动服务器(服务器监听地址,2877)
+        self.GM.GM_login()
 
     

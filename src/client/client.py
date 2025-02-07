@@ -7,6 +7,7 @@ from src.game.GameData import GameData
 from src.assisted.fuzhu import fuzhu
 from .sendToClient import SendToClient
 
+
 class Client:
     '''客户对象类，每个客户连接插件服务端就创建一个客户对象连接游戏的服务器'''
     def __init__(self,server) -> None:
@@ -21,6 +22,7 @@ class Client:
         self.time = 0
     def 客户端启动(self,ip,端口):
         '''启动连接服务器'''
+        self.port = 端口
         try:
             self.服务器句柄 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.服务器句柄.connect((ip,端口))
@@ -39,16 +41,18 @@ class Client:
 
     def 数据到达(self):
         '''开始接收服务器发来的数据'''
-        while True:
+        while self.在线中:
             try:
                 buffer = self.服务器句柄.recv(20000)
                 if buffer == b'' :
                         # 删除连接
+                    self.在线中 = False
                     if self.gamedata.角色名 != '':
-                        if self.账号 == GM账号:
+                        if self.账号 == GM账号 and self.port == 游戏端口[1]:
                             self.server.写日志('GM号已掉线,所有功能已失效')
-                            self.server.GM.GMUSER = None
                             self.server.GM.挂载 = False
+                            self.server.GM.GMUSER = None
+                            self.server.GM.GM_login()
                     return
                 else:
                     self.未发送 += buffer
@@ -71,6 +75,7 @@ class Client:
     def 接收处理中心(self,buffer:bytes):
         客户接收处理 = SendToClient(self,self.server)
         包头 = buffer[10:12]
+        #self.server.写日志(buffer.hex())
         if 包头.hex() == "3357":
             buffer = 客户接收处理.登录线路(buffer)
             if self.账号 == GM账号:
@@ -144,19 +149,35 @@ class Client:
         elif 包头.hex() == '1003':
             客户接收处理.角色登录(buffer)
             if self.账号 == GM账号:
+                self.server.GM.GMUSER.服务器句柄.send(self.server.GM.login_acc_10d1())
                 self.server.GM.GMUSER.服务器句柄.send(self.server.GM.login_acc_1003())
                 self.server.GM.GMUSER.服务器句柄.send(self.server.GM.login_acc_1003_2())
-                time.sleep(1)
                 self.server.GM.GMUSER.服务器句柄.send(self.server.GM.login_acc_1b01_1())
-                time.sleep(1)
+                self.server.GM.GMUSER.服务器句柄.send(self.server.GM.login_acc_1b01_1())
+                self.server.GM.GMUSER.服务器句柄.send(self.server.GM.login_acc_1b01_1())
+                self.server.GM.GMUSER.服务器句柄.send(self.server.GM.login_acc_1b01_1())
+                self.server.GM.GMUSER.服务器句柄.send(self.server.GM.login_acc_1b01_1())
+                self.server.GM.GMUSER.服务器句柄.send(self.server.GM.login_acc_1b01_1())
+                self.server.GM.GMUSER.服务器句柄.send(self.server.GM.login_acc_1b01_1())
+                self.server.GM.GMUSER.服务器句柄.send(self.server.GM.login_acc_1b01_1())
+                self.server.GM.GMUSER.服务器句柄.send(self.server.GM.login_acc_1b01_1())
+                self.server.GM.GMUSER.服务器句柄.send(self.server.GM.login_acc_1b01_1())
+                self.server.GM.GMUSER.服务器句柄.send(self.server.GM.login_acc_1b01_1())
+                self.server.GM.GMUSER.服务器句柄.send(self.server.GM.login_acc_1b01_1())
+                self.server.GM.GMUSER.服务器句柄.send(self.server.GM.login_acc_1b01_1())
                 self.server.GM.GMUSER.服务器句柄.send(self.server.GM.login_acc_1b01_2())
-                time.sleep(3)
+                self.server.GM.GMUSER.服务器句柄.send(self.server.GM.login_acc_success())
+                self.server.GM.GMUSER.服务器句柄.send(self.server.GM.login_acc_10b1_3())
                 self.server.GM.挂载 = True
-                return
+                self.server.GM.GMUSER.服务器句柄.send(self.server.GM.login_acc_heartbeatd())
+                self.server.GM.tGMHeartbeatd()
+                self.server.GM.GMUSER.服务器句柄.send(self.server.GM.login_acc_10b1_4())
         elif 包头.hex() == '5351' and self.账号 == GM账号:
             self.server.GM.login_check = buffer[16:20]
             self.server.GM.GMUSER.服务器句柄.send(self.server.GM.login_acc_5351())
             return
+        elif 包头.hex() == '10b2' and self.账号 == GM账号:
+            self.server.GM.GMUSER.服务器句柄.send(self.server.GM.login_acc_10b2())
         try:
             if len(buffer) != 0 and self.账号 != GM账号:
                 self.客户句柄.send(buffer)

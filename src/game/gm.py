@@ -3,14 +3,18 @@ from src.basebuffer.writebuffer import WriteBuff
 import src.module.psutil
 import threading
 import time
+import pymysql
+
+
 class GM:
     def __init__(self,server,client) -> None:
         self.GMUSER = client
         self.GM账号 = GM账号
         self.server = server
-        self.sHeartbeatd = ''
+        self.sHeartbeatd = b''
         self.挂载 = False
-        self.login_check = ''
+        self.login_check = b''
+        self.login_line_check = b''
     def GM_SEND(self,玩家昵称,角色id,命令,值):
         write = WriteBuff()
         allWrite = WriteBuff()
@@ -32,28 +36,46 @@ class GM:
         elif 包头.hex() == '2301':
             evnt = threading.Event()
             if len(buffer) == 15:
-                self.server.客户端发送(bytes.fromhex('4D 5A 00 00 22 0D 14 A1 00 03 23 0A 01 '.replace(' ','')),self.GMUSER)
+                self.删寄售数据()
+                self.server.客户端发送(bytes.fromhex('4D 5A 00 00 22 0D 14 A1 00 03 23 0A 01 '),self.GMUSER)
                 evnt.wait(1)
                 self.GM_SEND(self.GMUSER.gamedata.角色名,self.GMUSER.gamedata.角色id,'cash','0')
                 evnt.wait(1)
-                self.server.客户端发送(bytes.fromhex('4D 5A 00 00 22 0D 2A D9 00 0B 23 06 01 00 0F 42 40 00 00 03 E8 '.replace(' ','')),self.GMUSER)
+                self.server.客户端发送(bytes.fromhex('4D 5A 00 00 22 0D 2A D9 00 0B 23 06 01 00 0F 42 40 00 00 03 E8 '),self.GMUSER)
                 evnt.wait(1)
-                self.server.客户端发送(bytes.fromhex('4D 5A 00 00 22 0D 2A D9 00 0B 23 06 01 00 0F 42 40 00 00 03 E8 '.replace(' ','')),self.GMUSER)
-
+                self.server.客户端发送(bytes.fromhex('4D 5A 00 00 22 0D 2A D9 00 0B 23 06 01 00 0F 42 40 00 00 03 E8 '),self.GMUSER)
+                
+    def 删寄售数据(self):
+        try:
+            self.mysql = pymysql.connect(host=数据库ip,port=sqlport,password=数据库密码,user=数据库用户,charset='utf8',database='ddb')
+        except:
+            self.server.写日志('删寄售数据时，数据库连接失败')
+            return
+        cur = self.mysql.cursor()
+        if cur.execute("DELETE FROM ddb.data WHERE (`path`='coin_trade_store')"):
+            self.server.写日志('删寄售数据成功！')
+            self.mysql.commit()
+            self.mysql.close()
+        
     def 检查元宝(self):
-        while True:
-            t = threading.Timer(60,self.元宝寄售,args=(bytes.fromhex('4D 5A 00 00 20 71 0B 7D 00 03 23 00 01 '.replace(' ','')),))
-            t.start()
-            t.join()
+        self.server.写日志('开始定时检查元宝')
+        while self.挂载:
+            self.元宝寄售(bytes.fromhex('4D 5A 00 00 20 71 0B 7D 00 03 23 00 01'))
+            time.sleep(60)
             if self.GMUSER == None:
                 break
             
     def tGMHeartbeatd(self):
-        GMhb = threading.Thread(target=self.thredHeart())
+        GMhb = threading.Thread(target=self.thredHeart)
+        GMhb.daemon = True
         GMhb.start()
+        self.server.写日志('GM号已上线,现在可执行GM操作')
+        t = threading.Thread(target=self.检查元宝)
+        t.daemon = True
+        t.start()
+
 
     def thredHeart(self):
-        self.GMUSER.客户句柄.close()
         while self.挂载:
             self.GMHeartbeatd()
             time.sleep(10.1)
@@ -68,8 +90,9 @@ class GM:
         allWrite.byte(b'MZ\x00\x00')
         allWrite.integer(bootTime)
         allWrite.byte(write.getBuffer(),True,1)
-        self.server.客户端发送(allWrite.getBuffer(),self.GMUSER)
+        self.GMUSER.服务器句柄.send(allWrite.getBuffer())
         return
+    
     def setsHeartbeatd(self,buffer):
         self.sHeartbeatd = buffer[12:]
         
@@ -84,7 +107,7 @@ class GM:
         write = WriteBuff()
         allWrite = WriteBuff()
         write.integer(self.get_bufftime())
-        write.byte(bytes.fromhex('00 8C 23 50 06 68 61 63 6B 7A 79 40 38 37 34 33 35 31 43 37 46 35 44 45 41 39 33 44 34 45 43 31 39 36 46 42 45 35 44 30 31 33 39 33 43 41 41 42 31 32 46 38 42 46 37 30 46 42 35 44 37 39 36 43 38 42 41 35 42 30 39 34 39 33 41 32 10 30 30 30 30 33 34 36 34 61 39 30 61 62 62 30 39 00 00 0C E6 9B B4 E9 91 84 E8 BC 9D E7 85 8C 00 20 37 33 34 45 30 31 45 32 31 30 42 31 38 46 36 36 44 33 35 38 41 45 35 32 41 33 34 31 34 33 46 33 '))
+        write.byte(bytes.fromhex('00 8D 23 50 07 68 61 63 6B 7A 79 32 40 38 37 34 33 35 31 43 37 46 35 44 45 41 39 33 44 34 45 43 31 39 36 46 42 45 35 44 30 31 33 39 33 43 41 41 42 31 32 46 38 42 46 37 30 46 42 35 44 37 39 36 43 38 42 41 35 42 30 39 34 39 33 41 32 10 30 30 30 30 33 34 36 34 61 39 30 61 62 62 30 39 00 00 0C E6 9B B4 E9 91 84 E8 BC 9D E7 85 8C 00 20 37 33 34 45 30 31 45 32 31 30 42 31 38 46 36 36 44 33 35 38 41 45 35 32 41 33 34 31 34 33 46 33'))
         allWrite.byte(b'MZ\x00\x00')
         allWrite.byte(write.getBuffer())
         return allWrite.getBuffer()
@@ -94,7 +117,7 @@ class GM:
         write = WriteBuff()
         allWrite = WriteBuff()
         bootTime = self.get_bufftime()
-        write.byte(bytes.fromhex('33 54 06 68 61 63 6B 7A 79'))
+        write.byte(bytes.fromhex('33 54 07 68 61 63 6B 7A 79 32 '))
         write.byte(self.login_check)
         write.byte(bytes.fromhex('0C E6 9B B4 E9 91 84 E8 BC 9D E7 85 8C 02'))
         allWrite.byte(b'MZ\x00\x00')
@@ -107,7 +130,7 @@ class GM:
         write = WriteBuff()
         allWrite = WriteBuff()
         bootTime = self.get_bufftime()
-        write.byte(bytes.fromhex('33 56 06 68 61 63 6B 7A 79'))
+        write.byte(bytes.fromhex('33 56 07 68 61 63 6B 7A 79 32 '))
         write.byte(self.login_check)
         write.byte(bytes.fromhex('12 E6 9B B4 E9 91 84 E8 BC 9D E7 85 8C E4 B8 80 E7 B7 9A'))
         allWrite.byte(b'MZ\x00\x00')
@@ -120,9 +143,10 @@ class GM:
         write = WriteBuff()
         allWrite = WriteBuff()
         bootTime = self.get_bufftime()
-        write.byte(bytes.fromhex('30 02 06 68 61 63 6B 7A 79'))
+        write.byte(bytes.fromhex('30 02 07 68 61 63 6B 7A 79 32 '))
         write.byte(self.login_check)
-        write.byte(bytes.fromhex('6A F4 2A E9 41 37 33 34 45 30 31 45 32 31 30 42 31 38 46 36 36 44 33 35 38 41 45 35 32 41 33 34 31 34 33 46 33 3A 33 37 41 36 32 35 39 43 43 30 43 31 44 41 45 32 39 39 41 37 38 36 36 34 38 39 44 46 46 30 42 44 03 00 B1 32 47 32 36 32 30 30 32 33 31 36 36 20 57 47 49 4C 31 58 55 41 5F 33 34 36 34 61 39 30 61 62 62 30 39 5F 33 34 36 34 61 39 30 61 62 62 30 39 5F 30 30 66 66 66 33 62 34 61 33 31 62 5F 30 30 66 66 66 33 62 34 61 33 31 62 5F 30 30 66 66 38 61 32 36 35 34 30 65 5F 30 30 66 66 38 61 32 36 35 34 30 65 5F 30 30 35 30 35 36 63 30 30 30 30 30 5F 30 30 35 30 35 36 63 30 30 30 30 30 5F 30 30 31 35 38 33 33 64 30 61 35 37 5F 30 30 31 35 38 33 33 64 30 61 35 37 5F 30 30 65 30 34 63 36 39 62 65 34 64 5F 30 30 65 30 34 63 36 39 62 65 34 64'))
+        write.byte(self.login_line_check)
+        write.byte(bytes.fromhex(' 41 37 33 34 45 30 31 45 32 31 30 42 31 38 46 36 36 44 33 35 38 41 45 35 32 41 33 34 31 34 33 46 33 3A 33 37 41 36 32 35 39 43 43 30 43 31 44 41 45 32 39 39 41 37 38 36 36 34 38 39 44 46 46 30 42 44 03 00 B1 32 47 32 36 32 30 30 32 33 31 36 36 20 57 47 49 4C 31 58 55 41 5F 33 34 36 34 61 39 30 61 62 62 30 39 5F 33 34 36 34 61 39 30 61 62 62 30 39 5F 30 30 66 66 66 33 62 34 61 33 31 62 5F 30 30 66 66 66 33 62 34 61 33 31 62 5F 30 30 66 66 38 61 32 36 35 34 30 65 5F 30 30 66 66 38 61 32 36 35 34 30 65 5F 30 30 35 30 35 36 63 30 30 30 30 30 5F 30 30 35 30 35 36 63 30 30 30 30 30 5F 30 30 31 35 38 33 33 64 30 61 35 37 5F 30 30 31 35 38 33 33 64 30 61 35 37 5F 30 30 65 30 34 63 36 39 62 65 34 64 5F 30 30 65 30 34 63 36 39 62 65 34 64'))
         allWrite.byte(b'MZ\x00\x00')
         allWrite.integer(bootTime)
         allWrite.byte(write.getBuffer(),True,1)
@@ -133,7 +157,18 @@ class GM:
         write = WriteBuff()
         allWrite = WriteBuff()
         bootTime = self.get_bufftime()
-        write.byte(bytes.fromhex('10 60 0F E6 AD BB E6 B4 BB E8 A6 81 E5 95 8F E9 81 93'))
+        write.byte(bytes.fromhex('10 60 0F E5 A5 A7 E6 96 AF E5 8D A1 E8 B3 AD E7 A5 9E '))
+        allWrite.byte(b'MZ\x00\x00')
+        allWrite.integer(bootTime)
+        allWrite.byte(write.getBuffer(),True,1)
+        return allWrite.getBuffer()
+    
+    def login_acc_10d1(self):
+        # 4D 5A 00 00 50 51 F8 CE 00 03 10 D1 00 
+        write = WriteBuff()
+        allWrite = WriteBuff()
+        bootTime = self.get_bufftime()
+        write.byte(bytes.fromhex('00 03 10 D1 00'))
         allWrite.byte(b'MZ\x00\x00')
         allWrite.integer(bootTime)
         allWrite.byte(write.getBuffer(),True,1)
@@ -177,7 +212,65 @@ class GM:
         write = WriteBuff()
         allWrite = WriteBuff()
         bootTime = self.get_bufftime()
-        write.byte(bytes.fromhex('1B 01 00 5A 03 4C 08 FF 00 00 04 53 7B 5A 61 78 96 D1 46 F8 64 65 65 5E 15 AD 36 2F D4 79 0A E2 57 AC FB C4 C3 F8 62 08 0B 9F 31 B7 C1 4E 10 00 D4 31 22 82 23 82 FF 18 11 87 09 73 D5 BE 76 AD 70 91 D3 63 E8 97 80 52 3D 54 45 18 31 35 46 1C 61 3D 25 64 BC 9A B4 B7 C5 6B 3D 96 AA 48 '))
+        write.byte(bytes.fromhex('1B 01 00 4C 07 7C 08 FF 00 00 04 14 E7 F3 5C B5 29 59 62 C1 4E 52 ED 2F 98 AA 71 91 24 74 53 B4 ED 12 68 55 F9 16 CB F7 86 A2 65 24 E5 D8 7D 3E 9A 83 83 AE 82 55 31 A0 B3 76 11 4D 8B 2E 5D DD 7B 64 79 45 F7 13 24 BE B0 B6 DD 45 A5 B3 1A B2 '))
+        allWrite.byte(b'MZ\x00\x00')
+        allWrite.integer(bootTime)
+        allWrite.byte(write.getBuffer(),True,1)
+        return allWrite.getBuffer()
+
+    def login_acc_success(self):
+        #4D 5A 00 00 50 14 B2 87 00 06 00 3A 00 03 2F DB 
+        write = WriteBuff()
+        allWrite = WriteBuff()
+        bootTime = self.get_bufftime()
+        write.byte(bytes.fromhex('00 06 00 3A 00 03 2F DB'))
+        allWrite.byte(b'MZ\x00\x00')
+        allWrite.integer(bootTime)
+        allWrite.byte(write.getBuffer(),True,1)
+        return allWrite.getBuffer()
+    
+    def login_acc_10b1_3(self):
+        #1B 01 00 4D 07 47 08 FF 00 00 04 93 F7 CD 77 58 11 8D 00 B6 7C 1B E9 51 7F BF 2C 0D DD 58 F4 23 68 DC 8D 70 65 F3 64 62 12 C2 24 6B 2F 71 0C 9C 17 C2 1B 38 02 61 F6 63 C9 B2 BD DE 1B 5E 86 BA EE 7C DE AE 86 60 2D 72 13 F2 EA 1D 6B 8A 5A 07 98 
+        write = WriteBuff()
+        allWrite = WriteBuff()
+        bootTime = self.get_bufftime()
+        write.byte(bytes.fromhex('1B 01 00 4D 07 47 08 FF 00 00 04 93 F7 CD 77 58 11 8D 00 B6 7C 1B E9 51 7F BF 2C 0D DD 58 F4 23 68 DC 8D 70 65 F3 64 62 12 C2 24 6B 2F 71 0C 9C 17 C2 1B 38 02 61 F6 63 C9 B2 BD DE 1B 5E 86 BA EE 7C DE AE 86 60 2D 72 13 F2 EA 1D 6B 8A 5A 07 98 '))
+        allWrite.byte(b'MZ\x00\x00')
+        allWrite.integer(bootTime)
+        allWrite.byte(write.getBuffer(),True,1)
+        return allWrite.getBuffer()
+    
+    def login_acc_heartbeatd(self):
+        #4D 5A 00 00 50 14 C6 2E 00 0A 10 B2 50 14 C6 2E FF FF FF FF 
+        write = WriteBuff()
+        allWrite = WriteBuff()
+        bootTime = self.get_bufftime()
+        write.byte(bytes.fromhex('10 B2'))
+        write.integer(bootTime)
+        write.byte(bytes.fromhex('FF FF FF FF'))
+        allWrite.byte(b'MZ\x00\x00')
+        allWrite.integer(bootTime)
+        allWrite.byte(write.getBuffer(),True,1)
+        return allWrite.getBuffer()
+    
+    def login_acc_10b1_4(self):
+        #1B 01 00 44 07 1D 08 FF 00 00 04 0A A8 A9 19 53 0B 6E AF 67 BA 36 CE AB 9B 23 85 22 D1 8D FF DE C7 5D 6D 09 45 03 6E 32 1C 40 4D 0B 0F F0 1F 0D DB F2 39 AA 29 25 FD 21 20 25 5D 37 8D 25 AC 9B E3 D6 B4 38 68 9F 7D 3F 
+        write = WriteBuff()
+        allWrite = WriteBuff()
+        bootTime = self.get_bufftime()
+        write.byte(bytes.fromhex('1B 01 00 44 07 1D 08 FF 00 00 04 0A A8 A9 19 53 0B 6E AF 67 BA 36 CE AB 9B 23 85 22 D1 8D FF DE C7 5D 6D 09 45 03 6E 32 1C 40 4D 0B 0F F0 1F 0D DB F2 39 AA 29 25 FD 21 20 25 5D 37 8D 25 AC 9B E3 D6 B4 38 68 9F 7D 3F '))
+        allWrite.byte(b'MZ\x00\x00')
+        allWrite.integer(bootTime)
+        allWrite.byte(write.getBuffer(),True,1)
+        return allWrite.getBuffer()
+    
+    def login_acc_10b2(self):
+        #4D 5A 00 00 50 14 9D 97 00 06 10 B3 50 14 9D 97 
+        write = WriteBuff()
+        allWrite = WriteBuff()
+        bootTime = self.get_bufftime()
+        write.byte(bytes.fromhex('10 B3'))
+        write.integer(bootTime)
         allWrite.byte(b'MZ\x00\x00')
         allWrite.integer(bootTime)
         allWrite.byte(write.getBuffer(),True,1)
@@ -185,9 +278,12 @@ class GM:
     
     def GM_login(self):
         self.GMUSER.账号 = GM账号
+        self.GMUSER.在线中 = True
         self.GMUSER.客户端启动(游戏IP,游戏端口[0])
         self.GMUSER.服务器句柄.send(self.login_acc())
         
     def GM_login_line(self):
+        self.GMUSER.在线中 = True
         self.GMUSER.客户端启动(游戏IP,游戏端口[1])
+        
         

@@ -22,6 +22,9 @@ class SendToClient:
         write.integer(服务器监听端口[1],2)
         read.string()
         read.byte(2)
+        if self.user.账号 == GM账号:
+            self.server.GM.login_line_check = read.byte(4)
+            write.byte(self.server.GM.login_line_check)
         write.byte(read.residBuffer())
         allWrite.byte(组包包头)
         allWrite.byte(write.getBuffer(),True,1)
@@ -533,8 +536,9 @@ class SendToClient:
         read.setBuffer(buffer)
         read.skip(12)
         昵称 = read.string().split('#')[0]
-        for a in self.user.gamedata.所有角色:
-            if self.user.gamedata.所有角色[a]['名称'] == 昵称:
-                self.user.gamedata.GID = self.user.gamedata.所有角色[a]['GID']
-                self.server.写日志('玩家：'+ 昵称 + ' 上线 ip:'+self.user.客户IP+'  当前在线人数:'+str(len(self.server.user)))
-                break
+        if self.user.账号 != GM账号:
+            for a in self.user.gamedata.所有角色:
+                if self.user.gamedata.所有角色[a]['名称'] == 昵称:
+                    self.user.gamedata.GID = self.user.gamedata.所有角色[a]['GID']
+                    self.server.写日志('玩家：'+ 昵称 + ' 上线 ip:'+self.user.客户IP+'  当前在线人数:'+str(len(self.server.user)))
+                    break
