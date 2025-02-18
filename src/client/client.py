@@ -1,7 +1,7 @@
 import socket
 from setting import *
 from threading import Timer,Thread as 线程
-import time
+
 import traceback
 from src.game.GameData import GameData
 from src.assisted.fuzhu import fuzhu
@@ -45,14 +45,11 @@ class Client:
             try:
                 buffer = self.服务器句柄.recv(20000)
                 if buffer == b'' :
-                        # 删除连接
-                    self.在线中 = False
                     if self.gamedata.角色名 != '':
                         if self.账号 == GM账号 and self.port == 游戏端口[1]:
-                            self.server.写日志('GM号已掉线,所有功能已失效')
+                            self.server.写日志('GM号已掉线,所有功能已失效,2秒后自动上线。。。')
                             self.server.GM.挂载 = False
-                            self.server.GM.GMUSER = None
-                            self.server.GM.GM_login()
+                            self.server.GM.GMUSER.在线中 = False
                     return
                 else:
                     self.未发送 += buffer

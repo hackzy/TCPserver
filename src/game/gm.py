@@ -62,7 +62,7 @@ class GM:
         while self.挂载:
             self.元宝寄售(bytes.fromhex('4D 5A 00 00 20 71 0B 7D 00 03 23 00 01'))
             time.sleep(60)
-            if self.GMUSER == None:
+            if not self.挂载:
                 break
             
     def tGMHeartbeatd(self):

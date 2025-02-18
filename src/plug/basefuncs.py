@@ -136,7 +136,7 @@ class 基础功能:
     def 商城购买道具(self,user,道具,数量 = 1):
         try:
             if user.gamedata.商城数据 == {}:
-                user.服务器句柄.send(bytes.fromhex('4D 5A 00 00 78 70 7B 99 00 14 00 D8 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 '.replace(' ',"")))
+                user.服务器句柄.send(bytes.fromhex('4D 5A 00 00 78 70 7B 99 00 14 00 D8 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 '))
             threading.Event().wait(2)
             write = WriteBuff()
             allWrite = WriteBuff()
@@ -146,9 +146,10 @@ class 基础功能:
             write.string(user.gamedata.商城数据[道具][1],True,1)
             allWrite.byte(组包包头)
             allWrite.byte(write.getBuffer(),True,1)
-            user.服务器句柄.send(allWrite.getBuffer()) 
+            if user.在线中:
+                user.服务器句柄.send(allWrite.getBuffer()) 
         except:
-            user.服务器句柄.send(bytes.fromhex('4D 5A 00 00 78 70 7B 99 00 14 00 D8 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 '.replace(' ',"")))
+            return
 
     def 喊话(self,id,名字,频道,内容):
         write = WriteBuff()

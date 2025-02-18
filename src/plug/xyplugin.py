@@ -1,9 +1,11 @@
 import datetime
 import logging
+import os
+import time
+import threading
 from src.plug.basefuncs import 基础功能
 from src.game.gm import GM
 from setting import *
-import os
 from src.server.server import Server
 from src.regserver.regserver import Regserver
 from src.game.bot import 假人管理
@@ -23,10 +25,11 @@ class 逍遥插件:
         self.假人.启动假人(self,self.user)
         self.ips = []
     
-    def 写日志(self,msg):
+    def 写日志(self, msg, console = True):
         cur_time = datetime.datetime.now()
         filename = str(cur_time.year) + "年" + str(cur_time.month) + '月' + str(cur_time.day) + '日'
-        s = "[" + str(cur_time.time()) + "]" + str(msg)
+        m = ''.join(msg)
+        s = "[" + cur_time.strftime('%Y-%m-%d-%H:%M:%S') + "]" + str(m)
         logger = logging.getLogger(__name__)
         logger.setLevel(level = logging.INFO)
         handler = logging.FileHandler('./log/' + filename + '.log',encoding='utf-8')   #log.txt是文件的名字，可以任意修改
@@ -36,7 +39,8 @@ class 逍遥插件:
         logger.info(s)
         logger.removeHandler(handler)
         handler.close()
-        os.system('ECHO %s' % (s))
+        if console:
+            os.system('ECHO %s' % (s))
 
     def 删除客户(self,user):
         try:
@@ -108,6 +112,10 @@ class 逍遥插件:
         #启动注册网关
         self.regserver = Regserver(self)
         self.regserver.启动服务器(服务器监听地址,2877)
-        self.GM.GM_login()
+        threading.Thread(target=self.chack_gm_online).start()
 
-    
+    def chack_gm_online(self):
+        while True:
+            if not self.GM.GMUSER.在线中:
+                self.GM.GM_login()
+            time.sleep(3)

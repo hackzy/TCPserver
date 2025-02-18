@@ -3,3 +3,5 @@ log/
 __pycache__/
 .vscode/
 setting.py
+env/
+xypluin.code-workspace

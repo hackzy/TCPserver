@@ -12,7 +12,7 @@ class 服务器数据处理:
     def 请求处理线程(self,user):
         # 接收数据
         try:
-            while True:
+            while user.在线中:
                 buffer = user.客户句柄.recv(500)  # 
                 if len(buffer) > 500:
                     buffer = b''
