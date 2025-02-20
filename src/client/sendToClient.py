@@ -85,7 +85,7 @@ class SendToClient:
             string = read.string()
             lis = string.split(' ')
             lis[0] = 服务器外网地址
-            lis[1] = str(服务器监听端口[游戏端口.index(int(lis[1]))])
+            lis[1] = str(服务器监听端口[原游戏端口.index(int(lis[1]))])
             write.string(' '.join(lis))
         allWrite.byte(组包包头)
         allWrite.byte(write.getBuffer(),True,1)
