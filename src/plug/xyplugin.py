@@ -86,21 +86,21 @@ class 逍遥插件:
     def 服务器发送(self,buffer,user):
         try:
             if user.在线中:
-                user.客户句柄.send(buffer)
+                user.客户句柄.sendall(buffer)
         except:
             return
 
     def 客户端发送(self,buffer,user):
         try:
             if user.在线中:
-                user.服务器句柄.send(buffer)
+                user.服务器句柄.sendall(buffer)
         except:
             return
         
     def 封包测试(self,buffer):
         try:
             if self.测试.在线中:
-                self.测试.客户句柄.send(buffer)
+                self.测试.客户句柄.sendall(buffer)
         except:
             return
         

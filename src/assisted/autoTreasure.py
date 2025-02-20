@@ -22,32 +22,32 @@ class AutoTreasure:
         
     def startTreasure(self,user,server):
         try:
-            if self.flag == False:
-                return
-            treasPot = self.getTreasurePot(user,server)
-            if treasPot == 0:
-                self.flag = False
-                server.客户端发送(server.基础功能.中心提示('當前背包裏沒有藏寶圖！'),user)
-                return
-            hoe = self.getHoe(user,server)
-            if hoe == 0:
-                self.buyHoe(user,server)
+            while True:
+                if self.flag == False:
+                    return
+                treasPot = self.getTreasurePot(user,server)
+                if treasPot == 0:
+                    self.flag = False
+                    server.客户端发送(server.基础功能.中心提示('當前背包裏沒有藏寶圖！'),user)
+                    return
                 hoe = self.getHoe(user,server)
-            #server.客户端发送(user.fuzhu.使用技能(308),user)
-            loca = None
-            for task in user.gamedata.任务:
-                if task.find('寶藏') != -1:
-                    break
-            if user.gamedata.任务[task] == '' or task.find('寶藏') == -1:
-                server.客户端发送(user.fuzhu.使用物品(treasPot),user)
-                time.sleep(1)
-                self.startTreasure(user,server)
-                return
-            loca = user.gamedata.任务[task].split('#Z')
-            server.客户端发送(server.基础功能.T8飞NPC(loca[1],user,True),user)#T8飞NPC(self,NPC,user,bTask = False):
-            time.sleep(0.3)
-            server.客户端发送(user.fuzhu.使用物品(hoe),user)
-            time.sleep(0.3)
-            self.startTreasure(user,server)
+                if hoe == 0:
+                    self.buyHoe(user,server)
+                    hoe = self.getHoe(user,server)
+                #server.客户端发送(user.fuzhu.使用技能(308),user)
+                loca = None
+                for task in user.gamedata.任务:
+                    if task.find('寶藏') != -1:
+                        break
+                if user.gamedata.任务[task] == '' or task.find('寶藏') == -1:
+                    server.客户端发送(user.fuzhu.使用物品(treasPot),user)
+                    time.sleep(1)
+                    continue
+                loca = user.gamedata.任务[task].split('#Z')
+                server.客户端发送(server.基础功能.T8飞NPC(loca[1],user,True),user)#T8飞NPC(self,NPC,user,bTask = False):
+                time.sleep(0.3)
+                server.客户端发送(user.fuzhu.使用物品(hoe),user)
+                time.sleep(0.3)
+            
         except:
             return

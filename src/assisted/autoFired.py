@@ -14,14 +14,16 @@ class 自动战斗:
         self.user = user
 
     def 战斗封包(self,id,技能,攻击位置):
+        if id == 0:
+            return b''
         if 攻击位置 not in self.攻击位置id:
             for b in self.攻击位置id.keys():
                 攻击位置 = b
                 break
         if 技能 == '':
-            return
+            return b''
         if len(self.攻击位置id) == 0:
-            return
+            return b''
         if 技能 == "防御":
             攻击id = id
             技能id = 0
@@ -88,7 +90,7 @@ class 自动战斗:
         read.setBuffer(buffer)
         read.skip(12)
         删除id = read.integer()
-        for a in list(self.攻击位置id.keys()):
+        for a in self.攻击位置id.keys():
             try:
                 if self.攻击位置id[a]['id'] == 删除id:
                     del self.攻击位置id[a]

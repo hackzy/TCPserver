@@ -25,6 +25,7 @@ class Regserver(server.Server):
         while True:
             '''开始监听客户'''
             client, 客户IP = self.listener.accept()          #阻塞，等待客户端连接
+            print("客户连接注册服务器 IP:{}".format(客户IP[0]))
             self.开始接受请求(client,客户IP[0])
     def 开始接受请求(self,user,ip):
         数据处理 = RegData(self.server,ip)

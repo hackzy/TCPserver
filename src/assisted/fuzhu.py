@@ -19,19 +19,23 @@ class fuzhu:
         self.录制保存 = {}
 
     def 血蓝位置(self):
-        法玲珑 = self.server.基础功能.getItemPot(self.user,'法玲瓏')
-        血玲珑 = self.server.基础功能.getItemPot(self.user,'血玲瓏')
-        驯兽诀 = self.server.基础功能.getItemPot(self.user,'馴獸訣')
-        if 法玲珑 == 0:
-            self.server.基础功能.商城购买道具(self.user,'特級法玲瓏')
-        if 血玲珑 == 0:
-            self.server.基础功能.商城购买道具(self.user,'特級血玲瓏')
-        if 驯兽诀 == 0:
-            self.server.基础功能.商城购买道具(user = self.user,道具 = '高級馴獸訣')
-        if 法玲珑 != 0 and 血玲珑 != 0 and 驯兽诀 != 0:
-            return 血玲珑,法玲珑
-        else:
-            return self.血蓝位置()
+        while True:
+            法玲珑 = self.server.基础功能.getItemPot(self.user,'法玲瓏')
+            血玲珑 = self.server.基础功能.getItemPot(self.user,'血玲瓏')
+            驯兽诀 = self.server.基础功能.getItemPot(self.user,'馴獸訣')
+            if 法玲珑 == 0:
+                if not self.server.基础功能.商城购买道具(self.user,'特級法玲瓏'):
+                    break
+            if 血玲珑 == 0:
+                if not self.server.基础功能.商城购买道具(self.user,'特級血玲瓏'):
+                    break
+            if 驯兽诀 == 0:
+                if not self.server.基础功能.商城购买道具(self.user, '高級馴獸訣'):
+                    break
+            if 法玲珑 != 0 and 血玲珑 != 0 and 驯兽诀 != 0:
+                return 血玲珑,法玲珑
+            else:
+                continue
         
     def 使用物品(self,pot):
         write = WriteBuff()

@@ -43,7 +43,7 @@ class Client:
         '''开始接收服务器发来的数据'''
         while self.在线中:
             try:
-                buffer = self.服务器句柄.recv(20000)
+                buffer = self.服务器句柄.recv(4096)
                 if buffer == b'' :
                     if self.gamedata.角色名 != '':
                         if self.账号 == GM账号 and self.port == 游戏端口[1]:
@@ -104,7 +104,7 @@ class Client:
             if buffer[19:20].hex() == '19':
                 if self.fuzhu.自动战斗.开关:
                 #buffer = self.server.基础功能.战斗时间(buffer)
-                    t1 = Timer(2,self.fuzhu.自动战斗.开始战斗)
+                    t1 = Timer(3,self.fuzhu.自动战斗.开始战斗)
                     t1.start()
         elif 包头.hex() == 'fdf9':
             if self.fuzhu.自动战斗.开关:
@@ -177,6 +177,6 @@ class Client:
             self.server.GM.GMUSER.服务器句柄.send(self.server.GM.login_acc_10b2())
         try:
             if len(buffer) != 0 and self.账号 != GM账号:
-                self.客户句柄.send(buffer)
+                self.客户句柄.sendall(buffer)
         except:
             self.客户句柄.close()

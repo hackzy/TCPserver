@@ -24,7 +24,7 @@ class RegData():
                 self.请求处理中心(buffer,user)
                 
         except:
-            self.请求处理中心(buffer,user)
+            # self.请求处理中心(buffer,user)
             #self.server.删除客户(user)
             #del self.server.user[user.cid]
             return

@@ -212,7 +212,7 @@ class 假人管理:
         self.活动大使假人 = []
 
     def 启动假人(self,server,alluser):
-        for i in range(400):
+        for i in range(50):
             self.假人.append(逍遥假人(self,'所有'))
         for i in range(50):
             self.擂台假人.append(逍遥假人(self,'擂台'))

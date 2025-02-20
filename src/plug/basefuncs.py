@@ -1,7 +1,7 @@
 from src.basebuffer.writebuffer import WriteBuff
 from src.basebuffer.readBuffer import ReadBuffer
 from setting import *
-import threading 
+import time 
 class 基础功能:
 
     def 中心提示(self,内容):
@@ -136,8 +136,8 @@ class 基础功能:
     def 商城购买道具(self,user,道具,数量 = 1):
         try:
             if user.gamedata.商城数据 == {}:
-                user.服务器句柄.send(bytes.fromhex('4D 5A 00 00 78 70 7B 99 00 14 00 D8 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 '))
-            threading.Event().wait(2)
+                user.服务器句柄.sendall(bytes.fromhex('4D 5A 00 00 78 70 7B 99 00 14 00 D8 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 00 '))
+            time.sleep(0.5)
             write = WriteBuff()
             allWrite = WriteBuff()
             write.byte(bytes.fromhex('20da'))
@@ -147,9 +147,11 @@ class 基础功能:
             allWrite.byte(组包包头)
             allWrite.byte(write.getBuffer(),True,1)
             if user.在线中:
-                user.服务器句柄.send(allWrite.getBuffer()) 
+                user.服务器句柄.sendall(allWrite.getBuffer())
+                return True 
+            return False
         except:
-            return
+            return False
 
     def 喊话(self,id,名字,频道,内容):
         write = WriteBuff()
