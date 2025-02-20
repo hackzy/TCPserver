@@ -4,5 +4,3 @@ __pycache__/
 .vscode/
 *.pyc
 setting.py
-xypluin.code-workspace
-test.py
