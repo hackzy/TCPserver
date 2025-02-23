@@ -5,3 +5,4 @@ __pycache__/
 setting.py
 env/
 xypluin.code-workspace
+*.log

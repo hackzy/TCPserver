@@ -5,6 +5,7 @@ from src.basebuffer.writebuffer import WriteBuff
 from .autoTreasure import AutoTreasure
 from setting import *
 from threading import Event
+import time
 class fuzhu:
     def __init__(self,server,user) -> None:
         self.luzhi = Luzhi(server,user)
@@ -19,24 +20,29 @@ class fuzhu:
         self.录制保存 = {}
 
     def 血蓝位置(self):
-        while True:
-            法玲珑 = self.server.基础功能.getItemPot(self.user,'法玲瓏')
-            血玲珑 = self.server.基础功能.getItemPot(self.user,'血玲瓏')
-            驯兽诀 = self.server.基础功能.getItemPot(self.user,'馴獸訣')
-            if 法玲珑 == 0:
-                if not self.server.基础功能.商城购买道具(self.user,'特級法玲瓏'):
-                    break
-            if 血玲珑 == 0:
-                if not self.server.基础功能.商城购买道具(self.user,'特級血玲瓏'):
-                    break
-            if 驯兽诀 == 0:
-                if not self.server.基础功能.商城购买道具(self.user, '高級馴獸訣'):
-                    break
-            if 法玲珑 != 0 and 血玲珑 != 0 and 驯兽诀 != 0:
-                return 血玲珑,法玲珑
-            else:
-                continue
-        
+        法玲珑 = self.getItemPot('法玲瓏')
+        血玲珑 = self.getItemPot('血玲瓏')
+        驯兽诀 = self.getItemPot('馴獸訣')
+        # self.server.写日志(msg = '血玲珑位置：{}，法玲珑位置：{}，驯兽诀位置：{}，所有物品：{}'.format(血玲珑,法玲珑,驯兽诀,self.user.gamedata.物品数据),console=True)
+        if 法玲珑 == 0:
+            if not self.server.基础功能.商城购买道具(self.user,'特級法玲瓏'):
+                time.sleep(1)
+                法玲珑 = self.getItemPot('法玲瓏')
+        if 血玲珑 == 0:
+            if not self.server.基础功能.商城购买道具(self.user,'特級血玲瓏'):
+                time.sleep(1)
+                血玲珑 = self.getItemPot('血玲瓏')
+        if 驯兽诀 == 0:
+            if not self.server.基础功能.商城购买道具(self.user, '高級馴獸訣'):
+                time.sleep(1)
+                驯兽诀 = self.getItemPot('馴獸訣')
+        if 法玲珑 != 0 and 血玲珑 != 0 and 驯兽诀 != 0:
+            return 血玲珑,法玲珑
+        else:
+            法玲珑 = self.getItemPot('法玲瓏')
+            血玲珑 = self.getItemPot('血玲瓏')
+            驯兽诀 = self.getItemPot('馴獸訣')
+            return 血玲珑,法玲珑
     def 使用物品(self,pot):
         write = WriteBuff()
         allWrite = WriteBuff()
@@ -154,3 +160,24 @@ class fuzhu:
             self.server.客户端发送(self.装备改造(),self.user)
             Event().wait(0.3)
 
+    def 维修装备(self):
+        #4D 5A 00 00 24 BC 8E 68 00 08 20 A4 00 00 00 00 00 00 
+        write = WriteBuff()
+        write.byte(bytes.fromhex('4D5A000024BC8E68000820A40000000000'))
+        buffer = write.getBuffer()
+        self.server.客户端发送(buffer,self.user)
+        time.sleep(0.3)
+        write = WriteBuff()
+        write.byte(bytes.fromhex('4D 5A 00 00 24 BC 9A 8D 00 0B 20 EE 06 E4 BF AE E7 90 86 01 30 '))
+        buffer = write.getBuffer()
+        self.server.客户端发送(buffer,self.user)
+        
+    def getItemPot(self,item:str,vague = True):
+        for key in self.user.gamedata.物品数据:
+            if vague:
+                if self.user.gamedata.物品数据[key].名称.find(item) != -1:
+                    return key
+            else:
+                if self.user.gamedata.物品数据[key].名称 == item:
+                    return key
+        return 0

@@ -3,6 +3,7 @@ import logging
 import os
 import time
 import threading
+import subprocess
 from src.plug.basefuncs import 基础功能
 from src.game.gm import GM
 from setting import *
@@ -24,23 +25,28 @@ class 逍遥插件:
         self.假人 = 假人管理()
         self.假人.启动假人(self,self.user)
         self.ips = []
-    
-    def 写日志(self, msg, console = True):
+        self.ip_connections = {}
+        
+    def 写日志(self, msg, level = "info",console = True):
         cur_time = datetime.datetime.now()
         filename = str(cur_time.year) + "年" + str(cur_time.month) + '月' + str(cur_time.day) + '日'
         m = ''.join(msg)
-        s = "[" + cur_time.strftime('%Y-%m-%d-%H:%M:%S') + "]" + str(m)
+        formatter = logging.Formatter(
+            "[%(asctime)s] - [%(levelname)s] - %(message)s",
+            datefmt='%Y-%m-%d %H:%M:%S'
+        )
         logger = logging.getLogger(__name__)
         logger.setLevel(level = logging.INFO)
-        handler = logging.FileHandler('./log/' + filename + '.log',encoding='utf-8')   #log.txt是文件的名字，可以任意修改
-        handler.setLevel(logging.INFO)
+        file_handler = logging.FileHandler('./log/' + filename + '.log',encoding='utf-8')   #log.txt是文件的名字，可以任意修改
+        console_handler = logging.StreamHandler()
+        file_handler.setFormatter(formatter)
+        console_handler.setFormatter(formatter)
         if not logger.handlers:
-            logger.addHandler(handler)
-        logger.info(s)
-        logger.removeHandler(handler)
-        handler.close()
-        if console:
-            os.system('ECHO %s' % (s))
+            logger.addHandler(file_handler)
+            if console:
+                logger.addHandler(console_handler)
+        logger.info(m)
+
 
     def 删除客户(self,user):
         try:
@@ -119,3 +125,76 @@ class 逍遥插件:
             if not self.GM.GMUSER.在线中:
                 self.GM.GM_login()
             time.sleep(3)
+    
+    def create_ip_blacklist_rule(rule_name,ip):
+        command = [
+            'netsh', 'advfirewall', 'firewall', 'add', 'rule',
+            f'name={rule_name}',
+            'dir=in',
+            'action=block',
+            f'remoteip={ip}',
+            'enable=yes'
+        ]
+        subprocess.run(command, check=True)
+        
+    def get_existing_ips(self, rule_name):
+        command = [
+            'netsh', 'advfirewall', 'firewall', 'show', 'rule',
+            f'name={rule_name}'
+        ]
+        result = subprocess.run(command, capture_output=True, text=True)
+        for line in result.stdout.splitlines():
+            if '远程 IP' in line:
+                ip_list = line.split(':')[1].strip()
+                return ip_list.split(',')
+        return []
+        
+    def inset_blacklist(self,rule_name, ip_address):
+        existing_ips = self.get_existing_ips(rule_name)
+        if ip_address not in existing_ips:
+            existing_ips.append(ip_address)
+            new_ip_list = ','.join(existing_ips)
+            command = [
+                'netsh', 'advfirewall', 'firewall', 'set', 'rule',
+                f'name={rule_name}',
+                'new',
+                f'remoteip={new_ip_list}'
+            ]
+            subprocess.run(command, check=True)
+    
+    
+        
+    def rule_exists(self, rule_name):
+        command = [
+            'netsh', 'advfirewall', 'firewall', 'show', 'rule',
+            f'name={rule_name}'
+        ]
+        result = subprocess.run(command, capture_output=True, text=True)
+        return '没有与指定标准相匹配的规则' not in result.stdout
+
+    def ensure_rule_exists(self, rule_name, ip_address):
+        if not self.rule_exists(rule_name):
+            self.create_ip_blacklist_rule(rule_name,ip_address)
+            return
+        self.inset_blacklist(rule_name, ip_address)
+        
+    def is_allowed(self, ip):
+        current_time = time.time()  # 获取当前时间戳
+        if ip not in self.ip_connections:
+            self.ip_connections[ip] = []
+
+        # 移除超过5秒的时间戳
+        new_connips = []
+        for timestamp in self.ip_connections[ip]:
+            if current_time - timestamp <= 60:  # 计算时间差
+                new_connips.append(timestamp)
+        self.ip_connections[ip] = new_connips
+
+        # 检查剩余的时间戳数量
+        if len(self.ip_connections[ip]) >= 3:
+            return True
+
+        # 记录新的连接时间戳
+        self.ip_connections[ip].append(current_time)
+        return False
+    

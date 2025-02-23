@@ -8,10 +8,27 @@ class 服务器数据处理:
     from src.client.client import Client
     def __init__(self,server) -> None:
         self.server = server
-                
     def 请求处理线程(self,user):
         # 接收数据
         try:
+            user.客户句柄.settimeout(5)
+            buffer = user.客户句柄.recv(500)  # 
+            if not buffer:
+                self.server.写日志(f"ip：{user.客户IP}，非正常连接，拉黑！:空包")
+                self.server.ensure_rule_exists("IP黑名单",user.客户IP)
+                self.server.删除客户(user)
+                return
+            else:
+                # 第一个封包验证通过，恢复正常的 recv 循环
+                if len(buffer) >= 10 and buffer[:2] == b'MZ':
+                    user.客户句柄.settimeout(None)  # 取消超时设置
+                    user.未请求 += buffer
+                    self.处理数据(user)
+                else:
+                    self.server.写日志(f"ip：{user.客户IP}，非正常连接，拉黑！：数据头错误：{buffer.hex()}")
+                    self.server.ensure_rule_exists("IP黑名单",user.客户IP)
+                    self.server.删除客户(user)
+                    return
             while user.在线中:
                 buffer = user.客户句柄.recv(500)  # 
                 if len(buffer) > 500:
@@ -24,8 +41,12 @@ class 服务器数据处理:
                     return
                 user.未请求 += buffer
                 self.处理数据(user)
-                
-        except:
+        except socket.timeout:
+            self.server.写日志(f"ip：{user.客户IP}，非正常连接，拉黑！:超时")
+            self.server.ensure_rule_exists("IP黑名单",user.客户IP)
+            self.server.删除客户(user)
+            return
+        except Exception as e:
             self.server.删除客户(user)
             #del self.server.user[user.cid]
             return
@@ -39,13 +60,19 @@ class 服务器数据处理:
             if len(user.未请求) - 10 >= leng:
                 buffer = user.未请求[:leng+10]
                 user.未请求 = user.未请求[leng + 10:]
-                请求处理线程 = 线程(target=self.请求处理中心,args=(buffer,user))
-                请求处理线程.daemon = True
-                请求处理线程.start()
+                user.request_processing_queue.put(buffer)
                 continue
             break
+        
+    def buffer_processing_queue(self,user):
+        '''按顺序发送数据'''
+        while user.在线中:
+            buffer = user.request_processing_queue.get()
+            if buffer is None:
+                break
+            self.request_processing_center(buffer,user)
 
-    def 请求处理中心(self,buffer,user:Client):
+    def request_processing_center(self,buffer,user:Client):
         包头 = buffer[10:12]
         htime = int.from_bytes(buffer[4:8])
         if user.账号 != GM账号 and 屏蔽辅助:
@@ -71,6 +98,7 @@ class 服务器数据处理:
             if user.账号 == '':
                 请求处理.取账号(buffer)
                 存档.读取存档信息(user)
+                
         elif 包头.hex() == '10b2' : 
             user.time = int.from_bytes(buffer[12:16])
             if self.server.GM.挂载 and self.server.GM.sHeartbeatd != '' and user.账号 == GM账号:

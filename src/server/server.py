@@ -35,8 +35,6 @@ class Server:
 
     def 开始接受请求(self,user):
         数据处理 = 服务器数据处理(self.server)
-        thread = 线程(target=数据处理.请求处理线程,args=(user,))
-        thread.daemon = True
-        thread.start()
-
+        线程(target=数据处理.请求处理线程,args=(user,),daemon=True).start()
+        线程(target=数据处理.buffer_processing_queue,args=(user,),daemon=True).start()
 

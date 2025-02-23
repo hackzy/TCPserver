@@ -101,16 +101,6 @@ class 基础功能:
         allWrite.byte(组包包头)
         allWrite.byte(write.getBuffer(),True,1)
         return allWrite.getBuffer()
-
-    def getItemPot(self,user,item:str,vague = True):
-        for key in user.gamedata.物品数据:
-            if vague:
-                if user.gamedata.物品数据[key].名称.find(item) != -1:
-                    return key
-            else:
-                if user.gamedata.物品数据[key].名称 == item:
-                    return key
-        return 0
             
     def T8飞NPC(self,NPC,user,bTask = False):
         write = WriteBuff()

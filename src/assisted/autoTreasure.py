@@ -3,15 +3,15 @@ import time
 class AutoTreasure:
     flag = False
     def getTreasurePot(self,user,server):
-        return server.基础功能.getItemPot(user,'藏寶圖')
+        return user.fuzhu.getItemPot('藏寶圖')
     def getHoe(self,user,server):
-        return server.基础功能.getItemPot(user,'鋤頭')
+        return user.fuzhu.getItemPot('鋤頭')
     
     def buyHoe(self,user,server):
-        xianlingkaPot = server.基础功能.getItemPot(user,'仙靈卡')
+        xianlingkaPot = user.fuzhu.getItemPot('仙靈卡')
         if xianlingkaPot == 0:
-            server.基礎功能.商城购买道具(user,'仙靈卡')
-            xianlingkaPot = server.基础功能.getItemPot(user,'仙靈卡')
+            server.基礎功能.商城购买道具('仙靈卡')
+            xianlingkaPot = user.fuzhu.getItemPot('仙靈卡')
         server.客户端发送(user.fuzhu.使用物品(xianlingkaPot),user)
         time.sleep(1)
         server.客户端发送(server.基础功能.对话点击(user.gamedata.角色id,'打開商店'),user)

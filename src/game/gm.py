@@ -277,10 +277,13 @@ class GM:
         return allWrite.getBuffer()
     
     def GM_login(self):
-        self.GMUSER.账号 = GM账号
-        self.GMUSER.在线中 = True
-        self.GMUSER.客户端启动(游戏IP,游戏端口[0])
-        self.GMUSER.服务器句柄.send(self.login_acc())
+        try:
+            self.GMUSER.账号 = GM账号
+            self.GMUSER.在线中 = True
+            self.GMUSER.客户端启动(游戏IP,游戏端口[0])
+            self.GMUSER.服务器句柄.send(self.login_acc())
+        finally:
+            return
         
     def GM_login_line(self):
         self.GMUSER.在线中 = True

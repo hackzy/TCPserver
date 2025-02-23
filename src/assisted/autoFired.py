@@ -1,6 +1,6 @@
 from src.basebuffer.writebuffer import WriteBuff
 from src.basebuffer.readBuffer import ReadBuffer
-import src.module.psutil
+from threading import Lock
 from setting import *
 class 自动战斗:
     def __init__(self,server,user) -> None:
@@ -12,6 +12,7 @@ class 自动战斗:
         self.开关 = False
         self.server = server
         self.user = user
+        self.fire_id_lock = Lock()
 
     def 战斗封包(self,id,技能,攻击位置):
         if id == 0:
@@ -50,7 +51,8 @@ class 自动战斗:
         write.integer(攻击类型)
         write.integer(技能id)
         write.integer(0)
-        allWrite.byte(组包包头)
+        allWrite.byte(b'\x4d\x5a\x00\x00')
+        allWrite.integer(self.user.time)
         allWrite.byte(write.getBuffer(),True,1)
         return allWrite.getBuffer()
 
@@ -68,34 +70,34 @@ class 自动战斗:
         read.setBuffer(buffer)
         read.skip(12)
         数量 = int.from_bytes(read.byte(1))
-        for a in range(数量):
-            id = read.integer()
-            read.skip(6)
-            位置 = read.integer()
-            self.攻击位置id.update({位置:{'id':id}})
-            信息数量 = read.integer(2)
-            for b in range(信息数量):
-                类型 = read.integer(2)
-                标识 = int.from_bytes(read.byte(1))
-                if 标识 == 4:
-                    文本 = read.string()
-                    if 类型 == 1:
-                        self.攻击位置id.update({位置:{'名称':文本}})
-                if 标识 == 3:
-                    read.integer()
-            read.skip(65)
+        with self.fire_id_lock:
+            for a in range(数量):
+                id = read.integer()
+                read.skip(6)
+                位置 = read.integer()
+                self.攻击位置id.update({位置:{'id':id}})
+                信息数量 = read.integer(2)
+                for b in range(信息数量):
+                    类型 = read.integer(2)
+                    标识 = int.from_bytes(read.byte(1))
+                    if 标识 == 4:
+                        文本 = read.string()
+                        if 类型 == 1:
+                            self.攻击位置id.update({位置:{'名称':文本}})
+                    if 标识 == 3:
+                        read.integer()
+                read.skip(65)
 
     def 删攻击id(self,buffer):
         read = ReadBuffer()
         read.setBuffer(buffer)
         read.skip(12)
         删除id = read.integer()
-        for a in self.攻击位置id.keys():
-            try:
-                if self.攻击位置id[a]['id'] == 删除id:
-                    del self.攻击位置id[a]
-            except:
-                continue
+        with self.fire_id_lock:
+            keys_to_delete = [a for a in self.攻击位置id.keys() if self.攻击位置id[a].get('id') == 删除id]
+            for a in keys_to_delete:
+                del self.攻击位置id[a]
+                
     def 捕捉(self,名称):
         write = WriteBuff()
         allWrite = WriteBuff()
@@ -111,3 +113,4 @@ class 自动战斗:
         血玲珑,法玲珑 = self.user.fuzhu.血蓝位置()
         self.user.fuzhu.人物回复(血玲珑,法玲珑)
         self.user.fuzhu.宠物回复(血玲珑,法玲珑)
+        self.user.fuzhu.维修装备()

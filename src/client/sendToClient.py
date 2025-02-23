@@ -85,6 +85,8 @@ class SendToClient:
             saveBuff.integer(物品数据总数,2)
             for a in range(物品数据总数):
                 物品属性类别 = read.integer(2)
+                if 物品属性类别 == 0:
+                    self.user.gamedata.物品数据.pop(物品位置id,None)
                 saveBuff.integer(物品属性类别,2)
                 物品属性数量 = read.integer(2)
                 if 物品位置id == 33 or 物品位置id == 31:
