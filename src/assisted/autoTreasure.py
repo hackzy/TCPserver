@@ -10,13 +10,13 @@ class AutoTreasure:
     def buyHoe(self,user,server):
         xianlingkaPot = user.fuzhu.getItemPot('仙靈卡')
         if xianlingkaPot == 0:
-            server.基礎功能.商城购买道具('仙靈卡')
+            server.基础功能.商城购买道具(user,'仙靈卡')
             xianlingkaPot = user.fuzhu.getItemPot('仙靈卡')
         server.客户端发送(user.fuzhu.使用物品(xianlingkaPot),user)
         time.sleep(1)
         server.客户端发送(server.基础功能.对话点击(user.gamedata.角色id,'打開商店'),user)
         time.sleep(1)
-        server.客户端发送(bytes.fromhex('4D 5A 00 00 22 4B 9D C9 00 0C 30 44 00 00 5D C9 00 0C 00 01 00 67 '.replace(' ','')),user)
+        server.客户端发送(bytes.fromhex('4D 5A 00 00 22 4B 9D C9 00 0C 30 44 00 00 5E 19 00 0C 00 01 00 00 '.replace(' ','')),user)
         time.sleep(0.3)
         server.客户端发送(bytes.fromhex('4d5a0000000000000006003c00005e40'),user)
         
@@ -45,9 +45,10 @@ class AutoTreasure:
                     continue
                 loca = user.gamedata.任务[task].split('#Z')
                 server.客户端发送(server.基础功能.T8飞NPC(loca[1],user,True),user)#T8飞NPC(self,NPC,user,bTask = False):
-                time.sleep(0.3)
+                time.sleep(1)
                 server.客户端发送(user.fuzhu.使用物品(hoe),user)
-                time.sleep(0.3)
+                time.sleep(1)
             
-        except:
+        except Exception as e:
+            server.写日志(msg = '自动挖宝出现异常：{}'.format(e),level="error",console=True)
             return

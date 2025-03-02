@@ -2,7 +2,7 @@ import socket
 from setting import *
 from threading import Timer,Thread as 线程
 from concurrent.futures import ThreadPoolExecutor
-from queue import Queue
+from queue import Queue,Empty
 import traceback
 from src.game.GameData import GameData
 from src.assisted.fuzhu import fuzhu
@@ -21,9 +21,13 @@ class Client:
         self.在线中 = False
         self.未发送 = b''
         self.time = 0
-        self.receive_task = ThreadPoolExecutor(10)
+        self.receive_task = ThreadPoolExecutor(10,'client_pool')
         self.recevie_buffer_queue = Queue()
         self.request_processing_queue = Queue()
+        
+    def shutdown(self):
+        self.receive_task.shutdown()
+        
     def 客户端启动(self,ip,端口):
         '''启动连接服务器'''
         self.port = 端口
@@ -31,7 +35,7 @@ class Client:
             self.服务器句柄 = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
             self.服务器句柄.connect((ip,端口))
             线程(target=self.数据到达,daemon=True).start()
-            线程(target=self.buffer_processing_queue,daemon=True).start()
+            线程(target=self.buffer_receiving_queue,daemon=True).start()
         except:
             self.server.写日志("连接服务器失败，请检查服务器是否开启，详细错误：{}".format(traceback.format_exc()))
 
@@ -70,13 +74,17 @@ class Client:
                 continue
             break
     
-    def buffer_processing_queue(self):
+    def buffer_receiving_queue(self):
         '''按顺序发送数据'''
         while self.在线中:
-            buffer = self.recevie_buffer_queue.get()
+            try:
+                buffer = self.recevie_buffer_queue.get(timeout=11)
+            except Empty:
+                return
             if buffer is None:
                 break
             self.receiving_processing_center(buffer)
+            
 
     def receiving_processing_center(self,buffer:bytes):
         客户接收处理 = SendToClient(self,self.server)

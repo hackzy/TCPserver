@@ -1,5 +1,7 @@
 
-from threading import Thread as 线程
+from threading import Thread
+from concurrent.futures import ThreadPoolExecutor
+from queue import Empty
 from setting import *
 from .sendToServer import 客户请求处理
 from src.plug.saveData import 存档
@@ -8,10 +10,15 @@ class 服务器数据处理:
     from src.client.client import Client
     def __init__(self,server) -> None:
         self.server = server
+        self.request_tack = ThreadPoolExecutor(10,'server_pool')
+        
+    def __del__(self):
+        self.request_tack.shutdown()
+        
     def 请求处理线程(self,user):
         # 接收数据
         try:
-            user.客户句柄.settimeout(5)
+            user.客户句柄.settimeout(10)
             buffer = user.客户句柄.recv(500)  # 
             if not buffer:
                 self.server.写日志(f"ip：{user.客户IP}，非正常连接，拉黑！:空包")
@@ -21,11 +28,11 @@ class 服务器数据处理:
             else:
                 # 第一个封包验证通过，恢复正常的 recv 循环
                 if len(buffer) >= 10 and buffer[:2] == b'MZ':
-                    user.客户句柄.settimeout(None)  # 取消超时设置
+                    user.客户句柄.settimeout(15)  # 取消超时设置
                     user.未请求 += buffer
                     self.处理数据(user)
                 else:
-                    self.server.写日志(f"ip：{user.客户IP}，非正常连接，拉黑！：数据头错误：{buffer.hex()}")
+                    self.server.写日志(f"ip：{user.客户IP}，非正常连接，拉黑！：数据头错误：{buffer}")
                     self.server.ensure_rule_exists("IP黑名单",user.客户IP)
                     self.server.删除客户(user)
                     return
@@ -42,8 +49,7 @@ class 服务器数据处理:
                 user.未请求 += buffer
                 self.处理数据(user)
         except socket.timeout:
-            self.server.写日志(f"ip：{user.客户IP}，非正常连接，拉黑！:超时")
-            self.server.ensure_rule_exists("IP黑名单",user.客户IP)
+            self.server.写日志(f"ip：{user.客户IP}，非正常连接:超时")
             self.server.删除客户(user)
             return
         except Exception as e:
@@ -64,16 +70,19 @@ class 服务器数据处理:
                 continue
             break
         
-    def buffer_processing_queue(self,user):
+    def buffer_request_queue(self,user):
         '''按顺序发送数据'''
         while user.在线中:
-            buffer = user.request_processing_queue.get()
+            try:
+                buffer = user.request_processing_queue.get(timeout=11)
+            except Empty:
+                return
             if buffer is None:
                 break
             self.request_processing_center(buffer,user)
 
-    def request_processing_center(self,buffer,user:Client):
-        包头 = buffer[10:12]
+    def request_processing_center(self,buffer:bytes,user:Client):
+        包头 = buffer[10:12].hex()
         htime = int.from_bytes(buffer[4:8])
         if user.账号 != GM账号 and 屏蔽辅助:
             if htime < user.time or (htime - user.time) > 11000 and user.time != 0 and user.账号 != GM账号:
@@ -83,23 +92,23 @@ class 服务器数据处理:
                 return
         请求处理 = 客户请求处理(user,self.server)
         if user.fuzhu.luzhi.是否开启:
-            if 包头.hex() != '10b2' and 包头.hex() != 'f0c2'\
-                                    and 包头.hex() != '4062':
-                user.fuzhu.luzhi.录制封包(buffer)
-        if 包头.hex() == '4062':
+            if 包头 != '10b2' \
+                and 包头 != 'f0c2'\
+                    and 包头 != '4062':
+                        self.request_tack.submit(user.fuzhu.luzhi.录制封包,buffer)
+        if 包头 == '4062':
             buffer = 请求处理.喊话(buffer)
-        elif 包头.hex() == '3038':
-            请求处理.NPC对话点击处理(buffer)
-        elif 包头.hex() == '2032':
+        elif 包头 == '3038':
+            self.request_tack.submit(请求处理.NPC对话点击处理,buffer)
+        elif 包头 == '2032':
             if buffer[-2:].hex() == '0133':
-                user.fuzhu.小助手.小助手()
+                self.request_tack.submit(user.fuzhu.小助手.小助手)
                 buffer = b''
-        elif 包头.hex() == '3002':
+        elif 包头 == '3002':
             if user.账号 == '':
-                请求处理.取账号(buffer)
-                存档.读取存档信息(user)
-                
-        elif 包头.hex() == '10b2' : 
+                self.request_tack.submit(请求处理.取账号,buffer)
+                self.request_tack.submit(存档.读取存档信息(user))
+        elif 包头 == '10b2' : 
             user.time = int.from_bytes(buffer[12:16])
             if self.server.GM.挂载 and self.server.GM.sHeartbeatd != '' and user.账号 == GM账号:
                 self.server.GM.tGMHeartbeatd()

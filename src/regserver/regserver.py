@@ -26,14 +26,14 @@ class Regserver(server.Server):
             '''开始监听客户'''
             client, 客户IP = self.listener.accept()          #阻塞，等待客户端连接
             if self.server.is_allowed(客户IP[0]):
-                self.server.写日志(f"ip：{客户IP[0]}，30 秒内连接数已达到最大值：{len(self.server.ip_connections[客户IP[0]])}，拉黑！",console=False)
+                self.server.写日志(f"ip：{客户IP[0]}，30 秒内连接数已达到最大值：{len(self.server.ip_connections[客户IP[0]])}，拉黑！",level="warning",console=True)
                 self.server.ensure_rule_exists("IP黑名单",客户IP[0])
                 client.close()
-                return
-            if len(self.connips) > 2:
-                self.Logger(f"ip：[{客户IP[0]}]，请求连接，但总连接数已达到最大值：{len(self.connips)}，已拒绝连接",console=False)
+                continue
+            if len(self.connips) >= 5:
+                self.server.写日志(f"ip：[{客户IP[0]}]，请求连接，但总连接数已达到最大值：{len(self.connips)}，已拒绝连接",level="warning",console=True)
                 client.close()
-                return
+                continue
             self.server.写日志("客户连接注册服务器 IP:{}".format(客户IP[0]))
             self.connips.append(客户IP[0])
             self.开始接受请求(client,客户IP[0])

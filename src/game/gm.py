@@ -286,6 +286,7 @@ class GM:
             return
         
     def GM_login_line(self):
+        self.GMUSER.服务器句柄.close()
         self.GMUSER.在线中 = True
         self.GMUSER.客户端启动(游戏IP,游戏端口[1])
         

@@ -47,12 +47,12 @@ class RegData():
                     buffer = encrypt(b'Fzml',reg.accreg(去包头,self.客户ip).encode('gb2312','ignore'))
                     cur.close()
 
-            if 包头 == 'lg':
+            elif 包头 == 'lg':
                 去包头 = 解密后的数据[2:]
                 buffer = encrypt(b'Fzml',reg.passwdchange(去包头).encode('gb2312','ignore'))
 
             
-            if 包头 == 'ld':
+            elif 包头 == 'ld':
                 语句 = 'SELECT * FROM linxz WHERE ip=\'%s\'' % (self.客户ip)
                 cur = reg.mysql.cursor()
                 if cur.execute(语句) >= 5:
@@ -63,8 +63,13 @@ class RegData():
                     去包头 = 解密后的数据[2:].split('#o_o')
                     dafeireg = Dafei(self.server)
                     buffer = encrypt(b'Fzml',reg.accreg(去包头,self.客户ip).encode('gb2312','ignore') + dafeireg.大飞注册(去包头[0],去包头[4],去包头[3],'旧',去包头[5],'逍遙大飛').encode('gb2312','ignore'))
-        except:
-            pass
+            else:
+                self.server.写日志("注册非法封包，拉黑！")
+                self.server.ensure_rule_exists("IP黑名单",self.客户ip)
+                user.close()
+                return
+        except Exception as e:
+            self.server.写日志(f"注册出错:{e}",level="error",console=True)
 
 
         try:

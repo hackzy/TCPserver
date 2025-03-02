@@ -4,6 +4,7 @@ import os
 import time
 import threading
 import subprocess
+from typing import Literal
 from src.plug.basefuncs import 基础功能
 from src.game.gm import GM
 from setting import *
@@ -27,7 +28,7 @@ class 逍遥插件:
         self.ips = []
         self.ip_connections = {}
         
-    def 写日志(self, msg, level = "info",console = True):
+    def 写日志(self, msg, level:Literal["info","error","warning","debug"] = "info", console:bool=True):
         cur_time = datetime.datetime.now()
         filename = str(cur_time.year) + "年" + str(cur_time.month) + '月' + str(cur_time.day) + '日'
         m = ''.join(msg)
@@ -45,7 +46,14 @@ class 逍遥插件:
             logger.addHandler(file_handler)
             if console:
                 logger.addHandler(console_handler)
-        logger.info(m)
+        if level == 'info':
+            logger.info(m)
+        elif level == 'error':
+            logger.error(m)
+        elif level == 'warning':
+            logger.warning(m)
+        elif level == 'debug':
+            logger.debug(m)
 
 
     def 删除客户(self,user):
@@ -60,6 +68,7 @@ class 逍遥插件:
                 self.ips.remove(user.客户IP)
                 user.客户句柄.close()
                 user.服务器句柄.close()
+                user.shutdown()
                 del self.user[user.cid]
                 if user.gamedata.角色名 != '':
                     self.写日志('玩家: ' + user.gamedata.角色名 + ' 下线 Ip:' + user.客户IP + '  当前在线人数:' + str(len(self.user)))
@@ -118,15 +127,21 @@ class 逍遥插件:
         #启动注册网关
         self.regserver = Regserver(self)
         self.regserver.启动服务器(服务器监听地址,2877)
-        threading.Thread(target=self.chack_gm_online).start()
+        
+        # threading.Thread(target=self.chack_gm_online).start()
 
     def chack_gm_online(self):
         while True:
             if not self.GM.GMUSER.在线中:
                 self.GM.GM_login()
+            try:
+                self.GM.GMUSER.服务器句柄.sendall(bytes.fromhex('4D 5A 00 00 20 71 0B 7D 00 03 23 00 01'))
+            except:
+                self.GM.GMUSER.在线中 = False
+                continue
             time.sleep(3)
     
-    def create_ip_blacklist_rule(rule_name,ip):
+    def create_ip_blacklist_rule(self, rule_name, ip):
         command = [
             'netsh', 'advfirewall', 'firewall', 'add', 'rule',
             f'name={rule_name}',

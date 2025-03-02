@@ -14,6 +14,8 @@ class Reg:
     def accreg(self,账号密码,ip):
         if len(账号密码) < 3:
             return '缺少必要信息，请检查后重试！'
+        if 账号密码[0].find("'") > 0:
+            return '账号不合法，请更换后重试！'
         cur = self.mysql.cursor()
         cur.execute('SELECT * FROM account WHERE account=\'%s\'' % (账号密码[0]))
         if len(cur.fetchall()) >= 1:
