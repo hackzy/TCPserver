@@ -9,6 +9,7 @@ import pymysql
 class GM:
     def __init__(self,server,client) -> None:
         self.GMUSER = client
+        self.GMUSER.在线中 = False
         self.GM账号 = GM账号
         self.server = server
         self.sHeartbeatd = b''
@@ -278,16 +279,23 @@ class GM:
     
     def GM_login(self):
         try:
-            self.GMUSER.账号 = GM账号
+            self.GMUSER.账号 = GM账号   
             self.GMUSER.在线中 = True
-            self.GMUSER.客户端启动(游戏IP,游戏端口[0])
-            self.GMUSER.服务器句柄.send(self.login_acc())
-        finally:
+            if self.GMUSER.客户端启动(游戏IP,游戏端口[0]):
+                self.GMUSER.服务器句柄.send(self.login_acc())
+                time.sleep(3)
+                return
+            self.GMUSER.在线中 = False
+        except Exception :
+            self.GMUSER.在线中 = False
             return
         
     def GM_login_line(self):
-        self.GMUSER.服务器句柄.close()
-        self.GMUSER.在线中 = True
-        self.GMUSER.客户端启动(游戏IP,游戏端口[1])
-        
+        try:
+            self.GMUSER.服务器句柄.close()
+            self.GMUSER.在线中 = True
+            self.GMUSER.客户端启动(游戏IP,游戏端口[1])
+        except Exception :
+            self.GMUSER.在线中 = False
+            return
         

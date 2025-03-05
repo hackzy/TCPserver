@@ -128,18 +128,15 @@ class 逍遥插件:
         self.regserver = Regserver(self)
         self.regserver.启动服务器(服务器监听地址,2877)
         
-        # threading.Thread(target=self.chack_gm_online).start()
+        threading.Thread(target=self.chack_gm_online,daemon=True).start()
 
     def chack_gm_online(self):
         while True:
             if not self.GM.GMUSER.在线中:
                 self.GM.GM_login()
-            try:
-                self.GM.GMUSER.服务器句柄.sendall(bytes.fromhex('4D 5A 00 00 20 71 0B 7D 00 03 23 00 01'))
-            except:
-                self.GM.GMUSER.在线中 = False
-                continue
             time.sleep(3)
+            
+            
     
     def create_ip_blacklist_rule(self, rule_name, ip):
         command = [

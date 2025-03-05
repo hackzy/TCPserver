@@ -36,9 +36,10 @@ class Client:
             self.服务器句柄.connect((ip,端口))
             线程(target=self.数据到达,daemon=True).start()
             线程(target=self.buffer_receiving_queue,daemon=True).start()
+            return True
         except:
             self.server.写日志("连接服务器失败，请检查服务器是否开启，详细错误：{}".format(traceback.format_exc()))
-
+            return False
     def 初始化客户信息(self,客户句柄:socket.socket,客户IP:str,cid:int):
         '''初始化客户连接属性'''
         self.客户句柄 = 客户句柄
